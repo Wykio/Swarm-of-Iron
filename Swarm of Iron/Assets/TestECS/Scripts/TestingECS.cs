@@ -7,7 +7,7 @@ using Unity.Collections;
 using Unity.Rendering;
 using Unity.Mathematics;
 
-public class Testing : MonoBehaviour
+public class TestingECS : MonoBehaviour
 {
     [SerializeField] private Mesh entityMesh;
     [SerializeField] private Material entityMaterial;
