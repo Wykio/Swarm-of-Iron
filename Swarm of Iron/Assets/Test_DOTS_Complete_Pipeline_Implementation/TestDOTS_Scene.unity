@@ -164,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3231c13646aff541a903627d4be7e9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entityAmount: 2
+  entityAmount: 80000
   entityMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   entityMaterial: {fileID: 2100000, guid: c6f396ee324bed84abcc97a3e5f060ff, type: 2}
 --- !u!1 &1924277488

@@ -10,6 +10,7 @@ using Unity.Mathematics;
 namespace testECS {
     public class TestingECS : MonoBehaviour
     {
+        [SerializeField] private int entityAmount;
         [SerializeField] private Mesh entityMesh;
         [SerializeField] private Material entityMaterial;
 
@@ -35,7 +36,7 @@ namespace testECS {
             //entityManager.SetComponentData(entity, new LevelComponent { level = 10 });
 
             //Création d'un nativeArray aloué temporairement car on utilise juste poue l'instanciation
-            NativeArray<Entity> entityArray = new NativeArray<Entity>(10000, Allocator.Temp);
+            NativeArray<Entity> entityArray = new NativeArray<Entity>(entityAmount, Allocator.Temp);
 
             //Création d'une entity avec un nativeArray
             entityManager.CreateEntity(entityArchetype, entityArray);
