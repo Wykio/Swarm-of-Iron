@@ -247,6 +247,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7408f5a7416623c4d986730120f700e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soldierNumber: 500
+  useJobs: 1
+  pfSoldier: {fileID: 6511916296240778617, guid: e20d6b228ac84fb408afdc9c0be258cc,
+    type: 3}
 --- !u!1 &1709406555
 GameObject:
   m_ObjectHideFlags: 0
