@@ -7,7 +7,7 @@ using Unity.Collections;
 using Unity.Rendering;
 using Unity.Mathematics;
 
-public class Testing : MonoBehaviour
+public class TestingECS : MonoBehaviour
 {
     [SerializeField] private Mesh entityMesh;
     [SerializeField] private Material entityMaterial;
@@ -33,7 +33,7 @@ public class Testing : MonoBehaviour
         //entityManager.SetComponentData(entity, new LevelComponent { level = 10 });
 
         //Création d'un nativeArray aloué temporairement car on utilise juste poue l'instanciation
-        NativeArray<Entity> entityArray = new NativeArray<Entity>(1000, Allocator.Temp);
+        NativeArray<Entity> entityArray = new NativeArray<Entity>(10000, Allocator.Temp);
 
         //Création d'une entity avec un nativeArray
         entityManager.CreateEntity(entityArchetype, entityArray);
