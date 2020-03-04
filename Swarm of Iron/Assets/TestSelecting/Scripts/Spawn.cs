@@ -8,7 +8,17 @@ using Unity.Rendering;
 using Unity.Mathematics;
 
 public class Spawn : MonoBehaviour {
+
+    public static Spawn instance;
+
     [SerializeField] private RenderMesh renderMesh;
+
+    public Mesh unitSelectedMesh;
+    public Material unitSelectedMaterial;
+
+    private void Awake() {
+        instance = this;
+    }
 
     public void Start() {
         //On récupére l'entityManager
@@ -31,7 +41,7 @@ public class Spawn : MonoBehaviour {
         for (int i = 0; i < entityArray.Length; i++) {
             Entity entity = entityArray[i];
 
-            var position = new float3(UnityEngine.Random.Range(20.0f, 30.0f), 0.0f, UnityEngine.Random.Range(20.0f, 30.0f));
+            var position = new float3(UnityEngine.Random.Range(20.0f, 30.0f), 1.5f, UnityEngine.Random.Range(20.0f, 30.0f));
             // TODO: Eventually switch to the new Unity.Physics AABB 
             var aabb = new AABB {
                 max = position + 0.5f,

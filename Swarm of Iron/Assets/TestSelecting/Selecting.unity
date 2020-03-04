@@ -157,6 +157,9 @@ MonoBehaviour:
     layer: 0
     castShadows: 0
     receiveShadows: 0
+  unitSelectedMesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+  unitSelectedMaterial: {fileID: 2100000, guid: dc53258ad3c20968198b10a840d38f40,
+    type: 2}
 --- !u!4 &416072945
 Transform:
   m_ObjectHideFlags: 0

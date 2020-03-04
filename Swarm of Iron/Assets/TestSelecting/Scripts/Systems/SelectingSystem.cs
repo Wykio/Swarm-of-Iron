@@ -23,3 +23,21 @@ public class SelectingSystem : ComponentSystem {
             });
     }
 }
+
+public class SelectingRenderer : ComponentSystem {
+
+    protected override void OnUpdate() {
+        Entities
+            .WithAll<PlayerUnitSelect>()
+            .ForEach((ref Translation translation) => {
+                float3 position = translation.Value - new float3(0.0f, 1.0f, 0.0f);
+                Graphics.DrawMesh(
+                    Spawn.instance.unitSelectedMesh,
+                    position,
+                    Quaternion.identity,
+                    Spawn.instance.unitSelectedMaterial,
+                    0
+                );
+            });
+    }
+}
