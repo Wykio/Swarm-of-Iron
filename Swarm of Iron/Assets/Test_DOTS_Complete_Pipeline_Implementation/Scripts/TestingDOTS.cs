@@ -40,8 +40,8 @@ namespace testDOTS {
             {
                 Entity entity = entityArray[i];
                 //entityManager.SetComponentData(entity, new LevelComponent { level = UnityEngine.Random.Range(10.0f, 20.0f) });
-                entityManager.SetComponentData(entity, new MoveSpeedComponent { moveSpeed = UnityEngine.Random.Range(1.0f, 2.0f) });
-                entityManager.SetComponentData(entity, new Translation { Value = new float3(UnityEngine.Random.Range(-8.0f, 8.0f), UnityEngine.Random.Range(-5.0f, 5.0f), UnityEngine.Random.Range(-1.0f, 1.0f)) });
+                entityManager.SetComponentData(entity, new MoveSpeedComponent { moveSpeed = UnityEngine.Random.Range(1.0f, 10.0f) });
+                entityManager.SetComponentData(entity, new Translation { Value = new float3(UnityEngine.Random.Range(-80.0f, 80.0f), UnityEngine.Random.Range(-50.0f, 50.0f), UnityEngine.Random.Range(-100.0f, 100.0f)) });
 
                 entityManager.SetSharedComponentData(entity, new RenderMesh
                 {
