@@ -10,16 +10,32 @@ namespace Swarm_Of_Iron_namespace
 {
     public class Swarm_Of_Iron : MonoBehaviour
     {
+        //management des dépendences à revoir
+        public static Swarm_Of_Iron instance;
+
         private EntityManager entityManager;
 
         [SerializeField] int spawnUnitAmount;
         [SerializeField] private Mesh soldierMesh;
         [SerializeField] private Material soldierMaterial;
 
+        public Transform selectionAreaTransform;
+        public Mesh unitSelectedCircleMesh;
+        public Material unitSelectedCircleMaterial;
+
+        private void Awake()
+        {
+            //management des dépendences à revoir
+            instance = this;
+        }
+
         // Start is called before the first frame update
         private void Start()
         {
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+            //unitSelectedCircleMesh = Swarm_Of_Iron.createMesh
+            //12.05
 
             for (int i = 0; i < spawnUnitAmount; i++)
             {
@@ -51,27 +67,6 @@ namespace Swarm_Of_Iron_namespace
                 mesh = soldierMesh,
                 material = soldierMaterial
             });
-        }
-
-        private void Update()
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 clickPosition = -Vector3.one;
-
-                //Method 1
-                //clickPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition + new Vector3(0.0f , 0.0f, 10.0f));
-
-                //Method 2
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit)) {
-                    clickPosition = hit.point;
-                }
-                //Goal
-                Debug.Log(clickPosition);
-            }
         }
     }
 }
