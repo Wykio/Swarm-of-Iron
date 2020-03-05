@@ -18,11 +18,11 @@ namespace Swarm_Of_Iron_namespace
             return Entities.ForEach((ref Translation translation, ref Soldier moveSpeedComponent) =>
             {
                 translation.Value.y += moveSpeedComponent.animationSpeed * deltaTime;
-                if (translation.Value.y > 1.4f)
+                if (translation.Value.y > 1.5f)
                 {
                     moveSpeedComponent.animationSpeed = -math.abs(moveSpeedComponent.animationSpeed);
                 }
-                if (translation.Value.y < 1.0f)
+                if (translation.Value.y < 1.1f)
                 {
                     moveSpeedComponent.animationSpeed = +math.abs(moveSpeedComponent.animationSpeed);
                 }

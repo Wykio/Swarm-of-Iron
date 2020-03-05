@@ -58,6 +58,12 @@ namespace Swarm_Of_Iron_namespace
                 float3 lowerLeftPosition = new float3(math.min(startPosition.x, endPosition.x), 0.0f, math.min(startPosition.z, endPosition.z));
                 float3 upperRightPosition = new float3(math.max(startPosition.x, endPosition.x), 0.0f, math.max(startPosition.z, endPosition.z));
 
+                // Deselect all Units
+                Entities.WithAll<UnitSelected>().ForEach((Entity entity) => {
+                    PostUpdateCommands.RemoveComponent<UnitSelected>(entity);
+                });
+                
+                // Select Units
                 Entities.ForEach((Entity entity, ref Translation translation) => {
                     float3 entityPosition = translation.Value;
 
