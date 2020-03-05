@@ -7,7 +7,7 @@ namespace Swarm_Of_Iron_namespace
 {
     public struct Soldier : IComponentData
     {
-
+        public float animationSpeed;
     }
 }
 

@@ -15,7 +15,12 @@ namespace Swarm_Of_Iron_namespace
         protected override void OnUpdate()
         {
             Entities.WithAll<UnitSelected>().ForEach((ref Translation translation) => {
-                //Graphics.DrawMesh();
+                Graphics.DrawMesh(
+                    Swarm_Of_Iron.instance.unitSelectedCircleMesh,
+                    translation.Value + new float3(0.0f, -1.0f, 0.0f), 
+                    Quaternion.identity, 
+                    Swarm_Of_Iron.instance.unitSelectedCircleMaterial, 
+                    0);
             });
         }
     }
@@ -40,7 +45,7 @@ namespace Swarm_Of_Iron_namespace
                 // Mouse Held Down
                 float3 currentPositionScreen = Input.mousePosition;//Screen Position
                 float3 selectionAeraSize = currentPositionScreen - startPositionScreen;
-                Debug.Log(startPositionScreen + " -> " + currentPositionScreen);
+                //Debug.Log(startPositionScreen + " -> " + currentPositionScreen);
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
                 //Debug.Log(selectionAeraSize);
             }
