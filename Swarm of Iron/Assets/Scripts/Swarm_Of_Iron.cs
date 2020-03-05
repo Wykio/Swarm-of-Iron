@@ -19,6 +19,7 @@ namespace Swarm_Of_Iron_namespace
         [SerializeField] private Mesh soldierMesh;
         [SerializeField] private Material soldierMaterial;
 
+        //réferences pour la selection d'unitée
         public Transform selectionAreaTransform;
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;

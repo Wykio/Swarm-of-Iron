@@ -22,22 +22,27 @@ namespace Swarm_Of_Iron_namespace
 
     public class UnitControlSystem : ComponentSystem
     {
-        private float3 startPosition;
+        private float3 startPosition; //World Position
+        private float3 startPositionScreen; //Screen Position
 
         protected override void OnUpdate()
         {
             if (Input.GetMouseButtonDown(0)) {
                 // Mouse Pressed
                 Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(true);
-                startPosition = getMousePosition();
-                Swarm_Of_Iron.instance.selectionAreaTransform.position = startPosition;
-                //Debug.Log(startPosition);
+                startPosition = getMousePosition(); //World Position
+                startPositionScreen = Input.mousePosition; //Screen Position
+                Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;
+                //Debug.Log(startPositionScreen);
             }
 
             if (Input.GetMouseButton(0)) {
                 // Mouse Held Down
-                float3 selectionAeraSize = getMousePosition() - startPosition;
+                float3 currentPositionScreen = Input.mousePosition;//Screen Position
+                float3 selectionAeraSize = currentPositionScreen - startPositionScreen;
+                Debug.Log(startPositionScreen + " -> " + currentPositionScreen);
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
+                //Debug.Log(selectionAeraSize);
             }
 
             if (Input.GetMouseButtonUp(0)) {
