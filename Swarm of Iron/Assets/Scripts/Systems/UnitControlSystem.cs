@@ -32,6 +32,7 @@ namespace Swarm_Of_Iron_namespace
 
         protected override void OnUpdate()
         {
+            // left click
             if (Input.GetMouseButtonDown(0)) {
                 // Mouse Pressed
                 Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(true);
@@ -86,6 +87,14 @@ namespace Swarm_Of_Iron_namespace
                 });
             }
 
+            // right click
+            if (Input.GetMouseButtonDown(1)) {
+                Entities.WithAll<UnitSelected>().ForEach((Entity entity, ref MoveTo moveTo) => {
+                    moveTo.position = getMousePosition();
+                    moveTo.move = true;
+                    //Debug.Log("move to" + moveTo.position);
+                });
+            }
         }
 
         private float3 getMousePosition()

@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fce485dc98c478941a1e9d9f0e741c80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnUnitAmount: 10
+  spawnUnitAmount: 1000
   soldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   soldierMaterial: {fileID: 2100000, guid: 93243c8ced0dc7a4b829027dd3c44bb8, type: 2}
   selectionAreaTransform: {fileID: 1187381452}

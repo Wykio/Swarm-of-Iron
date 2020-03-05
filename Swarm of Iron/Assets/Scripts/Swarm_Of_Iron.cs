@@ -63,6 +63,10 @@ namespace Swarm_Of_Iron_namespace
 
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
             entityManager.SetComponentData(entity, new Soldier { animationSpeed = 0.5f });
+            entityManager.SetComponentData(entity, new MoveTo {
+                move = false,
+                moveSpeed = 1.0f
+            });
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {
                 mesh = soldierMesh,
