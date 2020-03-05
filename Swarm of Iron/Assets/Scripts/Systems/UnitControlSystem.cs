@@ -58,6 +58,14 @@ namespace Swarm_Of_Iron_namespace
                 float3 lowerLeftPosition = new float3(math.min(startPosition.x, endPosition.x), 0.0f, math.min(startPosition.z, endPosition.z));
                 float3 upperRightPosition = new float3(math.max(startPosition.x, endPosition.x), 0.0f, math.max(startPosition.z, endPosition.z));
 
+                float selectionAreaMinSize = 10.0f;
+                float selectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
+                if (selectionAreaSize < selectionAreaMinSize) {
+                    // SelectionArea too small
+                    lowerLeftPosition += new float3(-1, 0, -1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
+                    upperRightPosition += new float3(+1, 0, +1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
+                }
+
                 // Deselect all Units
                 Entities.WithAll<UnitSelected>().ForEach((Entity entity) => {
                     PostUpdateCommands.RemoveComponent<UnitSelected>(entity);
