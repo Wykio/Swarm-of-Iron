@@ -59,31 +59,41 @@ namespace Swarm_Of_Iron_namespace
                 float3 lowerLeftPosition = new float3(math.min(startPosition.x, endPosition.x), 0.0f, math.min(startPosition.z, endPosition.z));
                 float3 upperRightPosition = new float3(math.max(startPosition.x, endPosition.x), 0.0f, math.max(startPosition.z, endPosition.z));
 
+                //Select OneUnitOnly
+                bool selectOnlyOneEntity = false;
+
+                //Click on OneUnitOnly
                 float selectionAreaMinSize = 10.0f;
                 float selectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
                 if (selectionAreaSize < selectionAreaMinSize) {
                     // SelectionArea too small
                     lowerLeftPosition += new float3(-1, 0, -1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
                     upperRightPosition += new float3(+1, 0, +1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
+                    selectOnlyOneEntity = true;
                 }
 
                 // Deselect all Units
                 Entities.WithAll<UnitSelected>().ForEach((Entity entity) => {
                     PostUpdateCommands.RemoveComponent<UnitSelected>(entity);
                 });
-                
-                // Select Units
-                Entities.ForEach((Entity entity, ref Translation translation) => {
-                    float3 entityPosition = translation.Value;
 
-                    if (entityPosition.x >= lowerLeftPosition.x &&
-                        entityPosition.z >= lowerLeftPosition.z &&
-                        entityPosition.x <= upperRightPosition.x &&
-                        entityPosition.z <= upperRightPosition.z) {
-                        //Entity inside selection area
-                        //Debug.Log(entity);
-                        PostUpdateCommands.AddComponent(entity, new UnitSelected());
-                    }  
+                // Select Units
+                int selectedEntityCount = 0;
+                Entities.ForEach((Entity entity, ref Translation translation) => {
+                    if (selectOnlyOneEntity == false || selectedEntityCount < 1) {
+                        float3 entityPosition = translation.Value;
+
+                        if (entityPosition.x >= lowerLeftPosition.x &&
+                            entityPosition.z >= lowerLeftPosition.z &&
+                            entityPosition.x <= upperRightPosition.x &&
+                            entityPosition.z <= upperRightPosition.z)
+                        {
+                            //Entity inside selection area
+                            //Debug.Log(entity);
+                            PostUpdateCommands.AddComponent(entity, new UnitSelected());
+                            selectedEntityCount++;
+                        }
+                    }
                 });
             }
 

@@ -23,7 +23,8 @@ namespace Swarm_Of_Iron_namespace
                         // Far from target position, Move to position
                         float3 moveDir = math.normalize(moveTo.position - translation.Value);
                         moveTo.lastMoveDir = moveDir;
-                        translation.Value += moveDir * moveTo.moveSpeed * deltatime;
+                        translation.Value.x += moveDir.x * moveTo.moveSpeed * deltatime;
+                        translation.Value.z += moveDir.z * moveTo.moveSpeed * deltatime;
                     } else {
                         // Already there
                         moveTo.move = false;
