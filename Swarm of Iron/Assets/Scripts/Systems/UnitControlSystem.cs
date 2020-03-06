@@ -101,8 +101,8 @@ namespace Swarm_Of_Iron_namespace
             if (Input.GetMouseButtonDown(1)) {
                 //move unit
                 float3 targetPosition = getMousePosition();
-                List<float3> movePositionList = GetPositionListAround(targetPosition, 3.0f, 5);
-                //List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 2.0f, 4.0f, 6.0f }, new int[] { 5, 10, 20 });
+                //List<float3> movePositionList = GetPositionListAround(targetPosition, 3.0f, 8);
+                List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 3.0f, 5.0f, 7.0f }, new int[] { 8, 12, 16 });
                 int positionIndex = 0;
                 Entities.WithAll<UnitSelected>().ForEach((Entity entity, ref MoveTo moveTo) => {
                     moveTo.position = movePositionList[positionIndex];
@@ -141,19 +141,13 @@ namespace Swarm_Of_Iron_namespace
         private List<float3> GetPositionListAround(float3 startPosition, float distance, int positionCount)
         {
             List<float3> positionList = new List<float3>();
-            positionList.Add(startPosition);
-            positionList.Add(startPosition + new float3(distance, 0.0f, 0.0f));
-            positionList.Add(startPosition + new float3(-distance, 0.0f, 0.0f));
-            positionList.Add(startPosition + new float3(0.0f, 0.0f, distance));
-            positionList.Add(startPosition + new float3(0.0f, 0.0f, -distance));
-            /*
             for (int i = 0; i < positionCount; i++) {
                 int angle = i * (360 / positionCount);
                 float3 direction = ApplyRotationToVector(new float3(1.0f, 0.0f, 0.0f), angle);
                 float3 position = startPosition + direction * distance;
                 positionList.Add(position);
             }
-            */
+            
             for (int i = 0; i < positionCount; i++) {
                 Debug.Log(positionList[i]);
             }
@@ -162,7 +156,7 @@ namespace Swarm_Of_Iron_namespace
 
         // take a vector and apply an angle to it
         private float3 ApplyRotationToVector(float3 vector, float angle) {
-            return Quaternion.Euler(0, 0, angle) * vector;
+            return Quaternion.Euler(0.0f, angle, 0.0f) * vector;
         }
     }
 }
