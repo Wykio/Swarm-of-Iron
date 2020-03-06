@@ -15,7 +15,7 @@ namespace Swarm_Of_Iron_namespace
         {
             float deltaTime = Time.DeltaTime;
 
-            return Entities.ForEach((ref Translation translation, ref Soldier moveSpeedComponent) =>
+            return Entities.ForEach((ref Translation translation, ref SoldierComponent moveSpeedComponent) =>
             {
                 translation.Value.y += moveSpeedComponent.animationSpeed * deltaTime;
                 if (translation.Value.y > 1.5f)

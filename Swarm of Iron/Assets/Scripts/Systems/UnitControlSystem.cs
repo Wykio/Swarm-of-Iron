@@ -4,10 +4,14 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
+using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
     public struct UnitSelected : IComponentData {
+    }
+    public struct TestUnitSelected : IComponentData
+    {
     }
 
     public class UnitSelectedRenderer : ComponentSystem
@@ -39,7 +43,6 @@ namespace Swarm_Of_Iron_namespace
                 startPosition = getMousePosition(); //World Position
                 startPositionScreen = Input.mousePosition; //Screen Position
                 Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;
-                //Debug.Log(startPositionScreen);
             }
 
             if (Input.GetMouseButton(0)) {
@@ -76,6 +79,9 @@ namespace Swarm_Of_Iron_namespace
                 Entities.WithAll<UnitSelected>().ForEach((Entity entity) => {
                     PostUpdateCommands.RemoveComponent<UnitSelected>(entity);
                 });
+                Entities.WithAll<TestUnitSelected>().ForEach((Entity entity) => {
+                    Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
+                });
 
                 // Select Units
                 int selectedEntityCount = 0;
@@ -89,9 +95,9 @@ namespace Swarm_Of_Iron_namespace
                             entityPosition.z <= upperRightPosition.z)
                         {
                             //Entity inside selection area
-                            //Debug.Log(entity);
                             PostUpdateCommands.AddComponent(entity, new UnitSelected());
                             selectedEntityCount++;
+                            AddEntitySelectionMesh(entity);
                         }
                     }
                 });
@@ -104,7 +110,7 @@ namespace Swarm_Of_Iron_namespace
                 //List<float3> movePositionList = GetPositionListAround(targetPosition, 3.0f, 8);
                 List<float3> movePositionList = GetPositionListAround(targetPosition, new float[] { 3.0f, 5.0f, 7.0f }, new int[] { 8, 12, 16 });
                 int positionIndex = 0;
-                Entities.WithAll<UnitSelected>().ForEach((Entity entity, ref MoveTo moveTo) => {
+                Entities.WithAll<UnitSelected>().ForEach((Entity entity, ref MoveToComponent moveTo) => {
                     moveTo.position = movePositionList[positionIndex];
                     positionIndex = (positionIndex + 1) % movePositionList.Count;
                     moveTo.move = true;
@@ -147,16 +153,37 @@ namespace Swarm_Of_Iron_namespace
                 float3 position = startPosition + direction * distance;
                 positionList.Add(position);
             }
-            
-            for (int i = 0; i < positionCount; i++) {
-                Debug.Log(positionList[i]);
-            }
             return positionList;
         }
 
         // take a vector and apply an angle to it
         private float3 ApplyRotationToVector(float3 vector, float angle) {
             return Quaternion.Euler(0.0f, angle, 0.0f) * vector;
+        }
+
+        private void AddEntitySelectionMesh(Entity entityParent)
+        {
+            //Debug.Log("coucou");
+            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityArchetype entityArchetype = entityManager.CreateArchetype(
+                typeof(TestUnitSelected),
+                typeof(LocalToWorld),
+                typeof(LocalToParent),
+                typeof(Parent),
+                typeof(Translation),
+                typeof(RenderMesh),
+                typeof(RenderBounds)
+            );
+
+            Entity entity = entityManager.CreateEntity(entityArchetype);
+
+            entityManager.SetComponentData(entity, new Parent { Value = entityParent });
+            entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, 0.0f, 0.0f) });
+            entityManager.SetSharedComponentData(entity, new RenderMesh
+            {
+                mesh = Swarm_Of_Iron.instance.TestUnitSelectedCircleMesh,
+                material = Swarm_Of_Iron.instance.TestUnitSelectedCircleMaterial
+            });
         }
     }
 }
