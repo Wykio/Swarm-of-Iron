@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
     public float movementTimes;
     public float rotationAmount;
     public float ScreenBorder;
-    public Vector2 mapLimit;
+    public Vector3 mapLimit;
     public Vector3 zoomAmount;
 
     public Vector3 newPosition;
@@ -39,10 +39,23 @@ public class CameraController : MonoBehaviour
     void HandleMouseInput()
     {
         //Zoom with mouse
+
         if (Input.mouseScrollDelta.y != 0)
         {
             newZoom += Input.mouseScrollDelta.y * zoomAmount;
         }
+
+    //    newZoom.y = Mathf.Clamp(newZoom.y, -mapLimit.z, mapLimit.z);
+    //    newZoom.z = Mathf.Clamp(newZoom.z, -mapLimit.z, mapLimit.z);
+
+        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, Time.deltaTime * movementTimes);
+
+   /*     if (newZoom.y >= 1 && newZoom.y <= 15)
+        {
+            cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, Time.deltaTime * movementTimes);
+        } 
+   */
+
     }
 
     //Using Keyboard
@@ -100,11 +113,12 @@ public class CameraController : MonoBehaviour
                 }
         */
 
-        newPosition.x = Mathf.Clamp(newPosition.x, - mapLimit.x, mapLimit.x);
+        newPosition.x = Mathf.Clamp(newPosition.x, -mapLimit.x, mapLimit.x);
         newPosition.z = Mathf.Clamp(newPosition.z, -mapLimit.y, mapLimit.y);
+
 
         transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTimes);
         transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTimes);
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, newZoom, Time.deltaTime * movementTimes);
+
     }
 }
