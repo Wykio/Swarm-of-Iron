@@ -18,6 +18,7 @@ namespace Swarm_Of_Iron_namespace
     {
         protected override void OnUpdate()
         {
+            /*
             Entities.WithAll<UnitSelected>().ForEach((ref Translation translation) => {
                 Graphics.DrawMesh(
                     Swarm_Of_Iron.instance.unitSelectedCircleMesh,
@@ -26,6 +27,7 @@ namespace Swarm_Of_Iron_namespace
                     Swarm_Of_Iron.instance.unitSelectedCircleMaterial, 
                     0);
             });
+            */
         }
     }
 
@@ -178,11 +180,11 @@ namespace Swarm_Of_Iron_namespace
             Entity entity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.SetComponentData(entity, new Parent { Value = entityParent });
-            entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, 0.0f, 0.0f) });
+            entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {
-                mesh = Swarm_Of_Iron.instance.TestUnitSelectedCircleMesh,
-                material = Swarm_Of_Iron.instance.TestUnitSelectedCircleMaterial
+                mesh = Swarm_Of_Iron.instance.unitSelectedCircleMesh,
+                material = Swarm_Of_Iron.instance.unitSelectedCircleMaterial
             });
         }
     }

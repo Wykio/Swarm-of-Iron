@@ -256,17 +256,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fce485dc98c478941a1e9d9f0e741c80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnUnitAmount: 2
+  spawnUnitAmount: 10000
   spawnAreaRange: 50
   soldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   soldierMaterial: {fileID: 2100000, guid: 93243c8ced0dc7a4b829027dd3c44bb8, type: 2}
   selectionAreaTransform: {fileID: 1187381452}
   unitSelectedCircleMesh: {fileID: 0}
   unitSelectedCircleMaterial: {fileID: 2100000, guid: 753bccb4e4bca0149b19efd9dd5be33d,
-    type: 2}
-  TestUnitSelectedCircleMesh: {fileID: 10202, guid: 0000000000000000e000000000000000,
-    type: 0}
-  TestUnitSelectedCircleMaterial: {fileID: 2100000, guid: f7c2deb7be33c61418c105b4da4da2d8,
     type: 2}
 --- !u!1 &556468207
 GameObject:

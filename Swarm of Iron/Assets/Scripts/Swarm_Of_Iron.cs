@@ -24,8 +24,8 @@ namespace Swarm_Of_Iron_namespace
         public Transform selectionAreaTransform;
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;
-        public Mesh TestUnitSelectedCircleMesh;
-        public Material TestUnitSelectedCircleMaterial;
+        //public Mesh TestUnitSelectedCircleMesh;
+        //public Material TestUnitSelectedCircleMaterial;
 
         private void Awake()
         {
