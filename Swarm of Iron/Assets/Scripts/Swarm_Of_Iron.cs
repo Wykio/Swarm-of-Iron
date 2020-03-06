@@ -37,8 +37,11 @@ namespace Swarm_Of_Iron_namespace
         private void Start()
         {
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+            Soldier.init();
             //create selection Mesh
             unitSelectedCircleMesh = SelectionMesh.CreateMesh(2.0f, 2.0f);
+         
             // Spawn Soldiers
             for (int i = 0; i < spawnUnitAmount; i++) {
                 Soldier.SpawnSoldier();
