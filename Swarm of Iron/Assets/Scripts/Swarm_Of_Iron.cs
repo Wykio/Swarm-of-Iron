@@ -55,11 +55,11 @@ namespace Swarm_Of_Iron_namespace
             unitSelectedCircleMesh = SelectionMesh.CreateMesh();
 
             //spawn some woods
-            Wood.SpawnWood(1);
+            Wood.SpawnWood(spawnWoodAmount);
 
             //spawn some soldiers
             Soldier.init();
-            Soldier.SpawnSoldiers(10);
+            Soldier.SpawnSoldiers(spawnSoldierAmount);
         }
     }
 }

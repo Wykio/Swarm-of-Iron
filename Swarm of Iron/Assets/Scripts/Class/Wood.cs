@@ -16,10 +16,10 @@ namespace Swarm_Of_Iron_namespace
             SpawnWood(new float3(UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange), 1.0f, UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange)));
         }
 
-        static public void SpawnWood(int Amount)
+        static public void SpawnWood(int amount)
         {
             // Spawn Woods
-            for (int i = 0; i < Swarm_Of_Iron.instance.spawnWoodAmount; i++)
+            for (int i = 0; i < amount; i++)
             {
                 SpawnWood();
             }
@@ -39,9 +39,6 @@ namespace Swarm_Of_Iron_namespace
             Entity entity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition + new float3(0.0f, -1.0f, 0.0f)});
-            //entityManager.SetComponentData(entity, new RotationEulerXYZ { Value = new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f) });
-            //entityManager.SetComponentData(entity, new RotationEulerXYZ { Value = new float3(0.0f, 0.0f, 0.0f) });
-            quaternion quaternion = new quaternion();
             entityManager.SetComponentData(entity, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {

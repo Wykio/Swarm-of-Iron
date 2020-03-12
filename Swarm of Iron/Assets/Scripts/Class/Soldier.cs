@@ -39,10 +39,10 @@ namespace Swarm_Of_Iron_namespace
             SpawnSoldier(new float3(UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange), 1.0f, UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange)));
         }
 
-        static public void SpawnSoldiers(int Amount)
+        static public void SpawnSoldiers(int amount)
         {
             // Spawn Soldiers
-            for (int i = 0; i < Swarm_Of_Iron.instance.spawnSoldierAmount; i++)
+            for (int i = 0; i < amount; i++)
             {
                 SpawnSoldier();
             }
