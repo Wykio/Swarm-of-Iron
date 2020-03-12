@@ -39,6 +39,15 @@ namespace Swarm_Of_Iron_namespace
             SpawnSoldier(new float3(UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange), 1.0f, UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange)));
         }
 
+        static public void SpawnSoldiers(int Amount)
+        {
+            // Spawn Soldiers
+            for (int i = 0; i < Swarm_Of_Iron.instance.spawnSoldierAmount; i++)
+            {
+                SpawnSoldier();
+            }
+        }
+
         static public void SpawnSoldier(float3 spawnPosition)
         {
             EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;

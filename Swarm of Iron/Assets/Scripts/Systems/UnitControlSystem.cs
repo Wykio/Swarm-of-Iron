@@ -10,7 +10,7 @@ namespace Swarm_Of_Iron_namespace
 {
     public struct UnitSelected : IComponentData {
     }
-    public struct TestUnitSelected : IComponentData
+    public struct SelectionMeshComponent : IComponentData
     {
     }
 
@@ -64,13 +64,13 @@ namespace Swarm_Of_Iron_namespace
                 Entities.WithAll<UnitSelected>().ForEach((Entity entity) => {
                     PostUpdateCommands.RemoveComponent<UnitSelected>(entity);
                 });
-                Entities.WithAll<TestUnitSelected>().ForEach((Entity entity) => {
+                Entities.WithAll<SelectionMeshComponent>().ForEach((Entity entity) => {
                     Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
                 });
 
                 // Select Units
                 int selectedEntityCount = 0;
-                Entities.ForEach((Entity entity, ref Translation translation) => {
+                Entities.WithAll<SoldierComponent>().ForEach((Entity entity, ref Translation translation) => {
                     if (selectOnlyOneEntity == false || selectedEntityCount < 1) {
                         float3 entityPosition = translation.Value;
 
@@ -98,9 +98,9 @@ namespace Swarm_Of_Iron_namespace
                 //List<float3> movePositionList = GetPositionListAround(targetPosition, Soldier.ringDistancesArray, Soldier.unitsPerRingArray);
                 int positionIndex = 0;
                 Entities.WithAll<UnitSelected>().ForEach((Entity entity, ref MoveToComponent moveTo) => {
+                    moveTo.move = true;
                     moveTo.position = Soldier.movePositionList[positionIndex] + targetPosition;
                     positionIndex = (positionIndex + 1) % Soldier.movePositionList.Count;
-                    moveTo.move = true;
                 });
             }
         }
@@ -123,7 +123,7 @@ namespace Swarm_Of_Iron_namespace
         {
             EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
-                typeof(TestUnitSelected),
+                typeof(SelectionMeshComponent),
                 typeof(LocalToWorld),
                 typeof(LocalToParent),
                 typeof(Parent),

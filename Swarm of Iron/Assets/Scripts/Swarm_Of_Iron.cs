@@ -11,21 +11,33 @@ namespace Swarm_Of_Iron_namespace
     public class Swarm_Of_Iron : MonoBehaviour
     {
         //management des dépendences à revoir
+        //instance du MonoBehaviour pour partager les attributs
         public static Swarm_Of_Iron instance;
 
+        //EntityManager
         public EntityManager entityManager;
 
-        [SerializeField] private int spawnUnitAmount;
-        public float spawnAreaRange;
-        public Mesh soldierMesh;
-        public Material soldierMaterial;
+        [Header("Units Attributes")]
+        //réferences pour les d'unitées
+        public float spawnAreaRange = 50.0f; // taille de la zone de spawn
 
+        [Header("Soldiers Attributes")]
+        public Mesh soldierMesh; // mesh pour les soldats
+        public Material soldierMaterial; // materiaux pour les soldats
+        public int spawnSoldierAmount = 10; //nombre d'unité à spawn
+
+        [Header("Woods Attributes")]
+        public Mesh leafMesh; // mesh pour les soldats
+        public Material leafMaterial; // materiaux pour les soldats
+        public Mesh trunkMesh; // mesh pour les soldats
+        public Material trunkMaterial; // materiaux pour les soldats
+        public int spawnWoodAmount = 1; //nombre d'unité à spawn
+
+        [Header("Selection Attributes")]
         //réferences pour la selection d'unitée
         public Transform selectionAreaTransform;
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;
-        //public Mesh TestUnitSelectedCircleMesh;
-        //public Material TestUnitSelectedCircleMaterial;
 
         private void Awake()
         {
@@ -36,16 +48,18 @@ namespace Swarm_Of_Iron_namespace
         // Start is called before the first frame update
         private void Start()
         {
+            //Init entityManager
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-            Soldier.init();
             //create selection Mesh
-            unitSelectedCircleMesh = SelectionMesh.CreateMesh(2.0f, 2.0f);
-         
-            // Spawn Soldiers
-            for (int i = 0; i < spawnUnitAmount; i++) {
-                Soldier.SpawnSoldier();
-            }
+            unitSelectedCircleMesh = SelectionMesh.CreateMesh();
+
+            //spawn some woods
+            Wood.SpawnWood(1);
+
+            //spawn some soldiers
+            Soldier.init();
+            Soldier.SpawnSoldiers(10);
         }
     }
 }

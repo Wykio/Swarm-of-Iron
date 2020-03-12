@@ -6,6 +6,11 @@ namespace Swarm_Of_Iron_namespace
 {
     public class SelectionMesh
     {
+        public static Mesh CreateMesh()
+        {
+            return CreateMesh(2.0f, 2.0f);
+        }
+
         public static Mesh CreateMesh(float meshWidth, float meshHeight)
         {
             Vector3[] vertices = new Vector3[4];
