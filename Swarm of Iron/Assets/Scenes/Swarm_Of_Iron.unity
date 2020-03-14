@@ -333,7 +333,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1042575325
 GameObject:
@@ -521,7 +521,7 @@ Transform:
   m_LocalScale: {x: 50, y: 1, z: 50}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1584354829
 BoxCollider:
@@ -629,7 +629,7 @@ RectTransform:
   - {fileID: 1187381452}
   - {fileID: 1042575326}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -707,6 +707,16 @@ PrefabInstance:
         type: 3}
       propertyPath: movementTimes
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5684794827389571727, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
+        type: 3}
+      propertyPath: zoomAmount.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5684794827389571727, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
+        type: 3}
+      propertyPath: zoomAmount.z
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5684794827644384209, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
         type: 3}
