@@ -21,6 +21,11 @@ namespace Swarm_Of_Iron_namespace
         //réferences pour les d'unitées
         public float spawnAreaRange = 50.0f; // taille de la zone de spawn
 
+        [Header("Workers Attributes")]
+        public Mesh workerMesh; // mesh pour les soldats
+        public Material workerMaterial; // materiaux pour les soldats
+        public int spawnWorkerAmount = 10; //nombre d'unité à spawn
+
         [Header("Soldiers Attributes")]
         public Mesh soldierMesh; // mesh pour les soldats
         public Material soldierMaterial; // materiaux pour les soldats
@@ -56,6 +61,9 @@ namespace Swarm_Of_Iron_namespace
 
             //spawn some woods
             Wood.SpawnWood(spawnWoodAmount);
+
+            //spawn some workers
+            Worker.SpawnWorkers(spawnWorkerAmount);
 
             //spawn some soldiers
             Soldier.init();

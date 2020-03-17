@@ -8,12 +8,6 @@ using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public struct UnitSelected : IComponentData {
-    }
-    public struct SelectionMeshComponent : IComponentData
-    {
-    }
-
     public class UnitControlSystem : ComponentSystem
     {
         private float3 startPosition; //World Position
@@ -23,7 +17,6 @@ namespace Swarm_Of_Iron_namespace
         {
             // left click Down
             if (Input.GetMouseButtonDown(0)) {
-                // Mouse Pressed
                 Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(true);
                 startPosition = getMousePosition(); //World Position
                 startPositionScreen = Input.mousePosition; //Screen Position
@@ -31,7 +24,6 @@ namespace Swarm_Of_Iron_namespace
             }
             // Hold left click Down
             if (Input.GetMouseButton(0)) {
-                // Mouse Held Down
                 float3 currentPositionScreen = Input.mousePosition;//Screen Position
                 float3 selectionAeraSize = currentPositionScreen - startPositionScreen; //Resize SCREEN selection Area
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
@@ -60,8 +52,6 @@ namespace Swarm_Of_Iron_namespace
 
             //Select OneUnitOnly
             bool selectOnlyOneEntity = false;
-
-            //Click on OneUnitOnly
             float selectionAreaMinSize = 10.0f;
             float selectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
             if (selectionAreaSize < selectionAreaMinSize)
@@ -73,8 +63,8 @@ namespace Swarm_Of_Iron_namespace
             }
 
             // Deselect all Units and Destroy all entities of the selection Mesh
-            Entities.WithAll<UnitSelected>().ForEach((Entity entity) => {
-                PostUpdateCommands.RemoveComponent<UnitSelected>(entity);
+            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) => {
+                PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
             });
             Entities.WithAll<SelectionMeshComponent>().ForEach((Entity entity) => {
                 Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
@@ -82,7 +72,8 @@ namespace Swarm_Of_Iron_namespace
 
             // Add "UnitSelected" component and create the entity for the selection Mesh
             int selectedEntityCount = 0;
-            Entities.WithAll<SoldierComponent>().ForEach((Entity entity, ref Translation translation) => {
+            Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
+                // On execute une seule fois si l'unité a été séléctionnée directement
                 if (selectOnlyOneEntity == false || selectedEntityCount < 1)
                 {
                     float3 entityPosition = translation.Value;
@@ -93,7 +84,7 @@ namespace Swarm_Of_Iron_namespace
                         entityPosition.z <= upperRightPosition.z)
                     {
                         //Entity inside selection area
-                        PostUpdateCommands.AddComponent(entity, new UnitSelected());
+                        PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
                         selectedEntityCount++;
                         AddEntitySelectionMesh(entity);
                     }
@@ -105,7 +96,7 @@ namespace Swarm_Of_Iron_namespace
         {
             float3 targetPosition = getMousePosition();
             int positionIndex = 0;
-            Entities.WithAll<UnitSelected>().ForEach((Entity entity, ref MoveToComponent moveTo) => {
+            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) => {
                 moveTo.move = true;
                 moveTo.position = Soldier.movePositionList[positionIndex] + targetPosition;
                 positionIndex = (positionIndex + 1) % Soldier.movePositionList.Count;

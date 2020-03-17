@@ -52,7 +52,7 @@ namespace Swarm_Of_Iron_namespace
         {
             EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
-                typeof(SoldierComponent),
+                typeof(UnitComponent),
                 typeof(MoveToComponent),
                 typeof(Translation),
                 typeof(LocalToWorld),
@@ -63,7 +63,7 @@ namespace Swarm_Of_Iron_namespace
             Entity entity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.SetComponentData(entity, new SoldierComponent { animationSpeed = 0.5f });
+            entityManager.SetComponentData(entity, new UnitComponent { animationSpeed = 0.5f });
             entityManager.SetComponentData(entity, new MoveToComponent
             {
                 move = false,
@@ -76,6 +76,7 @@ namespace Swarm_Of_Iron_namespace
             });
         }
 
+        // Fill position List for each rings
         static private List<float3> GetPositionListAround(float3 centerPosition, float[] ringDistance, int[] ringPositionCount)
         {
             List<float3> positionList = new List<float3>();
@@ -88,7 +89,7 @@ namespace Swarm_Of_Iron_namespace
             return positionList;
         }
 
-        // Create positions for Units to not overlap
+        // Get all positions for one ring
         static private List<float3> GetPositionListAround(float3 startPosition, float distance, int positionCount)
         {
             List<float3> positionList = new List<float3>();

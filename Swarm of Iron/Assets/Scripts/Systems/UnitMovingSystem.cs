@@ -8,7 +8,7 @@ using Unity.Mathematics;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class UnitMoveSystem : JobComponentSystem
+    public class UnitMovingSystem : JobComponentSystem
     {
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
