@@ -10,6 +10,13 @@ namespace Swarm_Of_Iron_namespace
 {
     public class Worker
     {
+        static public bool isWorkerSelected;
+
+        static public void InitWorker()
+        {
+            isWorkerSelected = false;
+        }
+
         static public void SpawnWorker()
         {
             float spawnAreaRange = Swarm_Of_Iron.instance.spawnAreaRange;

@@ -10,6 +10,10 @@ namespace Swarm_Of_Iron_namespace
 {
     public class UnitControlSystem : ComponentSystem
     {
+        //EntityQuery to optimise "component manipulation" in the entity manager
+        private EntityQuery getAllUnitSelectedComponent;
+        private EntityQuery getAllSelectionMeshComponent;
+
         private float3 startPosition; //World Position
         private float3 startPositionScreen; //Screen Position
 
@@ -62,14 +66,26 @@ namespace Swarm_Of_Iron_namespace
                 selectOnlyOneEntity = true;
             }
 
+            deselectAllUnits();
+
+            selectAllUnits(selectOnlyOneEntity, lowerLeftPosition, upperRightPosition);
+        }
+
+        private void deselectAllUnits()
+        {
             // Deselect all Units and Destroy all entities of the selection Mesh
             Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) => {
                 PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
             });
+            //Swarm_Of_Iron.instance.entityManager.RemoveComponent(UnitSelectedComponent);
             Entities.WithAll<SelectionMeshComponent>().ForEach((Entity entity) => {
                 Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
             });
 
+        }
+
+        private void selectAllUnits(bool selectOnlyOneEntity, float3 lowerLeftPosition, float3 upperRightPosition)
+        {
             // Add "UnitSelected" component and create the entity for the selection Mesh
             int selectedEntityCount = 0;
             Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
@@ -142,5 +158,18 @@ namespace Swarm_Of_Iron_namespace
                 Debug.Log("Click on Nothing !");
             }
         }
+
+        //Don't use this, it completely crashes the game for no reason oO ... Florian can you give a look ?
+        /*
+        protected override void OnCreate()
+        {
+            //getAllUnitSelectedComponent = GetEntityQuery(typeof(UnitSelectedComponent));
+            //getAllSelectionMeshComponent = GetEntityQuery(typeof(SelectionMeshComponent));
+            var query = new EntityQueryDesc
+            {
+                All = new ComponentType[] { typeof(UnitSelectedComponent) }
+            };
+            getAllUnitSelectedComponent = GetEntityQuery(query);
+        }*/
     }
 }
