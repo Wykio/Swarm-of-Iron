@@ -11,14 +11,34 @@ namespace Swarm_Of_Iron_namespace
     public class Swarm_Of_Iron : MonoBehaviour
     {
         //management des dépendences à revoir
+        //instance du MonoBehaviour pour partager les attributs
         public static Swarm_Of_Iron instance;
 
-        private EntityManager entityManager;
+        //EntityManager
+        public EntityManager entityManager;
 
-        [SerializeField] int spawnUnitAmount;
-        [SerializeField] private Mesh soldierMesh;
-        [SerializeField] private Material soldierMaterial;
+        [Header("Units Attributes")]
+        //réferences pour les d'unitées
+        public float spawnAreaRange = 50.0f; // taille de la zone de spawn
 
+        [Header("Workers Attributes")]
+        public Mesh workerMesh; // mesh pour les soldats
+        public Material workerMaterial; // materiaux pour les soldats
+        public int spawnWorkerAmount = 10; //nombre d'unité à spawn
+
+        [Header("Soldiers Attributes")]
+        public Mesh soldierMesh; // mesh pour les soldats
+        public Material soldierMaterial; // materiaux pour les soldats
+        public int spawnSoldierAmount = 10; //nombre d'unité à spawn
+
+        [Header("Woods Attributes")]
+        public Mesh leafMesh; // mesh pour les soldats
+        public Material leafMaterial; // materiaux pour les soldats
+        public Mesh trunkMesh; // mesh pour les soldats
+        public Material trunkMaterial; // materiaux pour les soldats
+        public int spawnWoodAmount = 1; //nombre d'unité à spawn
+
+        [Header("Selection Attributes")]
         //réferences pour la selection d'unitée
         public Transform selectionAreaTransform;
         public Mesh unitSelectedCircleMesh;
@@ -33,81 +53,21 @@ namespace Swarm_Of_Iron_namespace
         // Start is called before the first frame update
         private void Start()
         {
+            //Init entityManager
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-            unitSelectedCircleMesh = Swarm_Of_Iron.CreateMesh(2.0f, 2.0f);
+            //create selection Mesh
+            unitSelectedCircleMesh = SelectionMesh.CreateMesh();
 
-            for (int i = 0; i < spawnUnitAmount; i++)
-            {
-                SpawnSoldier();
-            }
-        }
+            //spawn some woods
+            Wood.SpawnWood(spawnWoodAmount);
 
-        private void SpawnSoldier()
-        {
-            SpawnSoldier(new float3(UnityEngine.Random.Range(-10.0f, 10.0f), 1.0f, UnityEngine.Random.Range(-10.0f, 10.0f)));
-        }
+            //spawn some workers
+            Worker.SpawnWorkers(spawnWorkerAmount);
 
-        private void SpawnSoldier(float3 spawnPosition)
-        {
-            EntityArchetype entityArchetype = entityManager.CreateArchetype(
-                typeof(Soldier),
-                typeof(MoveTo),
-                typeof(Translation),
-                typeof(LocalToWorld),
-                typeof(RenderMesh),
-                typeof(RenderBounds)
-            );
-
-            Entity entity = entityManager.CreateEntity(entityArchetype);
-
-            entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.SetComponentData(entity, new Soldier { animationSpeed = 0.5f });
-            entityManager.SetComponentData(entity, new MoveTo {
-                move = false,
-                moveSpeed = 10.0f
-            });
-            entityManager.SetSharedComponentData(entity, new RenderMesh
-            {
-                mesh = soldierMesh,
-                material = soldierMaterial
-            });
-        }
-
-        //A déplacer + pas Opti j'ai l'impression
-        public static Mesh CreateMesh(float meshWidth, float meshHeight)
-        {
-            Vector3[] vertices = new Vector3[4];
-            Vector2[] uv = new Vector2[4];
-            int[] triangles = new int[6];
-
-            float meshWidthHalf = meshWidth / 2f;
-            float meshHeightHalf = meshHeight / 2f;
-
-            vertices[0] = new Vector3(-meshWidthHalf, 0.0f, meshHeightHalf);
-            vertices[1] = new Vector3(meshWidthHalf, 0.0f, meshHeightHalf);
-            vertices[2] = new Vector3(-meshWidthHalf, 0.0f, -meshHeightHalf);
-            vertices[3] = new Vector3(meshWidthHalf, 0.0f, -meshHeightHalf);
-
-            uv[0] = new Vector2(0, 1);
-            uv[1] = new Vector2(1, 1);
-            uv[2] = new Vector2(0, 0);
-            uv[3] = new Vector2(1, 0);
-
-            triangles[0] = 0;
-            triangles[1] = 1;
-            triangles[2] = 2;
-            triangles[3] = 2;
-            triangles[4] = 1;
-            triangles[5] = 3;
-
-            Mesh mesh = new Mesh();
-
-            mesh.vertices = vertices;
-            mesh.uv = uv;
-            mesh.triangles = triangles;
-
-            return mesh;
+            //spawn some soldiers
+            Soldier.init();
+            Soldier.SpawnSoldiers(spawnSoldierAmount);
         }
     }
 }

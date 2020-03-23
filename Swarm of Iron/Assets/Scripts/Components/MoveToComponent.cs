@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public struct MoveTo : IComponentData
+    public struct MoveToComponent : IComponentData
     {
         public bool move;
         public float3 position;

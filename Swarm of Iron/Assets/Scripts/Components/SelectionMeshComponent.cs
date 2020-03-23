@@ -5,9 +5,9 @@ using Unity.Entities;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public struct Soldier : IComponentData
+    public struct SelectionMeshComponent : IComponentData
     {
-        public float animationSpeed;
+
     }
 }
 

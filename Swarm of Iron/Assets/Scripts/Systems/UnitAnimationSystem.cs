@@ -8,14 +8,14 @@ using Unity.Mathematics;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class SoldierAnimationSystem : JobComponentSystem
+    public class UnitAnimationSystem : JobComponentSystem
     {
         // This is the right way to write a JobSystem
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             float deltaTime = Time.DeltaTime;
 
-            return Entities.ForEach((ref Translation translation, ref Soldier moveSpeedComponent) =>
+            return Entities.ForEach((ref Translation translation, ref UnitComponent moveSpeedComponent) =>
             {
                 translation.Value.y += moveSpeedComponent.animationSpeed * deltaTime;
                 if (translation.Value.y > 1.5f)
