@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class WorkerComponent : IComponentData
+    public struct WorkerComponent : IComponentData
     {
-
+        //public bool value;//test
     }
 }
 

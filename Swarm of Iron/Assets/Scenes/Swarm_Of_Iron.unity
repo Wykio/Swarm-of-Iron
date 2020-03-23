@@ -256,13 +256,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fce485dc98c478941a1e9d9f0e741c80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnAreaRange: 50
+  spawnAreaRange: 100
   workerMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   workerMaterial: {fileID: 2100000, guid: 8a59af476ad75e34b8b8e153a68314e6, type: 2}
   spawnWorkerAmount: 100
   soldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   soldierMaterial: {fileID: 2100000, guid: 93243c8ced0dc7a4b829027dd3c44bb8, type: 2}
-  spawnSoldierAmount: 10
+  spawnSoldierAmount: 1000
   leafMesh: {fileID: 4300008, guid: 24a759921bedc2541881a0535a7bfcc8, type: 3}
   leafMaterial: {fileID: 2100000, guid: 05c3b35dce48bfb44a9ce93ae526df18, type: 2}
   trunkMesh: {fileID: 4300006, guid: c52a1ad28de5ec447a225e11be0fe132, type: 3}
@@ -406,10 +406,12 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Click and Drag to select Units
+  m_Text: 'You can ZOOM in/out with scroll
 
-    Double Click to select All Units of
-    the same type'
+    Move camera with Arrows Keys
+
+    Click
+    and Drag to select Units'
 --- !u!222 &1042575328
 CanvasRenderer:
   m_ObjectHideFlags: 0

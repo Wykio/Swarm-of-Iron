@@ -106,6 +106,23 @@ namespace Swarm_Of_Iron_namespace
                     }
                 }
             });
+            /*
+            var componentDataFromEntity = GetComponentDataFromEntity<WorkerComponent>();
+            if (componentDataFromEntity.Exists())
+            {
+
+            }*/
+            /*
+            //Degeulasse mais je sais pas faire autrement pour savoir si mon entity manager connait un "worker" qui est "selectionné"
+            int selectedWorkerAmount = 0;
+            Entities.ForEach((ref Translation translation, ref WorkerComponent workerComponent, ref UnitSelectedComponent unitSelectedComponent) =>
+            {
+                selectedWorkerAmount++;
+            });
+            if (selectedWorkerAmount > 0)
+            {
+                Debug.Log("Au moins un worker est selectionné");
+            }*/
         }
 
         private void moveAllUnitSelected()

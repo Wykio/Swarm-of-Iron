@@ -5,7 +5,7 @@ using Unity.Entities;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class UnitSelectedComponent : IComponentData
+    public struct UnitSelectedComponent : IComponentData
     {
 
     }
