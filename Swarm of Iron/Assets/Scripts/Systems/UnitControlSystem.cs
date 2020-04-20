@@ -17,6 +17,8 @@ namespace Swarm_Of_Iron_namespace
         private float3 startPosition; //World Position
         private float3 startPositionScreen; //Screen Position
 
+        private bool isUI = false;
+
         protected override void OnUpdate()
         {
             // left click Down
@@ -24,19 +26,42 @@ namespace Swarm_Of_Iron_namespace
                 Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(true);
                 startPosition = getMousePosition(); //World Position
                 startPositionScreen = Input.mousePosition; //Screen Position
-                Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;
+                if(Swarm_Of_Iron.instance.getUI().TryClickInterface(startPositionScreen)) {
+                    // siwtch UI state
+                    isUI = !isUI;
+                    if (!isUI) {
+                        // construction is cancelled
+                        Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = new Vector3(0, 1, 0);
+                        Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(false);
+                    }
+                } else if (isUI) {
+                    // TODO : callback
+                    var constructPosition = startPosition;
+                    isUI = false;
+                    Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(false);
+                } else {
+                    Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;
+                }
             }
+
             // Hold left click Down
-            if (Input.GetMouseButton(0)) {
+            if (Input.GetMouseButton(0) && !isUI) {
                 float3 currentPositionScreen = Input.mousePosition;//Screen Position
                 float3 selectionAeraSize = currentPositionScreen - startPositionScreen; //Resize SCREEN selection Area
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
             }
 
+            if (isUI) {
+                Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = getMousePosition() + new float3(-10, 1, 10);
+                Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = new Vector3(20, 1, 20);
+                Swarm_Of_Iron.instance.selectionAreaTransform.localScale = new Vector3(0, 0, 0);
+            }
+
             // left click Up
             if (Input.GetMouseButtonUp(0)) {
                 // Mouse Released
-                GetAllUnitsInSelectionArea();
+                if (!isUI)
+                    GetAllUnitsInSelectionArea();
             }
 
             // right click

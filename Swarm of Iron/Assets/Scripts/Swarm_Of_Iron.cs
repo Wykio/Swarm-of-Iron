@@ -41,14 +41,20 @@ namespace Swarm_Of_Iron_namespace
         [Header("Selection Attributes")]
         //réferences pour la selection d'unitée
         public Transform selectionAreaTransform;
+        public Transform worldSelectionAreaTransform;
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;
 
         [Header("UI Attributes")]
         public GameObject houseCreationButton;
+        public List<GameObject> listButtonGO;
+
+        private UserInterface ui;
 
         private void Awake()
         {
+            ui = new UserInterface(listButtonGO);
+
             //management des dépendences à revoir
             instance = this;
         }
@@ -71,6 +77,10 @@ namespace Swarm_Of_Iron_namespace
             //spawn some soldiers
             Soldier.init();
             Soldier.SpawnSoldiers(spawnSoldierAmount);
+        }
+
+        public UserInterface getUI() {
+            return ui;
         }
     }
 }
