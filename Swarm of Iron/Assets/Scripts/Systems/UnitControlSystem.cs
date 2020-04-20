@@ -81,6 +81,8 @@ namespace Swarm_Of_Iron_namespace
             Entities.WithAll<SelectionMeshComponent>().ForEach((Entity entity) => {
                 Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
             });
+            //Desactive l'UI du worker
+            Swarm_Of_Iron.instance.houseCreationButton.SetActive(false);
 
         }
 
@@ -107,8 +109,8 @@ namespace Swarm_Of_Iron_namespace
                 }
             });
             /*
-            var componentDataFromEntity = GetComponentDataFromEntity<WorkerComponent>();
-            if (componentDataFromEntity.Exists())
+            var componentDataFromEntity = GetComponentDataFromEntity<WorkerComponent, Unitselectedcomponent>();
+            if (componentDataFromEntity.Exists(entity ?))
             {
 
             }*/

@@ -272,6 +272,7 @@ MonoBehaviour:
   unitSelectedCircleMesh: {fileID: 0}
   unitSelectedCircleMaterial: {fileID: 2100000, guid: 753bccb4e4bca0149b19efd9dd5be33d,
     type: 2}
+  houseCreationButton: {fileID: 1044678244}
 --- !u!1 &556468207
 GameObject:
   m_ObjectHideFlags: 0

@@ -44,6 +44,9 @@ namespace Swarm_Of_Iron_namespace
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;
 
+        [Header("UI Attributes")]
+        public GameObject houseCreationButton;
+
         private void Awake()
         {
             //management des dépendences à revoir
