@@ -107,7 +107,7 @@ namespace Swarm_Of_Iron_namespace
                 Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
             });
             //Desactive l'UI du worker
-            Swarm_Of_Iron.instance.houseCreationButton.SetActive(false);
+            Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "BuildHouseButton").SetActive(false);
 
         }
 

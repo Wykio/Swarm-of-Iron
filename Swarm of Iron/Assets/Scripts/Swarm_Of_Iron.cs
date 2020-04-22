@@ -46,7 +46,6 @@ namespace Swarm_Of_Iron_namespace
         public Material unitSelectedCircleMaterial;
 
         [Header("UI Attributes")]
-        public GameObject houseCreationButton;
         public List<GameObject> listButtonGO;
 
         private UserInterface ui;
