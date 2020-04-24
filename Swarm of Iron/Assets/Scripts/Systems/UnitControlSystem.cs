@@ -44,6 +44,7 @@ namespace Swarm_Of_Iron_namespace
                     var constructPosition = startPosition;
                     isUI = false;
                     Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(false);
+                    CityHall.SpawnCityHall(constructPosition);
                 }
                 else
                 {
