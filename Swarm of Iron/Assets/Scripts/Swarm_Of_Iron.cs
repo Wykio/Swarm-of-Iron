@@ -38,6 +38,11 @@ namespace Swarm_Of_Iron_namespace
         public Material trunkMaterial; // materiaux pour les soldats
         public int spawnWoodAmount = 1; //nombre d'unité à spawn
 
+        [Header("CityHall Attributes")]
+        public Mesh CityHallMesh; // mesh pour les soldats
+        public Material CityHallMaterial; // materiaux pour les soldats
+        public int CityHallConstructionTime;
+
         [Header("Selection Attributes")]
         //réferences pour la selection d'unitée
         public Transform selectionAreaTransform;
@@ -71,6 +76,8 @@ namespace Swarm_Of_Iron_namespace
             //spawn some soldiers
             Soldier.init();
             Soldier.SpawnSoldiers(spawnSoldierAmount);
+
+            CityHall.SpawnCityHall(new float3(0.0f, 0.0f, 0.0f));
         }
     }
 }
