@@ -11,7 +11,7 @@ namespace Swarm_Of_Iron_namespace
         protected override void OnUpdate()
         {
             Entities.WithAllReadOnly<WorkerComponent, UnitSelectedComponent>().ForEach((Entity entity) => {
-                Swarm_Of_Iron.instance.houseCreationButton.SetActive(true);
+                Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "BuildHouseButton").SetActive(true);
                 return;
             });
         }
