@@ -46,10 +46,9 @@ namespace Swarm_Of_Iron_namespace
 
             ConstructCameraCoordonates(outVect, tex);
 
-            int length = outVect.GetLength(0);
-            for (int i = 0; i < length; i++) {
-                colorArray[outVect[i, 0] + (outVect[i, 1] * tex.height)] = Color.white;
-                DrawLine(colorArray, tex, outVect[i, 0], outVect[i, 1], outVect[(i + 1) % length, 0], outVect[(i + 1) % length, 1], Color.white);
+            for (int i = 0; i < 4; i++) {
+                int idx = (i + 1) % 4;
+                DrawLine(colorArray, tex, outVect[i, 0], outVect[i, 1], outVect[idx, 0], outVect[idx, 1], Color.white);
             }
 
             tex.SetPixels(colorArray);
@@ -76,10 +75,12 @@ namespace Swarm_Of_Iron_namespace
             return new int[2] {x, y};
         }
 
-        private bool IsInMap (Vector3 vect) {
-            int w = mapWidth / 2;
-            int h = mapHeight / 2;
-            return (-w < vect.x && vect.x < w && -h < vect.z && vect.z < h);
+        private void DefineBounds(int[] coords, Texture2D tex) {
+            coords[0] = Mathf.Max(coords[0], 0);
+            coords[1] = Mathf.Max(coords[1], 0);
+
+            coords[0] = Mathf.Min(coords[0], tex.width - 1);
+            coords[1] = Mathf.Min(coords[1], tex.height - 1);
         }
 
         private void ConstructCameraCoordonates(int[,] outVect, Texture2D tex) {
@@ -98,31 +99,42 @@ namespace Swarm_Of_Iron_namespace
                 ray = Camera.main.ViewportPointToRay(points[i]);
                 if (plane.Raycast(ray, out distance)) {
                     Vector3 vect = ray.GetPoint(distance);
-                    if (IsInMap(vect)) {
-                        int[] coords = ConvertWorldToTexture(vect, tex);
-                        outVect[i, 0] = coords[0];
-                        outVect[i, 1] = coords[1];
-                    }
+                    
+                    int[] coords = ConvertWorldToTexture(vect, tex);
+                    DefineBounds(coords, tex);
+                    outVect[i, 0] = coords[0];
+                    outVect[i, 1] = coords[1];
                 }
             }
         }
 
         private void DrawLine(Color[] colorArray, Texture2D tex, int xA, int yA, int xB, int yB, Color color) {
-            int xdiff = Mathf.Abs(xA - xB);
-            int ydiff = Mathf.Abs(yA - yB);
+            int size = tex.width * tex.height;
+
+            int xdiff = Mathf.Abs(xB - xA);
+            int xsign = xA < xB ? 1 : -1;
             
-            if (xdiff > ydiff) {
-                for (int x = xA; x < xB; x++) {
-                    int y = yB + (yA - yB) * (x - xB) / (xA - xB);
-                    if (0 <= y && y < tex.height)
-                        colorArray[x + (y * tex.height)] = color;
+            int ydiff = -Mathf.Abs(yB - yA);
+            int ysign = yA < yB ? 1 : -1;
+            
+            int err = xdiff + ydiff;
+
+            while (true) {
+                int pos = xA + (yA * tex.height);
+                if (0 <= pos && pos < size) colorArray[pos] = color;
+
+                if (xA == xB && yA == yB) break;
+                int e2 = 2 * err;
+
+                if (e2 >= ydiff) {
+                    err += ydiff;
+                    xA += xsign;
                 }
-            } else {
-                for (int y = yA; y < yB; y++) {
-                    int x = xB + (xA - xB) * (y - yB) / (yA - yB);
-                    if (0 <= x && x < tex.width)
-                        colorArray[x + (y * tex.height)] = color;
-                }
+
+                if (e2 <= xdiff) {
+                    err += xdiff;
+                    yA += ysign;
+                }            
             }
         }
     }
