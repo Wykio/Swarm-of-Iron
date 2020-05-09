@@ -279,6 +279,7 @@ MonoBehaviour:
     type: 2}
   listButtonGO:
   - {fileID: 1044678244}
+  - {fileID: 1780192143}
 --- !u!1 &556468207
 GameObject:
   m_ObjectHideFlags: 0
@@ -1061,6 +1062,21 @@ PrefabInstance:
       propertyPath: zoomAmount.z
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5684794827389571727, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
+        type: 3}
+      propertyPath: mapLimit.x
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5684794827389571727, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
+        type: 3}
+      propertyPath: mapLimit.y
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5684794827389571727, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
+        type: 3}
+      propertyPath: mapLimit.z
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 5684794827644384209, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -1105,14 +1121,14 @@ RectTransform:
   m_GameObject: {fileID: 1780192143}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.0045457, y: 2.0045457, z: 2.0045457}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 1597881747}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -342, y: 14}
+  m_AnchoredPosition: {x: -460, y: 25}
   m_SizeDelta: {x: 80, y: 80}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1780192145
@@ -1128,7 +1144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.76110476, g: 0.76110476, b: 0.76110476, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
