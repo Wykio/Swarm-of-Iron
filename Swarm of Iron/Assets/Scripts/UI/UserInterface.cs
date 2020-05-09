@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UserInterface : MonoBehaviour {
+public class UserInterface {
     struct Button {
         float x, y, width, height;
 
