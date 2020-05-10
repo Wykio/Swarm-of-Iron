@@ -28,14 +28,19 @@ namespace Swarm_Of_Iron_namespace
                 }
             }
 
-            Entities.WithAll<UnitComponent>().ForEach((ref Translation trans) => {
+            Entities.WithAllReadOnly<UnitComponent>().ForEach((ref Translation trans) => {
                 int[] coords = ConvertWorldToTexture(trans.Value, tex);
                 colorArray[coords[0] + (coords[1] * tex.height)] = Color.blue;
             });
 
-            Entities.WithAll<WorkerComponent>().ForEach((ref Translation trans) => {
+            Entities.WithAllReadOnly<WorkerComponent>().ForEach((ref Translation trans) => {
                 int[] coords = ConvertWorldToTexture(trans.Value, tex);
                 colorArray[coords[0] + (coords[1] * tex.height)] = Color.yellow;
+            });
+
+            Entities.WithAllReadOnly<UnitSelectedComponent>().ForEach((ref Translation trans) => {
+                int[] coords = ConvertWorldToTexture(trans.Value, tex);
+                colorArray[coords[0] + (coords[1] * tex.height)] = Color.green;
             });
 
             int[,] outVect = new int[4,2] {
