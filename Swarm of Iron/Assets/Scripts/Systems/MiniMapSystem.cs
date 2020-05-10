@@ -13,9 +13,10 @@ namespace Swarm_Of_Iron_namespace
         // TODO: faire correspondre au valeur réelle
         const int mapWidth = 500;
         const int mapHeight = 500;
+        
         protected override void OnUpdate()
         {
-            Image rend = Swarm_Of_Iron.instance.listButtonGO[1].GetComponent<Image>();
+            Image rend = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "MiniMap").GetComponent<Image>();
 
             // Create a texture
             Texture2D tex = new Texture2D(100, 100);

@@ -53,12 +53,8 @@ namespace Swarm_Of_Iron_namespace
         [Header("UI Attributes")]
         public List<GameObject> listButtonGO;
 
-        private UserInterface ui;
-
         private void Awake()
         {
-            ui = new UserInterface(listButtonGO);
-
             //management des dépendences à revoir
             instance = this;
         }
@@ -83,10 +79,6 @@ namespace Swarm_Of_Iron_namespace
             Soldier.SpawnSoldiers(spawnSoldierAmount);
 
             //CityHall.SpawnCityHall(new float3(0.0f, 0.0f, 0.0f));
-        }
-
-        public UserInterface getUI() {
-            return ui;
         }
     }
 }
