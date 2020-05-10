@@ -6,16 +6,13 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Jobs;
 
-namespace Swarm_Of_Iron_namespace
-{
-    public class MiniMapSystem : ComponentSystem
-    {
+namespace Swarm_Of_Iron_namespace {
+    public class MiniMapSystem : ComponentSystem {
         // TODO: faire correspondre au valeur réelle
         const int mapWidth = 500;
         const int mapHeight = 500;
         
-        protected override void OnUpdate()
-        {
+        protected override void OnUpdate() {
             Image rend = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "MiniMap").GetComponent<Image>();
 
             // Create a texture
@@ -24,23 +21,23 @@ namespace Swarm_Of_Iron_namespace
 
             for (int x = 0; x < tex.width; x++) {
                 for (int y = 0; y < tex.height; y++) {
-                    colorArray[x + (y * tex.height)] = new Color(143.0f / 255.0f, 113.0f / 255.0f, 92.0f / 255.0f);
+                    colorArray[x + (y * tex.width)] = new Color(143.0f / 255.0f, 113.0f / 255.0f, 92.0f / 255.0f);
                 }
             }
 
-            Entities.WithAllReadOnly<UnitComponent>().ForEach((ref Translation trans) => {
+            Entities.WithAnyReadOnly<UnitComponent>().WithNone<WorkerComponent>().ForEach((ref Translation trans) => {
                 int[] coords = ConvertWorldToTexture(trans.Value, tex);
-                colorArray[coords[0] + (coords[1] * tex.height)] = Color.blue;
+                colorArray[coords[0] + (coords[1] * tex.width)] = Color.blue;
             });
 
             Entities.WithAllReadOnly<WorkerComponent>().ForEach((ref Translation trans) => {
                 int[] coords = ConvertWorldToTexture(trans.Value, tex);
-                colorArray[coords[0] + (coords[1] * tex.height)] = Color.yellow;
+                colorArray[coords[0] + (coords[1] * tex.width)] = Color.yellow;
             });
 
             Entities.WithAllReadOnly<UnitSelectedComponent>().ForEach((ref Translation trans) => {
                 int[] coords = ConvertWorldToTexture(trans.Value, tex);
-                colorArray[coords[0] + (coords[1] * tex.height)] = Color.green;
+                colorArray[coords[0] + (coords[1] * tex.width)] = Color.green;
             });
 
             int[,] outVect = new int[4,2] {
@@ -114,6 +111,7 @@ namespace Swarm_Of_Iron_namespace
             }
         }
 
+        // Algorithme de tracé de segment de Bresenham (schooding tracé de ligne générique)
         private void DrawLine(Color[] colorArray, Texture2D tex, int xA, int yA, int xB, int yB, Color color) {
             int size = tex.width * tex.height;
 

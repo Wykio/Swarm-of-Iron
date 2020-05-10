@@ -52,6 +52,7 @@ namespace Swarm_Of_Iron_namespace
 
         [Header("UI Attributes")]
         public List<GameObject> listButtonGO;
+        public List<Texture2D> layers;
 
         private void Awake()
         {
