@@ -5,6 +5,8 @@ using UnityEngine.UI;
 using Unity.Entities;
 using Unity.Jobs;
 
+// TODO : peut etre update seulement au moment d'une nouvelle selection
+
 namespace Swarm_Of_Iron_namespace {
     public class ActionsSystem : ComponentSystem {
         protected override void OnUpdate() {
@@ -31,17 +33,13 @@ namespace Swarm_Of_Iron_namespace {
                     layers.Add(texture);
                 } else if (texture.name == "HouseIcon.svg" && workerNumber > 0) {
                     layers.Add(texture);
-                } 
-                // Debug
-                else {
-                    layers.Add(texture);
                 }
             }
 
             Image rend = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").GetComponent<Image>();
 
             // Create a texture
-            Texture2D tex = new Texture2D(96 , 96);
+            Texture2D tex = new Texture2D(32 * 3, 32 * 3);
             Color[] colorArray = new Color[tex.width * tex.height];
             Color[][] srcArray = new Color[layers.Count][];
 
@@ -60,20 +58,16 @@ namespace Swarm_Of_Iron_namespace {
 
             int x = 0, y = 0;
             for (int idx = 0; idx < layers.Count && idx < actionsCount; idx++) {
-                int scalex = layers[idx].width / dimx;
-                int scaley = layers[idx].height / dimy;
                 for (int i = 0; i < dimx; i++) {
                     for (int j = 0; j < dimy; j++) {
-                        if (i * scalex < layers[idx].width && j * scaley < layers[idx].height) {
-                            // tex.height - y car dans Unity l'origine d'une image est en bas a gauche
-                            int pixelIndex = x + ((tex.height - y) * tex.width);
-                            // pareil pour layers[idx].height - j
-                            int scrIdx = (i * scalex) + (layers[idx].height - j * scaley) * layers[idx].width;
-                            if (scrIdx < layers[idx].width * layers[idx].height) {
-                                Color srcPixel = srcArray[idx][scrIdx];
-                                if (srcPixel.a == 1) {
-                                    colorArray[pixelIndex] = srcPixel;
-                                }
+                        // tex.height - y car dans Unity l'origine d'une image est en bas a gauche
+                        int pixelIndex = x + ((tex.height - y) * tex.width);
+                        // pareil pour layers[idx].height - j
+                        int scrIdx = i + (layers[idx].height - j) * layers[idx].width;
+                        if (scrIdx < layers[idx].width * layers[idx].height) {
+                            Color srcPixel = srcArray[idx][scrIdx];
+                            if (srcPixel.a == 1) {
+                                colorArray[pixelIndex] = srcPixel;
                             }
                         }
                         int tmp = (int)Mathf.Floor(idx / factorx);

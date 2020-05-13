@@ -355,15 +355,8 @@ MonoBehaviour:
   - {fileID: 1780192143}
   - {fileID: 461773636}
   layers:
-  - {fileID: 2800000, guid: 7960192d1d7f3a781980ed8b70443847, type: 3}
-  - {fileID: 2800000, guid: 7eb5c2d023f6c16738900f374fb66ca8, type: 3}
-  - {fileID: 2800000, guid: f906d38ae0e0b33a3b912251a23f65e4, type: 3}
-  - {fileID: 2800000, guid: f5b7b64a34f6ee86db4bbdec99282cba, type: 3}
-  - {fileID: 2800000, guid: 837d9e698d98700f6a57c354ce333ec7, type: 3}
-  - {fileID: 2800000, guid: c6ebddc56e43de32ebf41b4b38ed5232, type: 3}
-  - {fileID: 2800000, guid: eb15c7e2fd639f6b19c3d2eff6cf0e09, type: 3}
-  - {fileID: 2800000, guid: 34ad64da9fc0fee129cfc62d50086ed0, type: 3}
-  - {fileID: 2800000, guid: d35ac84589c430f49956c6c5782f503e, type: 3}
+  - {fileID: 2800000, guid: 6494baca2ed1b82ef97761526039fadd, type: 3}
+  - {fileID: 2800000, guid: c8018bb241c766198af4e5706ebd8c6a, type: 3}
 --- !u!1 &556468207
 GameObject:
   m_ObjectHideFlags: 0
