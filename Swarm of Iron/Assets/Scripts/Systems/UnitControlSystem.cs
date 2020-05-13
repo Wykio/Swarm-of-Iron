@@ -69,6 +69,7 @@ namespace Swarm_Of_Iron_namespace
                 // Mouse Released
                 if (!isUI)
                     GetAllUnitsInSelectionArea(startPosition, getMousePosition());
+                    //GetAllUnitsInSelectionArea(startPositionScreen, Input.mousePosition);
             }
 
             // right click
@@ -76,6 +77,16 @@ namespace Swarm_Of_Iron_namespace
                 //move selected units
                 moveAllUnitSelected();
             }
+
+            float3 endPos = Input.mousePosition;
+            float3 lowerLeftPosition = new float3(Mathf.Min(startPositionScreen.x, endPos.x), Mathf.Min(startPositionScreen.y, endPos.y), 0.0f);
+            float3 upperRightPosition = new float3(Mathf.Max(startPositionScreen.x, endPos.x), Mathf.Max(startPositionScreen.y, endPos.y), 0.0f);
+            
+            Ray ray = Camera.main.ScreenPointToRay(lowerLeftPosition);
+            Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
+            
+            ray = Camera.main.ScreenPointToRay(upperRightPosition);
+            Debug.DrawRay(ray.origin, ray.direction * 100, Color.blue);
         }
 
         private void GetAllUnitsInSelectionArea(float3 startPos, float3 endPos) {
@@ -84,6 +95,11 @@ namespace Swarm_Of_Iron_namespace
             // Calculate WORLD selection area
             float3 lowerLeftPosition = new float3(math.min(startPos.x, endPos.x), 0.0f, math.min(startPos.z, endPos.z));
             float3 upperRightPosition = new float3(math.max(startPos.x, endPos.x), 0.0f, math.max(startPos.z, endPos.z));
+            /*float3 topLeft = new float3(Mathf.Min(startPos.x, endPos.x), Mathf.Min(startPos.y, endPos.y), 0.0f);
+            float3 botRight = new float3(Mathf.Max(startPos.x, endPos.x), Mathf.Max(startPos.y, endPos.y), 0.0f);
+
+            float3 lowerLeftPosition = ScreenPointToWorldPoint(topLeft);
+            float3 upperRightPosition = ScreenPointToWorldPoint(botRight);*/
 
             //Select OneUnitOnly
             bool selectOnlyOneEntity = false;
@@ -121,6 +137,17 @@ namespace Swarm_Of_Iron_namespace
             Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
                 // On execute une seule fois si l'unité a été séléctionnée directement
                 if (selectOnlyOneEntity == false || selectedEntityCount < 1) {
+                    /*float x = translation.Value.x;
+                    float z = translation.Value.z;
+
+                    float xrect = lowerLeftPosition.x;
+                    float zrect = lowerLeftPosition.z;
+
+                    float widthrect = upperRightPosition.x - lowerLeftPosition.x;
+                    float heightrect = upperRightPosition.z - lowerLeftPosition.z;
+
+                    if (xrect <= x && xrect + widthrect >= x && zrect <= z && zrect + heightrect >= z)
+                    {*/
                     float3 entityPosition = translation.Value;
 
                     if (entityPosition.x >= lowerLeftPosition.x &&

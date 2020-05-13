@@ -8,10 +8,10 @@ using Unity.Jobs;
 namespace Swarm_Of_Iron_namespace {
     public class ActionsSystem : ComponentSystem {
         protected override void OnUpdate() {
+
             // Construct All EntityQuery
             var soldierQuery = new EntityQueryDesc {
-                All = new ComponentType[] { typeof(UnitComponent), typeof(UnitSelectedComponent) },
-                None = new ComponentType[] { typeof(WorkerComponent) }
+                All = new ComponentType[] { typeof(UnitComponent), typeof(UnitSelectedComponent) }
             };
             EntityQuery soldierEntityQuery = GetEntityQuery(soldierQuery);
 
@@ -31,31 +31,49 @@ namespace Swarm_Of_Iron_namespace {
                     layers.Add(texture);
                 } else if (texture.name == "HouseIcon.svg" && workerNumber > 0) {
                     layers.Add(texture);
+                } 
+                // Debug
+                else {
+                    layers.Add(texture);
                 }
             }
 
             Image rend = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").GetComponent<Image>();
 
             // Create a texture
-            Texture2D tex = new Texture2D(100 , 100);
+            Texture2D tex = new Texture2D(96 , 96);
             Color[] colorArray = new Color[tex.width * tex.height];
+            Color[][] srcArray = new Color[layers.Count][];
 
-            int dimx = 50;
-            int dimy = 50;
+            for (int i = 0; i < layers.Count; i++) {
+                srcArray[i] = layers[i].GetPixels();
+            }
+            
+            /* Redimensionnement de tout les layers */
+            int dimx = tex.width / 3;
+            int dimy = tex.height / 3; 
 
             int factorx = tex.width / dimx;
+            int factory = tex.height / dimy;
+            
+            int actionsCount = factorx * factory;
 
             int x = 0, y = 0;
-            for (int idx = 0; idx < layers.Count; idx++) {
+            for (int idx = 0; idx < layers.Count && idx < actionsCount; idx++) {
                 int scalex = layers[idx].width / dimx;
                 int scaley = layers[idx].height / dimy;
                 for (int i = 0; i < dimx; i++) {
                     for (int j = 0; j < dimy; j++) {
                         if (i * scalex < layers[idx].width && j * scaley < layers[idx].height) {
-                            int pixelIndex = x + (y * tex.width);
-                            Color srcPixel = layers[idx].GetPixel(i * scalex, j * scaley);
-                            if (srcPixel.a == 1) {
-                                colorArray[pixelIndex] = srcPixel;
+                            // tex.height - y car dans Unity l'origine d'une image est en bas a gauche
+                            int pixelIndex = x + ((tex.height - y) * tex.width);
+                            // pareil pour layers[idx].height - j
+                            int scrIdx = (i * scalex) + (layers[idx].height - j * scaley) * layers[idx].width;
+                            if (scrIdx < layers[idx].width * layers[idx].height) {
+                                Color srcPixel = srcArray[idx][scrIdx];
+                                if (srcPixel.a == 1) {
+                                    colorArray[pixelIndex] = srcPixel;
+                                }
                             }
                         }
                         int tmp = (int)Mathf.Floor(idx / factorx);
@@ -66,7 +84,7 @@ namespace Swarm_Of_Iron_namespace {
                             y++;
                         }
                     }
-                    if (x == tex.height - 1) {
+                    if (x == tex.width - 1) {
                         x = 0;
                     }
                 }
