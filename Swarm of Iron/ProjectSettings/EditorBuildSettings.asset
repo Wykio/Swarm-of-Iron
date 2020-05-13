@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Main_Menu.unity
+    guid: b8e1718e301e84042b8505edff77ef92
+  - enabled: 1
     path: Assets/Scenes/Swarm_Of_Iron.unity
     guid: afcdf24389ae9564483cf4a73bcc1dc9
   m_configObjects: {}
