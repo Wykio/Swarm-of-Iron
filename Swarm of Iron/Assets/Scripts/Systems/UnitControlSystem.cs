@@ -20,27 +20,27 @@ namespace Swarm_Of_Iron_namespace
 
         private bool isUI = false;
 
+        private List<Texture2D> layers;
+        private int selectedEntityCount;
+        private bool hasWorkerSelected;
+        private string currentAction;
+
         protected override void OnUpdate() {
             // left click Down
             if (Input.GetMouseButtonDown(0)) {
                 Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(true);
                 startPosition = getMousePosition(); //World Position
                 startPositionScreen = Input.mousePosition; //Screen Position
-                if (UserInterface.TryClickInterface(startPositionScreen, "BuildHouseButton")) {
-                    // siwtch UI state
-                    isUI = !isUI;
-                    if (!isUI) {
-                        // construction is cancelled
-                        Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = new Vector3(0, 1, 0);
-                        Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(false);
-                    }
-                } else if (isUI) {
-                    // TODO : callback
-                    var constructPosition = startPosition;
-                    isUI = false;
-                    Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(false);
-                    CityHall.SpawnCityHall(constructPosition);
+                if (UserInterface.TryClickInterface(startPositionScreen, "Actions")) {
+                    Vector3 localActionCoord = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").transform.InverseTransformPoint(startPositionScreen);
+
+                    this.currentAction = this.GetAction(localActionCoord);
+                    this.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction);
+                    
+                    isUI = true;
                 } else {
+                    isUI = false;
+
                     // Debug 
                     Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);
 
@@ -49,7 +49,7 @@ namespace Swarm_Of_Iron_namespace
             }
 
             // Hold left click Down
-            if (Input.GetMouseButton(0) && !isUI) {
+            if (Input.GetMouseButton(0)) {
                 float3 currentPositionScreen = Input.mousePosition;//Screen Position
                 float3 selectionAeraSize = currentPositionScreen - startPositionScreen; //Resize SCREEN selection Area
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
@@ -59,24 +59,29 @@ namespace Swarm_Of_Iron_namespace
                 Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = (endPosition - startPosition) * new float3(1, 1, -1);
             }
 
-            if (isUI) {
+            if (this.currentAction == "HouseIcon") {
                 Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = getMousePosition() + new float3(-10, 1, 10);
                 Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = new Vector3(20, 1, 20);
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = new Vector3(0, 0, 0);
             }
 
             // left click Up
-            if (Input.GetMouseButtonUp(0)) {
+            if (Input.GetMouseButtonUp(0) && !isUI) {
                 // Mouse Released
-                if (!isUI)
-                    GetAllUnitsInSelectionArea(startPosition, getMousePosition());
-                    //GetAllUnitsInSelectionArea(startPositionScreen, Input.mousePosition);
+                GetAllUnitsInSelectionArea(startPosition, getMousePosition());
+                //GetAllUnitsInSelectionArea(startPositionScreen, Input.mousePosition);
             }
+
+            Debug.Log(this.currentAction);
 
             // right click
             if (Input.GetMouseButtonDown(1)) {
-                //move selected units
-                moveAllUnitSelected();
+                if (this.currentAction == "ArrowIcon") {
+                    //move selected units
+                    moveAllUnitSelected();
+                } else if (this.currentAction == "HouseIcon") {
+                    CityHall.SpawnCityHall(getMousePosition());
+                }
             }
 
             float3 endPos = Input.mousePosition;
@@ -127,15 +132,12 @@ namespace Swarm_Of_Iron_namespace
             Entities.WithAll<SelectionMeshComponent>().ForEach((Entity entity) => {
                 Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
             });
-            //Desactive l'UI du worker
-            Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "BuildHouseButton").SetActive(false);
-
         }
 
         private void selectAllUnits(bool selectOnlyOneEntity, float3 lowerLeftPosition, float3 upperRightPosition) {
             // Add "UnitSelected" component and create the entity for the selection Mesh
-            int selectedEntityCount = 0;
-            bool hasWorkerSelected = false;
+            this.selectedEntityCount = 0;
+            this.hasWorkerSelected = false;
             Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
                 // On execute une seule fois si l'unité a été séléctionnée directement
                 if (selectOnlyOneEntity == false || selectedEntityCount < 1) {
@@ -159,36 +161,18 @@ namespace Swarm_Of_Iron_namespace
                     {
                         //Entity inside selection area
                         PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
-                        selectedEntityCount++;
+                        this.selectedEntityCount++;
                         AddEntitySelectionMesh(entity);
 
-                        if (!hasWorkerSelected) {
-                            hasWorkerSelected = EntityManager.HasComponent<WorkerComponent>(entity);
+                        if (!this.hasWorkerSelected) {
+                            this.hasWorkerSelected = EntityManager.HasComponent<WorkerComponent>(entity);
                         }
                     }
                 }
             });
 
-            Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "BuildHouseButton").SetActive(hasWorkerSelected);
-            
-            this.UpdateActionUI(hasWorkerSelected, selectedEntityCount > 0);
-            /*
-            var componentDataFromEntity = GetComponentDataFromEntity<WorkerComponent, Unitselectedcomponent>();
-            if (componentDataFromEntity.Exists(entity ?))
-            {
-
-            }*/
-            /*
-            //Degeulasse mais je sais pas faire autrement pour savoir si mon entity manager connait un "worker" qui est "selectionné"
-            int selectedWorkerAmount = 0;
-            Entities.ForEach((ref Translation translation, ref WorkerComponent workerComponent, ref UnitSelectedComponent unitSelectedComponent) =>
-            {
-                selectedWorkerAmount++;
-            });
-            if (selectedWorkerAmount > 0)
-            {
-                Debug.Log("Au moins un worker est selectionné");
-            }*/
+            this.currentAction = "ArrowIcon";
+            this.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction);
         }
 
         private void moveAllUnitSelected()  {
@@ -239,14 +223,18 @@ namespace Swarm_Of_Iron_namespace
             }
         }
 
-        private void UpdateActionUI(bool hasWorkerSelected, bool hasSoldierSelected) {
-            List<Texture2D> layers = new List<Texture2D>();
+        private void UpdateActionUI(bool hasWorkerSelected, bool hasSoldierSelected, string action) {
+            int actionIdx = -1;
+
+            this.layers = new List<Texture2D>();
             for (int i = 0; i < Swarm_Of_Iron.instance.layers.Count; i++) {
                 Texture2D texture = Swarm_Of_Iron.instance.layers[i];
-                if (texture.name == "ArrowIcon.svg" && (hasWorkerSelected || hasSoldierSelected)) {
-                    layers.Add(texture);
-                } else if (texture.name == "HouseIcon.svg" && hasWorkerSelected) {
-                    layers.Add(texture);
+                if (texture.name == "ArrowIcon" && (hasWorkerSelected || hasSoldierSelected)) {
+                    this.layers.Add(texture);
+                    if (action == "ArrowIcon") actionIdx = i;
+                } else if (texture.name == "HouseIcon" && hasWorkerSelected) {
+                    this.layers.Add(texture);
+                    if (action == "HouseIcon") actionIdx = i;
                 }
             }
 
@@ -255,13 +243,20 @@ namespace Swarm_Of_Iron_namespace
             // Create a texture
             Texture2D tex = new Texture2D(32 * 3, 32 * 3);
             Color[] colorArray = new Color[tex.width * tex.height];
-            Color[][] srcArray = new Color[layers.Count][];
 
-            for (int i = 0; i < layers.Count; i++) {
-                srcArray[i] = layers[i].GetPixels();
+            for (int i = 0; i < tex.width; i++) {
+                for (int j = 0; j < tex.height; j++) {
+                    int pixelIndex = this.GetPixelIndex(i, j, tex.width, tex.height);
+                    colorArray[pixelIndex] = Color.white;
+                }
+            } 
+
+            Color[][] srcArray = new Color[this.layers.Count][];
+
+            for (int i = 0; i < this.layers.Count; i++) {
+                srcArray[i] = this.layers[i].GetPixels();
             }
             
-            /* Redimensionnement de tout les layers */
             int dimx = tex.width / 3;
             int dimy = tex.height / 3; 
 
@@ -271,29 +266,53 @@ namespace Swarm_Of_Iron_namespace
             int actionsCount = factorx * factory;
 
             int x = 0, y = 0;
-            for (int idx = 0; idx < layers.Count && idx < actionsCount; idx++) {
+            for (int idx = 0; idx < this.layers.Count && idx < actionsCount; idx++) {
+                int scaley = (int)Mathf.Floor(actionIdx / factory);
+
                 for (int i = 0; i < dimx; i++) {
                     for (int j = 0; j < dimy; j++) {
                         // tex.height - y car dans Unity l'origine d'une image est en bas a gauche
-                        int pixelIndex = x + ((tex.height - y) * tex.width);
+                        int pixelIndex = this.GetPixelIndex(x, y, tex.width, tex.height);
                         // pareil pour layers[idx].height - j
-                        int scrIdx = i + (layers[idx].height - j) * layers[idx].width;
-                        if (scrIdx < layers[idx].width * layers[idx].height) {
+                        int scrIdx = this.GetPixelIndex(i, j, this.layers[idx].width, this.layers[idx].height);
+
+                        if (scrIdx < this.layers[idx].width * this.layers[idx].height) {
                             Color srcPixel = srcArray[idx][scrIdx];
                             if (srcPixel.a == 1) {
                                 colorArray[pixelIndex] = srcPixel;
                             }
                         }
-                        int tmp = (int)Mathf.Floor(idx / factorx);
-                        if (y == dimy * (tmp + 1) - 1) {
+                        
+                        if (y == dimy * (scaley + 1) - 1) {
                             x++;
-                            y = dimy * tmp;
+                            y = dimy * scaley;
                         } else {
                             y++;
                         }
                     }
                     if (x == tex.width - 1) {
                         x = 0;
+                    }
+                }
+            }
+
+            // Encadrer l'action courante
+            if (0 <= actionIdx && actionIdx < 9) {
+                int scalex = actionIdx % factorx;
+                int scaley = (int)Mathf.Floor(actionIdx / factory);
+
+                for (int i = 0; i < tex.width; i++) {
+                    for (int j = 0; j < tex.height; j++) {
+                        int pixelIndex = this.GetPixelIndex(i, j, tex.width, tex.height);
+
+                        float minx = dimx * scalex;
+                        float miny = dimy * scaley;
+                        float maxx = dimx * (scalex + 1) - 1;
+                        float maxy = dimy * (scaley + 1) - 1;
+
+                        if (i >= minx && j >= miny && i <= maxx && j <= maxy)
+                            if (i == minx || j == miny || i == maxx || j == maxy)
+                                colorArray[pixelIndex] = Color.green;
                     }
                 }
             }
@@ -308,6 +327,29 @@ namespace Swarm_Of_Iron_namespace
 
             // Assign our procedural sprite
             rend.sprite = newSprite;
+        }
+
+        private int GetPixelIndex(int x, int y, int width, int height) {
+            return x + (((height - 1) - y) * width);
+        }
+
+        private string GetAction(Vector3 pos) {
+            for (var i = 0; i < this.layers.Count; i++) {
+                int scalex = i % 3;
+                int scaley = (int)Mathf.Floor(i / 3);
+
+                scaley = (scaley == 0) ? 2 : (scaley == 2) ? 0 : 1; 
+
+                float minx = 32 * scalex;
+                float miny = 32 * scaley;
+                float maxx = 32 * (scalex + 1) - 1;
+                float maxy = 32 * (scaley + 1) - 1;
+
+                if (pos.x >= minx && pos.y >= miny && pos.x <= maxx && pos.y <= maxy) {
+                    return this.layers[i].name;
+                }
+            }
+            return "";
         }
 
         //Don't use this, it completely crashes the game for no reason oO ... Florian can you give a look ?
