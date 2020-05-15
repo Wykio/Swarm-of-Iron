@@ -134,6 +134,7 @@ namespace Swarm_Of_Iron_namespace
         private void selectAllUnits(bool selectOnlyOneEntity, float3 lowerLeftPosition, float3 upperRightPosition) {
             // Add "UnitSelected" component and create the entity for the selection Mesh
             int selectedEntityCount = 0;
+            bool hasWorkerSelected = false;
             Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
                 // On execute une seule fois si l'unité a été séléctionnée directement
                 if (selectOnlyOneEntity == false || selectedEntityCount < 1) {
@@ -159,9 +160,15 @@ namespace Swarm_Of_Iron_namespace
                         PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
                         selectedEntityCount++;
                         AddEntitySelectionMesh(entity);
+
+                        if (!hasWorkerSelected) {
+                            hasWorkerSelected = EntityManager.HasComponent<WorkerComponent>(entity);
+                        }
                     }
                 }
             });
+
+            Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "BuildHouseButton").SetActive(hasWorkerSelected);
             /*
             var componentDataFromEntity = GetComponentDataFromEntity<WorkerComponent, Unitselectedcomponent>();
             if (componentDataFromEntity.Exists(entity ?))
