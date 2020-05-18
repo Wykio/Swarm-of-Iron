@@ -350,9 +350,10 @@ MonoBehaviour:
   unitSelectedCircleMesh: {fileID: 0}
   unitSelectedCircleMaterial: {fileID: 2100000, guid: 753bccb4e4bca0149b19efd9dd5be33d,
     type: 2}
+  spriteMaterial: {fileID: 2100000, guid: 9371ea400a5883a479bf7355053ce38a, type: 2}
   listButtonGO:
-  - {fileID: 1044678244}
   - {fileID: 1780192143}
+  - {fileID: 1865384416}
   - {fileID: 461773636}
   layers:
   - {fileID: 2800000, guid: 6494baca2ed1b82ef97761526039fadd, type: 3}
@@ -1288,7 +1289,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1780192144
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1321,7 +1322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.4391699, g: 0.4391699, b: 0.4391699, a: 0.33333334}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
