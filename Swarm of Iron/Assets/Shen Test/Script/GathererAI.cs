@@ -10,11 +10,11 @@ namespace Swarm_Of_Iron_namespace
         [SerializeField] private Transform goldNodeTransform;
         [SerializeField] private Transform storageTransform;
 
-        private Worker worker;
+        //private Worker worker;
 
         private void Awake()
         {
-            worker = gameObject.GetComponent<Worker>();
+            //worker = gameObject.GetComponent<Worker>();
 /*
             worker.MoveTo(goldNodeTransform.position, 10f, () =>
              {
