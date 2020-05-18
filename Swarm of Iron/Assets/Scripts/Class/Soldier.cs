@@ -9,7 +9,7 @@ using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class Soldier
+    public static class Soldier
     {
         public static List<float3> movePositionList;
         

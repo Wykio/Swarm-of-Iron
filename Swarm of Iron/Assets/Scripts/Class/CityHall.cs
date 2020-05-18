@@ -8,7 +8,7 @@ using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class CityHall
+    public static class CityHall
     {
         static public void SpawnCityHall()
         {

@@ -8,7 +8,7 @@ using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class Wood
+    public static class Wood
     {
         static public void SpawnWood()
         {
