@@ -16,7 +16,23 @@ namespace Swarm_Of_Iron_namespace {
         RenderTexture blue = new RenderTexture { Value = new Color(0, 0, 1, 1) };
         RenderTexture white = new RenderTexture { Value = new Color(1, 1, 1, 1) };
 
+        EntityQuery m_UnitQuery, m_WorkerQuery, m_SelectedQuery;
+
+        protected override void OnCreate() {
+            m_UnitQuery = GetEntityQuery(new EntityQueryDesc
+            {
+                None = new ComponentType[] { typeof(WorkerComponent), typeof(UnitSelectedComponent) },
+                All = new ComponentType[]{ ComponentType.ReadOnly<UnitComponent>(), ComponentType.ReadOnly<Translation>() }
+            });
+            m_WorkerQuery = GetEntityQuery(ComponentType.ReadOnly<WorkerComponent>(), ComponentType.ReadOnly<Translation>());
+            m_SelectedQuery = GetEntityQuery(ComponentType.ReadOnly<UnitSelectedComponent>(), ComponentType.ReadOnly<Translation>());
+        }
+
         protected override void OnUpdate() {
+            var unitPositions = m_UnitQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
+            var workerPositions = m_WorkerQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
+            var selectedPositions = m_SelectedQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
+
             Entities
                 .WithAllReadOnly<MiniMapComponent>()
                 .ForEach((DynamicBuffer<RenderTexture> buffer) =>
@@ -30,13 +46,20 @@ namespace Swarm_Of_Iron_namespace {
                         }
                     }
 
-                    Entities.WithAnyReadOnly<UnitComponent>().ForEach((Entity entity, ref Translation trans) => {
-                        int[] coords = MiniMapHelpers.ConvertWorldToTexture(trans.Value, width, height);
-                        colorArray[coords[0] + (coords[1] * width)] = EntityManager.HasComponent<UnitSelectedComponent>(entity) ?
-                            green :
-                            EntityManager.HasComponent<WorkerComponent>(entity) ?
-                                yellow : blue;
-                    });
+                    for (int i = 0; i != unitPositions.Length; i++){
+                        int[] coords = MiniMapHelpers.ConvertWorldToTexture(unitPositions[i].Value, width, height);
+                        colorArray[coords[0] + (coords[1] * width)] = blue;
+                    }
+
+                    for (int i = 0; i != workerPositions.Length; i++){
+                        int[] coords = MiniMapHelpers.ConvertWorldToTexture(workerPositions[i].Value, width, height);
+                        colorArray[coords[0] + (coords[1] * width)] = yellow;
+                    }
+
+                    for (int i = 0; i != selectedPositions.Length; i++){
+                        int[] coords = MiniMapHelpers.ConvertWorldToTexture(selectedPositions[i].Value, width, height);
+                        colorArray[coords[0] + (coords[1] * width)] = green;
+                    }
 
                     int[,] outVect = new int[4,2] {
                         {0, 0},
@@ -54,6 +77,10 @@ namespace Swarm_Of_Iron_namespace {
 
                     buffer.CopyFrom(colorArray);
                 });
+
+            unitPositions.Dispose();
+            workerPositions.Dispose();
+            selectedPositions.Dispose();
         }
     }
 }

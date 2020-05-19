@@ -10,6 +10,5 @@ namespace Swarm_Of_Iron_namespace
     public struct ActionComponent : IComponentData {}
     public struct WorkerComponent : IComponentData {}
     public struct SelectionMeshComponent : IComponentData { }
-
 }
 
