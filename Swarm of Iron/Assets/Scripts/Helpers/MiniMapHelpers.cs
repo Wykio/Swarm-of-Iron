@@ -8,35 +8,35 @@ using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public static class ImageHerlpers
+    public static class MiniMapHelpers
     {
         // TODO: faire correspondre au valeur réelle
         const int mapWidth = 500;
         const int mapHeight = 500;
 
-        public static int[] ConvertWorldToTexture(Vector3 vect, Texture2D tex)
+        public static int[] ConvertWorldToTexture(Vector3 vect, int width, int height)
         {
             // Enlever les chiffres negatif
             int transX = (int)vect.x + (mapWidth / 2);
             int transZ = (int)vect.z + (mapHeight / 2);
 
             // Convertir les coordonnées
-            int x = (transX * tex.width) / mapWidth;
-            int y = (transZ * tex.height) / mapHeight;
+            int x = (transX * width) / mapWidth;
+            int y = (transZ * height) / mapHeight;
 
-            return new int[2] { x, y };
+            return new int[2] { x, height -  1 - y };
         }
 
-        public static void DefineBounds(int[] coords, Texture2D tex)
+        public static void DefineBounds(int[] coords, int width, int height)
         {
             coords[0] = Mathf.Max(coords[0], 0);
             coords[1] = Mathf.Max(coords[1], 0);
 
-            coords[0] = Mathf.Min(coords[0], tex.width - 1);
-            coords[1] = Mathf.Min(coords[1], tex.height - 1);
+            coords[0] = Mathf.Min(coords[0], width - 1);
+            coords[1] = Mathf.Min(coords[1], height - 1);
         }
 
-        public static void ConstructCameraCoordonates(int[,] outVect, Texture2D tex)
+        public static void ConstructCameraCoordonates(int[,] outVect, int width, int height)
         {
             Ray ray;
             float distance;
@@ -56,8 +56,8 @@ namespace Swarm_Of_Iron_namespace
                 {
                     Vector3 vect = ray.GetPoint(distance);
 
-                    int[] coords = ConvertWorldToTexture(vect, tex);
-                    DefineBounds(coords, tex);
+                    int[] coords = ConvertWorldToTexture(vect, width, height);
+                    DefineBounds(coords, width, height);
                     outVect[i, 0] = coords[0];
                     outVect[i, 1] = coords[1];
                 }
@@ -65,9 +65,9 @@ namespace Swarm_Of_Iron_namespace
         }
 
         // Algorithme de tracé de segment de Bresenham (schooding tracé de ligne générique)
-        public static void DrawLine(Color[] colorArray, Texture2D tex, int xA, int yA, int xB, int yB, Color color)
+        public static void DrawLine(RenderTexture[] colorArray, int width, int height, int xA, int yA, int xB, int yB, RenderTexture color)
         {
-            int size = tex.width * tex.height;
+            int size = width * height;
 
             int xdiff = Mathf.Abs(xB - xA);
             int xsign = xA < xB ? 1 : -1;
@@ -79,7 +79,7 @@ namespace Swarm_Of_Iron_namespace
 
             while (true)
             {
-                int pos = xA + (yA * tex.height);
+                int pos = xA + (yA * height);
                 if (0 <= pos && pos < size) colorArray[pos] = color;
 
                 if (xA == xB && yA == yB) break;

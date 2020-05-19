@@ -350,7 +350,6 @@ MonoBehaviour:
   unitSelectedCircleMesh: {fileID: 0}
   unitSelectedCircleMaterial: {fileID: 2100000, guid: 753bccb4e4bca0149b19efd9dd5be33d,
     type: 2}
-  spriteMaterial: {fileID: 2100000, guid: 9371ea400a5883a479bf7355053ce38a, type: 2}
   listButtonGO:
   - {fileID: 1780192143}
   - {fileID: 1865384416}
