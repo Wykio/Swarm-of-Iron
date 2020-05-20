@@ -47,6 +47,7 @@ namespace Swarm_Of_Iron_namespace
         //réferences pour la selection d'unitée
         public Transform selectionAreaTransform;
         public Transform worldSelectionAreaTransform;
+        public GameObject selectionObj;
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;
 

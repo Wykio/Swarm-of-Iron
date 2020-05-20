@@ -17,6 +17,7 @@ namespace Swarm_Of_Iron_namespace
 
         private float3 startPosition; //World Position
         private float3 startPositionScreen; //Screen Position
+        GameObject selectionObj; // debug
 
         private bool isUI = false;
 
@@ -26,6 +27,12 @@ namespace Swarm_Of_Iron_namespace
                 Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(true);
                 startPosition = getMousePosition(); //World Position
                 startPositionScreen = Input.mousePosition; //Screen Position
+                //selection OBJ Box
+                selectionObj = Swarm_Of_Iron.instance.selectionObj;
+                selectionObj.transform.position = startPosition;
+                Vector3 cameraVec3 = Camera.main.transform.eulerAngles;   
+                selectionObj.transform.rotation = Quaternion.Euler(0.0f, cameraVec3.y, 0.0f);
+                //
                 if (UserInterface.TryClickInterface(startPositionScreen, "BuildHouseButton")) {
                     // siwtch UI state
                     isUI = !isUI;
@@ -43,6 +50,7 @@ namespace Swarm_Of_Iron_namespace
                 } else {
                     // Debug 
                     Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);
+                    Swarm_Of_Iron.instance.worldSelectionAreaTransform.rotation = Quaternion.Euler(0.0f, cameraVec3.y, 0.0f);
 
                     Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;
                 }
@@ -51,8 +59,25 @@ namespace Swarm_Of_Iron_namespace
             // Hold left click Down
             if (Input.GetMouseButton(0) && !isUI) {
                 float3 currentPositionScreen = Input.mousePosition;//Screen Position
+                float3 currentPositionWorld = getMousePosition();//World Position
+
                 float3 selectionAeraSize = currentPositionScreen - startPositionScreen; //Resize SCREEN selection Area
+                //Resize WORLD selection Area
+
+                currentPositionWorld = RotatePointAroundPivot(currentPositionWorld, startPosition, Quaternion.Inverse(Camera.main.transform.rotation));
+                //float3 worldSelectionAeraSize = currentPositionWorld - startPosition;
+
+                //Vector3 cameraVec3 = Camera.main.transform.eulerAngles;
+
+                //currentPositionWorld = RotatePointAroundPivot();
+                float3 worldSelectionAeraSizetest = currentPositionWorld - startPosition;
+
+                //Debug.Log("worldSelectionAeraSize = " + worldSelectionAeraSize + "worldSelectionAeraSizetest = " + worldSelectionAeraSizetest);
+                //Debug.Log(worldSelectionAeraSize);
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
+                Vector3 scaleSelectObj = new Vector3(worldSelectionAeraSizetest[0], 3.0f, worldSelectionAeraSizetest[2]);
+                selectionObj.transform.localScale = scaleSelectObj;
+                //Debug.Log(selectionObj.transform.localScale + " : " + selectionAeraSize + " : " + scaleSelectObj);
 
                 // Debug 
                 float3 endPosition = getMousePosition();
@@ -322,5 +347,15 @@ namespace Swarm_Of_Iron_namespace
             };
             getAllUnitSelectedComponent = GetEntityQuery(query);
         }*/
+
+        public static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
+        {
+            return RotatePointAroundPivot(point, pivot, Quaternion.Euler(angles));
+        }
+
+        public static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion rotation)
+        {
+            return rotation * (point - pivot) + pivot;
+        }
     }
 }
