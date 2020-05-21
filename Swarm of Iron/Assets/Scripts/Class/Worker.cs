@@ -8,7 +8,7 @@ using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class Worker
+    public static class Worker
     {
         static public bool isWorkerSelected;
 

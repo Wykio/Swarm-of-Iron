@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Swarm_Of_Iron_namespace
 {
-    public class SelectionMesh
+    public static class SelectionMesh
     {
         public static Mesh CreateMesh()
         {

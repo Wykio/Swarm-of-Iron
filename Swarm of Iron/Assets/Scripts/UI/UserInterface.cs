@@ -24,9 +24,17 @@ namespace Swarm_Of_Iron_namespace
             }
         } 
 
+        static public bool TryClickInterface(Vector3 pos) {
+            for (var i = 0; i < Swarm_Of_Iron.instance.listButtonGO.Count; i++) {
+                if (UserInterface.TryClickInterface(pos, Swarm_Of_Iron.instance.listButtonGO[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         static public bool TryClickInterface(Vector3 pos, string name) {
             return UserInterface.TryClickInterface(pos, Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == name));
-            
         }
 
         static public bool TryClickInterface(Vector3 pos, GameObject element) {

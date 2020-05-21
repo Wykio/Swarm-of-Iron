@@ -80,6 +80,8 @@ namespace Swarm_Of_Iron_namespace
             Soldier.init();
             Soldier.SpawnSoldiers(spawnSoldierAmount);
 
+            MiniMap.SpawnMiniMap();
+
             //CityHall.SpawnCityHall(new float3(0.0f, 0.0f, 0.0f));
         }
     }
