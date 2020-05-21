@@ -116,9 +116,11 @@ namespace Swarm_Of_Iron_namespace
             selectionObj.transform.localScale = scaleSelectObj;
             //Debug.Log(selectionObj.transform.localScale + " : " + selectionAeraSize + " : " + scaleSelectObj);
 
+            float3 OrangeSelectionAeraSize = currentPositionWorld - startPosition;
             // Debug 
-            float3 endPosition = UnitControlHelpers.GetMousePosition();
-            Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = (endPosition - startPosition) * new float3(1, 1, -1);
+            //float3 endPosition = UnitControlHelpers.GetMousePosition();
+            //Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = (endPosition - startPosition) * new float3(1, 1, -1);
+            Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = OrangeSelectionAeraSize * new float3(1, 1, -1);
         }
 
         private void OnRightClickDown() {
