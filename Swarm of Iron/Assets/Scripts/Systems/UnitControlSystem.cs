@@ -45,8 +45,14 @@ namespace Swarm_Of_Iron_namespace
 
             // left click Up
             if (Input.GetMouseButtonUp(0) && !isUI) {
+                var trans = Swarm_Of_Iron.instance.image.GetComponent<RectTransform>();
+                Vector3[] v = new Vector3[4];
+                trans.GetLocalCorners(v);
+
+                deselectAllUnits();
+                SelectedUnits(v, Swarm_Of_Iron.instance.worldSelectionAreaTransform.worldToLocalMatrix);
                 // Mouse Released
-                GetAllUnitsInSelectionArea(startPosition, UnitControlHelpers.GetMousePosition());
+                //GetAllUnitsInSelectionArea(startPosition, UnitControlHelpers.GetMousePosition());
                 //GetAllUnitsInSelectionArea(startPositionScreen, Input.mousePosition);
             }
 
@@ -84,6 +90,7 @@ namespace Swarm_Of_Iron_namespace
 
                 Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;                       // Zone de sélection    rectangle vert      (screen)
                 Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);  // Debug                rectangle orange    (world)
+                Swarm_Of_Iron.instance.worldSelectionAreaTransform.rotation = Quaternion.Euler(-Camera.main.transform.eulerAngles.x, Swarm_Of_Iron.instance.cameraRig.transform.eulerAngles.y, 0);
             }
         }
 
@@ -117,6 +124,35 @@ namespace Swarm_Of_Iron_namespace
         private void OnRightClickDown() {
             ExecuteCurrentAction(currentAction);
         } 
+
+        private void SelectedUnits(Vector3[] localCorners, Matrix4x4 worldToLocalMatrix) {
+            float xrect = localCorners[1].x;
+            float zrect = localCorners[1].y;
+
+            float widthrect = math.abs(localCorners[3].x - localCorners[1].x);
+            float heightrect = math.abs(localCorners[3].y - localCorners[1].y);
+
+            Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
+                float3 localtrans = worldToLocalMatrix.MultiplyVector(translation.Value);
+                
+                // On execute une seule fois si l'unité a été séléctionnée directement
+                float x = localtrans[0];
+                float z = localtrans[2];
+
+                if (xrect <= x && xrect + widthrect >= x && zrect <= z && zrect + heightrect >= z)
+                {
+                    Debug.Log(localtrans);
+                    // Entity inside selection area
+                    PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
+                    this.selectedEntityCount++;
+                    SelectionMesh.AddEntitySelectionMesh(entity);
+
+                    if (!this.hasWorkerSelected) {
+                        this.hasWorkerSelected = EntityManager.HasComponent<WorkerComponent>(entity);
+                    }
+                }
+            });
+        }
 
         private void GetAllUnitsInSelectionArea(float3 startPos, float3 endPos) {
             Swarm_Of_Iron.instance.ToggleSelectionArea(false); //Desactivate SCREEN Selection Area

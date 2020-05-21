@@ -50,6 +50,8 @@ namespace Swarm_Of_Iron_namespace
         public GameObject selectionObj;
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;
+        public GameObject cameraRig;
+        public GameObject image;
 
         [Header("UI Attributes")]
         public List<GameObject> listButtonGO;

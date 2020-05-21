@@ -475,6 +475,8 @@ MonoBehaviour:
   unitSelectedCircleMesh: {fileID: 0}
   unitSelectedCircleMaterial: {fileID: 2100000, guid: 753bccb4e4bca0149b19efd9dd5be33d,
     type: 2}
+  cameraRig: {fileID: 1701617082}
+  image: {fileID: 1467673667}
   listButtonGO:
   - {fileID: 1780192143}
   - {fileID: 1865384416}
@@ -1396,6 +1398,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b37b56c7d719ab4389420a5f7b30e3b, type: 3}
+--- !u!1 &1701617082 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5684794827389571721, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1600079855}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1780192143
 GameObject:
   m_ObjectHideFlags: 0
