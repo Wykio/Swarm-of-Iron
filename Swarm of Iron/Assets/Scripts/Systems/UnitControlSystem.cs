@@ -11,10 +11,6 @@ namespace Swarm_Of_Iron_namespace
 {
     public class UnitControlSystem : ComponentSystem
     {
-        //EntityQuery to optimise "component manipulation" in the entity manager
-        private EntityQuery getAllUnitSelectedComponent;
-        private EntityQuery getAllSelectionMeshComponent;
-
         private float3 startPosition; //World Position
         private float3 startPositionScreen; //Screen Position
         GameObject selectionObj; // debug
@@ -45,15 +41,7 @@ namespace Swarm_Of_Iron_namespace
 
             // left click Up
             if (Input.GetMouseButtonUp(0) && !isUI) {
-                var trans = Swarm_Of_Iron.instance.image.GetComponent<RectTransform>();
-                Vector3[] v = new Vector3[4];
-                trans.GetLocalCorners(v);
-
-                deselectAllUnits();
-                SelectedUnits(v, Swarm_Of_Iron.instance.worldSelectionAreaTransform.worldToLocalMatrix);
-                // Mouse Released
-                //GetAllUnitsInSelectionArea(startPosition, UnitControlHelpers.GetMousePosition());
-                //GetAllUnitsInSelectionArea(startPositionScreen, Input.mousePosition);
+                this.OnLeftClickUp();
             }
 
             // right click
@@ -90,7 +78,7 @@ namespace Swarm_Of_Iron_namespace
 
                 Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;                       // Zone de sélection    rectangle vert      (screen)
                 Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);  // Debug                rectangle orange    (world)
-                Swarm_Of_Iron.instance.worldSelectionAreaTransform.rotation = Quaternion.Euler(-Camera.main.transform.eulerAngles.x, Swarm_Of_Iron.instance.cameraRig.transform.eulerAngles.y, 0);
+                Swarm_Of_Iron.instance.worldSelectionAreaTransform.rotation = Quaternion.Euler(0,  Swarm_Of_Iron.instance.cameraRig.transform.eulerAngles.y, 0);
             }
         }
 
@@ -121,27 +109,63 @@ namespace Swarm_Of_Iron_namespace
             Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = (endPosition - startPosition) * new float3(1, 1, -1);
         }
 
+        private void OnLeftClickUp() {
+            Swarm_Of_Iron.instance.ToggleSelectionArea(false);
+
+            this.selectedEntityCount = 0;
+            this.hasWorkerSelected = false;
+            this.currentAction = "ArrowIcon";
+
+            DeselectAllUnits();
+            SelectedUnits();
+            ActionHelpers.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
+        }
+
         private void OnRightClickDown() {
             ExecuteCurrentAction(currentAction);
         } 
 
-        private void SelectedUnits(Vector3[] localCorners, Matrix4x4 worldToLocalMatrix) {
-            float xrect = localCorners[1].x;
-            float zrect = localCorners[1].y;
+        private void SelectedUnits() {
+            var trans = Swarm_Of_Iron.instance.image.GetComponent<RectTransform>();
+            Vector3[] worldCorners = new Vector3[4];
+            trans.GetWorldCorners(worldCorners);
 
-            float widthrect = math.abs(localCorners[3].x - localCorners[1].x);
-            float heightrect = math.abs(localCorners[3].y - localCorners[1].y);
+            Quaternion q = Quaternion.Inverse(Quaternion.Euler(0, Swarm_Of_Iron.instance.cameraRig.transform.eulerAngles.y, 0));
+            
+            float3[] localCorners = new float3[4];
+            for(var i = 0; i < 4; i ++) {
+                localCorners[i] = q * worldCorners[i];
+            }
 
+            float3 lowerLeftPosition = UnitControlHelpers.MinArray(localCorners);
+            float3 upperRightPosition = UnitControlHelpers.MaxArray(localCorners);
+
+            // Test si on ne selection qu'une seul entité
+            float selectionAreaMinSize = 10.0f;
+            float selectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
+            if (selectionAreaSize < selectionAreaMinSize)
+            {
+                // SelectionArea is too small => select only one unit
+                lowerLeftPosition += new float3(-1, 0, -1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
+                upperRightPosition += new float3(+1, 0, +1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
+            }
+            
+            // On définit le rectangle de sélection
+            float xrect = lowerLeftPosition.x;
+            float zrect = lowerLeftPosition.z;
+
+            float widthrect = upperRightPosition.x - lowerLeftPosition.x;
+            float heightrect = upperRightPosition.z - lowerLeftPosition.z;
+
+            // On parcours toutes les unitées
             Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
-                float3 localtrans = worldToLocalMatrix.MultiplyVector(translation.Value);
-                
-                // On execute une seule fois si l'unité a été séléctionnée directement
-                float x = localtrans[0];
-                float z = localtrans[2];
+                float3 localtrans = q * translation.Value;
+
+                float x = localtrans.x;
+                float z = localtrans.z;
 
                 if (xrect <= x && xrect + widthrect >= x && zrect <= z && zrect + heightrect >= z)
                 {
-                    Debug.Log(localtrans);
                     // Entity inside selection area
                     PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
                     this.selectedEntityCount++;
@@ -154,76 +178,7 @@ namespace Swarm_Of_Iron_namespace
             });
         }
 
-        private void GetAllUnitsInSelectionArea(float3 startPos, float3 endPos) {
-            Swarm_Of_Iron.instance.ToggleSelectionArea(false); //Desactivate SCREEN Selection Area
-
-            // Calculate WORLD selection area
-            float3 lowerLeftPosition = new float3(math.min(startPos.x, endPos.x), 0.0f, math.min(startPos.z, endPos.z));
-            float3 upperRightPosition = new float3(math.max(startPos.x, endPos.x), 0.0f, math.max(startPos.z, endPos.z));
-            /*float3 topLeft = new float3(Mathf.Min(startPos.x, endPos.x), Mathf.Min(startPos.y, endPos.y), 0.0f);
-            float3 botRight = new float3(Mathf.Max(startPos.x, endPos.x), Mathf.Max(startPos.y, endPos.y), 0.0f);
-
-            float3 lowerLeftPosition = ScreenPointToWorldPoint(topLeft);
-            float3 upperRightPosition = ScreenPointToWorldPoint(botRight);*/
-
-            //Select OneUnitOnly
-            bool selectOnlyOneEntity = false;
-            float selectionAreaMinSize = 10.0f;
-            float selectionAreaSize = math.distance(lowerLeftPosition, upperRightPosition);
-            if (selectionAreaSize < selectionAreaMinSize) {
-                // SelectionArea is too small => select only one unit
-                lowerLeftPosition += new float3(-1, 0, -1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
-                upperRightPosition += new float3(+1, 0, +1) * 0.2f * (selectionAreaMinSize - selectionAreaSize);
-                selectOnlyOneEntity = true;
-            }
-
-            deselectAllUnits();
-
-            selectAllUnits(selectOnlyOneEntity, lowerLeftPosition, upperRightPosition);
-        }
-
-        private void selectAllUnits(bool selectOnlyOneEntity, float3 lowerLeftPosition, float3 upperRightPosition) {
-            // Add "UnitSelected" component and create the entity for the selection Mesh
-            this.selectedEntityCount = 0;
-            this.hasWorkerSelected = false;
-            Entities.WithAll<UnitComponent>().ForEach((Entity entity, ref Translation translation) => {
-                // On execute une seule fois si l'unité a été séléctionnée directement
-                if (selectOnlyOneEntity == false || selectedEntityCount < 1) {
-                    /*float x = translation.Value.x;
-                    float z = translation.Value.z;
-
-                    float xrect = lowerLeftPosition.x;
-                    float zrect = lowerLeftPosition.z;
-
-                    float widthrect = upperRightPosition.x - lowerLeftPosition.x;
-                    float heightrect = upperRightPosition.z - lowerLeftPosition.z;
-
-                    if (xrect <= x && xrect + widthrect >= x && zrect <= z && zrect + heightrect >= z)
-                    {*/
-                    float3 entityPosition = translation.Value;
-
-                    if (entityPosition.x >= lowerLeftPosition.x &&
-                        entityPosition.z >= lowerLeftPosition.z &&
-                        entityPosition.x <= upperRightPosition.x &&
-                        entityPosition.z <= upperRightPosition.z)
-                    {
-                        //Entity inside selection area
-                        PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
-                        this.selectedEntityCount++;
-                        SelectionMesh.AddEntitySelectionMesh(entity);
-
-                        if (!this.hasWorkerSelected) {
-                            this.hasWorkerSelected = EntityManager.HasComponent<WorkerComponent>(entity);
-                        }
-                    }
-                }
-            });
-
-            this.currentAction = "ArrowIcon";
-            ActionHelpers.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
-        }
-
-        public void deselectAllUnits() {
+        public void DeselectAllUnits() {
             // Deselect all Units
             Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) => {
                 PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
@@ -235,7 +190,7 @@ namespace Swarm_Of_Iron_namespace
             });
         }
 
-        public void moveAllUnitSelected() {
+        public void MoveAllUnitSelected() {
             float3 targetPosition = UnitControlHelpers.GetMousePosition();
             int positionIndex = 0;
 
@@ -249,7 +204,7 @@ namespace Swarm_Of_Iron_namespace
         public void ExecuteCurrentAction(string action) {
             if (action == "ArrowIcon") {
                 //move selected units
-                moveAllUnitSelected();
+                MoveAllUnitSelected();
             } else if (action == "HouseIcon") {
                 CityHall.SpawnCityHall(UnitControlHelpers.GetMousePosition());
             }

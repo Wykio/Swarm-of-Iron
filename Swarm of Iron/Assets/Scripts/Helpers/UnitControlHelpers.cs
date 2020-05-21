@@ -27,6 +27,30 @@ namespace Swarm_Of_Iron_namespace
                 Debug.Log("Click on Nothing !");
             }
         }
+
+        public static float3 MinArray(float3[] points) {
+            if (points.Length == 0) return new float3();
+            else if (points.Length == 1) return points[0];
+            else {
+                float3 tmp = new float3(math.min(points[0].x, points[1].x), 0.0f, math.min(points[0].z, points[1].z));
+                for (var i = 2; i < points.Length; i++) {
+                    tmp = new float3(math.min(tmp.x, points[i].x), 0.0f, math.min(tmp.z, points[i].z));
+                }
+                return tmp;
+            }
+        }
+
+        public static float3 MaxArray(float3[] points) {
+            if (points.Length == 0) return new float3();
+            else if (points.Length == 1) return points[0];
+            else {
+                float3 tmp = new float3(math.max(points[0].x, points[1].x), 0.0f, math.max(points[0].z, points[1].z));
+                for (var i = 2; i < points.Length; i++) {
+                    tmp = new float3(math.max(tmp.x, points[i].x), 0.0f, math.max(tmp.z, points[i].z));
+                }
+                return tmp;
+            }
+        }
     }
 }
 
