@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
@@ -41,16 +40,10 @@ namespace Swarm_Of_Iron_namespace
                 if (UserInterface.TryClickInterface(startPositionScreen, "Actions")) {
                     Vector3 localActionCoord = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").transform.InverseTransformPoint(startPositionScreen);
 
-                    this.currentAction = this.GetAction(localActionCoord);
-                    this.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction);
+                    this.currentAction = ActionHelpers.GetAction(localActionCoord, this.layers);
+                    ActionHelpers.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
                     
                     isUI = true;
-                } else if (isUI) {
-                    // TODO : callback
-                    var constructPosition = startPosition;
-                    isUI = false;
-                    Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(false);
-                    CityHall.SpawnCityHall(constructPosition);
                 } else {
                     isUI = false;
 
@@ -203,7 +196,7 @@ namespace Swarm_Of_Iron_namespace
             });
 
             this.currentAction = "ArrowIcon";
-            this.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction);
+            ActionHelpers.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
         }
 
         private void moveAllUnitSelected()  {
@@ -254,134 +247,7 @@ namespace Swarm_Of_Iron_namespace
             }
         }
 
-        private void UpdateActionUI(bool hasWorkerSelected, bool hasSoldierSelected, string action) {
-            int actionIdx = -1;
-
-            this.layers = new List<Texture2D>();
-            for (int i = 0; i < Swarm_Of_Iron.instance.layers.Count; i++) {
-                Texture2D texture = Swarm_Of_Iron.instance.layers[i];
-                if (texture.name == "ArrowIcon" && (hasWorkerSelected || hasSoldierSelected)) {
-                    this.layers.Add(texture);
-                    if (action == "ArrowIcon") actionIdx = i;
-                } else if (texture.name == "HouseIcon" && hasWorkerSelected) {
-                    this.layers.Add(texture);
-                    if (action == "HouseIcon") actionIdx = i;
-                }
-            }
-
-            Image rend = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").GetComponent<Image>();
-
-            // Create a texture
-            Texture2D tex = new Texture2D(32 * 3, 32 * 3);
-            Color[] colorArray = new Color[tex.width * tex.height];
-
-            for (int i = 0; i < tex.width; i++) {
-                for (int j = 0; j < tex.height; j++) {
-                    int pixelIndex = this.GetPixelIndex(i, j, tex.width, tex.height);
-                    colorArray[pixelIndex] = Color.white;
-                }
-            } 
-
-            Color[][] srcArray = new Color[this.layers.Count][];
-
-            for (int i = 0; i < this.layers.Count; i++) {
-                srcArray[i] = this.layers[i].GetPixels();
-            }
-            
-            int dimx = tex.width / 3;
-            int dimy = tex.height / 3; 
-
-            int factorx = tex.width / dimx;
-            int factory = tex.height / dimy;
-            
-            int actionsCount = factorx * factory;
-
-            int x = 0, y = 0;
-            for (int idx = 0; idx < this.layers.Count && idx < actionsCount; idx++) {
-                int scaley = (int)Mathf.Floor(actionIdx / factory);
-
-                for (int i = 0; i < dimx; i++) {
-                    for (int j = 0; j < dimy; j++) {
-                        // tex.height - y car dans Unity l'origine d'une image est en bas a gauche
-                        int pixelIndex = this.GetPixelIndex(x, y, tex.width, tex.height);
-                        // pareil pour layers[idx].height - j
-                        int scrIdx = this.GetPixelIndex(i, j, this.layers[idx].width, this.layers[idx].height);
-
-                        if (scrIdx < this.layers[idx].width * this.layers[idx].height) {
-                            Color srcPixel = srcArray[idx][scrIdx];
-                            if (srcPixel.a == 1) {
-                                colorArray[pixelIndex] = srcPixel;
-                            }
-                        }
-                        
-                        if (y == dimy * (scaley + 1) - 1) {
-                            x++;
-                            y = dimy * scaley;
-                        } else {
-                            y++;
-                        }
-                    }
-                    if (x == tex.width - 1) {
-                        x = 0;
-                    }
-                }
-            }
-
-            // Encadrer l'action courante
-            if (0 <= actionIdx && actionIdx < 9) {
-                int scalex = actionIdx % factorx;
-                int scaley = (int)Mathf.Floor(actionIdx / factory);
-
-                for (int i = 0; i < tex.width; i++) {
-                    for (int j = 0; j < tex.height; j++) {
-                        int pixelIndex = this.GetPixelIndex(i, j, tex.width, tex.height);
-
-                        float minx = dimx * scalex;
-                        float miny = dimy * scaley;
-                        float maxx = dimx * (scalex + 1) - 1;
-                        float maxy = dimy * (scaley + 1) - 1;
-
-                        if (i >= minx && j >= miny && i <= maxx && j <= maxy)
-                            if (i == minx || j == miny || i == maxx || j == maxy)
-                                colorArray[pixelIndex] = Color.green;
-                    }
-                }
-            }
-
-            tex.SetPixels(colorArray);
-            tex.Apply();
-
-            tex.wrapMode = TextureWrapMode.Clamp;
-
-            // Create a sprite
-            Sprite newSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.one * 0.5f);
-
-            // Assign our procedural sprite
-            rend.sprite = newSprite;
-        }
-
-        private int GetPixelIndex(int x, int y, int width, int height) {
-            return x + (((height - 1) - y) * width);
-        }
-
-        private string GetAction(Vector3 pos) {
-            for (var i = 0; i < this.layers.Count; i++) {
-                int scalex = i % 3;
-                int scaley = (int)Mathf.Floor(i / 3);
-
-                scaley = (scaley == 0) ? 2 : (scaley == 2) ? 0 : 1; 
-
-                float minx = 32 * scalex;
-                float miny = 32 * scaley;
-                float maxx = 32 * (scalex + 1) - 1;
-                float maxy = 32 * (scaley + 1) - 1;
-
-                if (pos.x >= minx && pos.y >= miny && pos.x <= maxx && pos.y <= maxy) {
-                    return this.layers[i].name;
-                }
-            }
-            return "";
-        }
+        
 
         //Don't use this, it completely crashes the game for no reason oO ... Florian can you give a look ?
         /*
