@@ -84,5 +84,9 @@ namespace Swarm_Of_Iron_namespace
 
             //CityHall.SpawnCityHall(new float3(0.0f, 0.0f, 0.0f));
         }
+
+        public void ToggleSelectionArea (bool isActive) {
+            this.selectionAreaTransform.gameObject.SetActive(isActive);
+        }
     }
 }

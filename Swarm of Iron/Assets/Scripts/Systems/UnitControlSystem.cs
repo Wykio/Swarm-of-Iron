@@ -57,39 +57,42 @@ namespace Swarm_Of_Iron_namespace
         }
 
         private void OnLeftClickDown () {
-            Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(true);
-            startPosition = UnitControlHelpers.GetMousePosition(); //World Position
-            startPositionScreen = Input.mousePosition; //Screen Position
-                                                       //selection OBJ Box
+            Swarm_Of_Iron.instance.ToggleSelectionArea(true);
+            
+            startPosition = UnitControlHelpers.GetMousePosition();  // World Position
+            startPositionScreen = Input.mousePosition;              // Screen Position
+            
+            // selection OBJ Box
             selectionObj = Swarm_Of_Iron.instance.selectionObj;
             selectionObj.transform.position = startPosition;
+
             Vector3 cameraVec3 = Camera.main.transform.eulerAngles;
             selectionObj.transform.rotation = Quaternion.Euler(0.0f, cameraVec3.y, 0.0f);
-            //
+            
             if (UserInterface.TryClickInterface(startPositionScreen, "Actions")) {
+                // On a cliqué sur le menu des boutons d'actions
+                isUI = true;
+
+                // On récupère la coordonnée local du clique
                 Vector3 localActionCoord = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").transform.InverseTransformPoint(startPositionScreen);
 
+                // On récupère l'action & on met a jour
                 this.currentAction = ActionHelpers.GetAction(localActionCoord, this.layers);
                 ActionHelpers.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
-
-                isUI = true;
             } else {
                 isUI = false;
 
-                // Debug 
-                Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);
-                Swarm_Of_Iron.instance.worldSelectionAreaTransform.rotation = Quaternion.Euler(0.0f, cameraVec3.y, 0.0f);
-
-                Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;
+                Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;                       // Zone de sélection    rectangle vert      (screen)
+                Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);  // Debug                rectangle orange    (world)
             }
         }
 
         private void OnLeftClickMove () {
-            float3 currentPositionScreen = Input.mousePosition;//Screen Position
-            float3 currentPositionWorld = UnitControlHelpers.GetMousePosition();//World Position
+            float3 currentPositionScreen = Input.mousePosition;                     // Screen Position
+            float3 currentPositionWorld = UnitControlHelpers.GetMousePosition();    // World Position
 
-            float3 selectionAeraSize = currentPositionScreen - startPositionScreen; //Resize SCREEN selection Area
-                                                                                    //Resize WORLD selection Area
+            float3 selectionAeraSize = currentPositionScreen - startPositionScreen; // Resize SCREEN selection Area
+                                                                                    // Resize WORLD selection Area
 
             currentPositionWorld = RotatePointAroundPivot(currentPositionWorld, startPosition, Quaternion.Inverse(Camera.main.transform.rotation));
             //float3 worldSelectionAeraSize = currentPositionWorld - startPosition;
@@ -116,7 +119,7 @@ namespace Swarm_Of_Iron_namespace
         } 
 
         private void GetAllUnitsInSelectionArea(float3 startPos, float3 endPos) {
-            Swarm_Of_Iron.instance.selectionAreaTransform.gameObject.SetActive(false); //Desactivate SCREEN Selection Area
+            Swarm_Of_Iron.instance.ToggleSelectionArea(false); //Desactivate SCREEN Selection Area
 
             // Calculate WORLD selection area
             float3 lowerLeftPosition = new float3(math.min(startPos.x, endPos.x), 0.0f, math.min(startPos.z, endPos.z));
@@ -185,11 +188,12 @@ namespace Swarm_Of_Iron_namespace
         }
 
         public void deselectAllUnits() {
-            // Deselect all Units and Destroy all entities of the selection Mesh
+            // Deselect all Units
             Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity) => {
                 PostUpdateCommands.RemoveComponent<UnitSelectedComponent>(entity);
             });
-            //Swarm_Of_Iron.instance.entityManager.RemoveComponent(UnitSelectedComponent);
+
+            // Destroy all entities of the selection Mesh
             Entities.WithAll<SelectionMeshComponent>().ForEach((Entity entity) => {
                 Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
             });
