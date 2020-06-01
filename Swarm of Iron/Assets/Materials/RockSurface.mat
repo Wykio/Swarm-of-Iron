@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: RockSurface
+  m_Shader: {fileID: 4800000, guid: 2fb0cdce8870b2753965f78c7de1c3c1, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 33d8fb068d117a149bff1c3f100c78e7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MossTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _PerlinNoise:
+        m_Texture: {fileID: 2800000, guid: 3cbc73c0c93bc4b9ba425ce1ef96ec7c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Blend: 0.407
+    - _Glossiness: 1
+    - _Metallic: 0
+    - _Scale: 3.86
+    m_Colors:
+    - _BaseColor: {r: 0.6037736, g: 0.45805308, b: 0.2306871, a: 1}
+    - _Color: {r: 0.6320754, g: 0.62121975, b: 0.20870416, a: 1}
+    - _MainColor: {r: 0.9056604, g: 0.6151659, b: 0.256319, a: 1}

@@ -38,6 +38,11 @@ namespace Swarm_Of_Iron_namespace
         public Material trunkMaterial; // materiaux pour les soldats
         public int spawnWoodAmount = 1; //nombre d'unité à spawn
 
+        [Header("Rock Attributes")]
+        public Mesh sphereMesh;
+        public Material rockMaterial;
+        public int spawnRockAmount = 1;
+
         [Header("CityHall Attributes")]
         public Mesh CityHallMesh; // mesh pour les soldats
         public Material CityHallMaterial; // materiaux pour les soldats
@@ -74,6 +79,7 @@ namespace Swarm_Of_Iron_namespace
 
             //spawn some woods
             Wood.SpawnWood(spawnWoodAmount);
+            Rock.SpawnRock(spawnRockAmount);
 
             //spawn some workers
             Worker.SpawnWorkers(spawnWorkerAmount);
