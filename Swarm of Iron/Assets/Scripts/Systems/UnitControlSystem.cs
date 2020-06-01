@@ -90,24 +90,15 @@ namespace Swarm_Of_Iron_namespace
                                                                                     // Resize WORLD selection Area
 
             currentPositionWorld = RotatePointAroundPivot(currentPositionWorld, startPosition, Quaternion.Inverse(Camera.main.transform.rotation));
-            //float3 worldSelectionAeraSize = currentPositionWorld - startPosition;
-
-            //Vector3 cameraVec3 = Camera.main.transform.eulerAngles;
-
             //currentPositionWorld = RotatePointAroundPivot();
             float3 worldSelectionAeraSizetest = currentPositionWorld - startPosition;
-
-            //Debug.Log("worldSelectionAeraSize = " + worldSelectionAeraSize + "worldSelectionAeraSizetest = " + worldSelectionAeraSizetest);
-            //Debug.Log(worldSelectionAeraSize);
             Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
             Vector3 scaleSelectObj = new Vector3(worldSelectionAeraSizetest[0], 3.0f, worldSelectionAeraSizetest[2]);
             selectionObj.transform.localScale = scaleSelectObj;
-            //Debug.Log(selectionObj.transform.localScale + " : " + selectionAeraSize + " : " + scaleSelectObj);
 
             float3 OrangeSelectionAeraSize = currentPositionWorld - startPosition;
+            
             // Debug 
-            //float3 endPosition = UnitControlHelpers.GetMousePosition();
-            //Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = (endPosition - startPosition) * new float3(1, 1, -1);
             Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = OrangeSelectionAeraSize * new float3(1, 1, -1);
         }
 
