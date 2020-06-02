@@ -38,6 +38,11 @@ namespace Swarm_Of_Iron_namespace
         public Material trunkMaterial; // materiaux pour les soldats
         public int spawnWoodAmount = 1; //nombre d'unité à spawn
 
+        [Header("Rock Attributes")]
+        public Mesh sphereMesh;
+        public Material rockMaterial;
+        public int spawnRockAmount = 1;
+
         [Header("CityHall Attributes")]
         public Mesh CityHallMesh; // mesh pour les soldats
         public Material CityHallMaterial; // materiaux pour les soldats
@@ -47,8 +52,11 @@ namespace Swarm_Of_Iron_namespace
         //réferences pour la selection d'unitée
         public Transform selectionAreaTransform;
         public Transform worldSelectionAreaTransform;
+        public GameObject selectionObj;
         public Mesh unitSelectedCircleMesh;
         public Material unitSelectedCircleMaterial;
+        public GameObject cameraRig;
+        public GameObject image;
 
         [Header("UI Attributes")]
         public List<GameObject> listButtonGO;
@@ -71,6 +79,7 @@ namespace Swarm_Of_Iron_namespace
 
             //spawn some woods
             Wood.SpawnWood(spawnWoodAmount);
+            Rock.SpawnRock(spawnRockAmount);
 
             //spawn some workers
             Worker.SpawnWorkers(spawnWorkerAmount);
@@ -82,6 +91,10 @@ namespace Swarm_Of_Iron_namespace
             MiniMap.SpawnMiniMap();
 
             //CityHall.SpawnCityHall(new float3(0.0f, 0.0f, 0.0f));
+        }
+
+        public void ToggleSelectionArea (bool isActive) {
+            this.selectionAreaTransform.gameObject.SetActive(isActive);
         }
     }
 }

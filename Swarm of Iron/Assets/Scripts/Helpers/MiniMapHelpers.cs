@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Entities;
 using Unity.Transforms;
@@ -65,7 +64,7 @@ namespace Swarm_Of_Iron_namespace
         }
 
         // Algorithme de tracé de segment de Bresenham (schooding tracé de ligne générique)
-        public static void DrawLine(RenderTexture[] colorArray, int width, int height, int xA, int yA, int xB, int yB, RenderTexture color)
+        public static void DrawLine(NativeArray<RenderTexture> colorArray, int width, int height, int xA, int yA, int xB, int yB, RenderTexture color)
         {
             int size = width * height;
 

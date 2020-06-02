@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Mathematics;
+using Unity.Entities;
+using Unity.Transforms;
+using Unity.Rendering;
 
 namespace Swarm_Of_Iron_namespace
 {
@@ -44,6 +48,30 @@ namespace Swarm_Of_Iron_namespace
             mesh.triangles = triangles;
 
             return mesh;
+        }
+
+        public static void AddEntitySelectionMesh(Entity entityParent)
+        {
+            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityArchetype entityArchetype = entityManager.CreateArchetype(
+                typeof(SelectionMeshComponent),
+                typeof(LocalToWorld),
+                typeof(LocalToParent),
+                typeof(Parent),
+                typeof(Translation),
+                typeof(RenderMesh),
+                typeof(RenderBounds)
+            );
+
+            Entity entity = entityManager.CreateEntity(entityArchetype);
+
+            entityManager.SetComponentData(entity, new Parent { Value = entityParent });
+            entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
+            entityManager.SetSharedComponentData(entity, new RenderMesh
+            {
+                mesh = Swarm_Of_Iron.instance.unitSelectedCircleMesh,
+                material = Swarm_Of_Iron.instance.unitSelectedCircleMaterial
+            });
         }
     }
 }

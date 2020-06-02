@@ -4,6 +4,7 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Rendering;
+using Unity.Jobs;
 
 namespace Swarm_Of_Iron_namespace {
     public class MiniMapSystem : ComponentSystem {
@@ -17,6 +18,30 @@ namespace Swarm_Of_Iron_namespace {
         RenderTexture white = new RenderTexture { Value = new Color(1, 1, 1, 1) };
 
         EntityQuery m_UnitQuery, m_WorkerQuery, m_SelectedQuery;
+
+        struct ColoringJob : IJobParallelFor
+        {
+            [ReadOnly] public RenderTexture m_color;
+            [ReadOnly] public NativeArray<Translation> m_positions;
+            [NativeDisableParallelForRestriction] public NativeArray<RenderTexture> m_results;
+
+            public void Execute(int index)
+            {
+                int[] coords = MiniMapHelpers.ConvertWorldToTexture(m_positions[index].Value, width, height);
+                m_results[coords[0] + (coords[1] * width)] = m_color;
+            }
+        }
+
+        public static JobHandle Schedule(RenderTexture _color, NativeArray<Translation> _position, NativeArray<RenderTexture> _colors)
+        {
+            var job = new ColoringJob()
+            {
+                m_color = _color,
+                m_positions = _position,
+                m_results = _colors
+            };
+            return job.Schedule(_position.Length, 1);
+        }
 
         protected override void OnCreate() {
             m_UnitQuery = GetEntityQuery(new EntityQueryDesc
@@ -37,8 +62,7 @@ namespace Swarm_Of_Iron_namespace {
                 .WithAllReadOnly<MiniMapComponent>()
                 .ForEach((DynamicBuffer<RenderTexture> buffer) =>
                 {
-                    // Create a texture
-                    RenderTexture[] colorArray = new RenderTexture[width * height];
+                    NativeArray<RenderTexture> colorArray = new NativeArray<RenderTexture>(width * height, Allocator.TempJob);
 
                     for (int x = 0; x < width; x++) {
                         for (int y = 0; y < height; y++) {
@@ -46,20 +70,16 @@ namespace Swarm_Of_Iron_namespace {
                         }
                     }
 
-                    for (int i = 0; i != unitPositions.Length; i++){
-                        int[] coords = MiniMapHelpers.ConvertWorldToTexture(unitPositions[i].Value, width, height);
-                        colorArray[coords[0] + (coords[1] * width)] = blue;
-                    }
+                    JobHandle jobHandle;
 
-                    for (int i = 0; i != workerPositions.Length; i++){
-                        int[] coords = MiniMapHelpers.ConvertWorldToTexture(workerPositions[i].Value, width, height);
-                        colorArray[coords[0] + (coords[1] * width)] = yellow;
-                    }
+                    jobHandle = Schedule(blue, unitPositions, colorArray);
+                    jobHandle.Complete();
 
-                    for (int i = 0; i != selectedPositions.Length; i++){
-                        int[] coords = MiniMapHelpers.ConvertWorldToTexture(selectedPositions[i].Value, width, height);
-                        colorArray[coords[0] + (coords[1] * width)] = green;
-                    }
+                    jobHandle = Schedule(yellow, workerPositions, colorArray);
+                    jobHandle.Complete();
+
+                    jobHandle = Schedule(green, selectedPositions, colorArray);
+                    jobHandle.Complete();
 
                     int[,] outVect = new int[4,2] {
                         {0, 0},
@@ -76,6 +96,7 @@ namespace Swarm_Of_Iron_namespace {
                     }
 
                     buffer.CopyFrom(colorArray);
+                    colorArray.Dispose();
                 });
 
             unitPositions.Dispose();
