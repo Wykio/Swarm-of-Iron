@@ -5,8 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
-
-using UnityEngine;
+using Unity.Physics;
 
 namespace Swarm_Of_Iron_namespace
 {
@@ -50,11 +49,13 @@ namespace Swarm_Of_Iron_namespace
         {
             EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
+                typeof(RockComponent),
                 typeof(Translation),
                 typeof(Rotation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
-                typeof(RenderBounds)
+                typeof(RenderBounds),
+                typeof(PhysicsCollider)
             );
 
             Entity entity = entityManager.CreateEntity(entityArchetype);
@@ -68,6 +69,15 @@ namespace Swarm_Of_Iron_namespace
                 mesh = mesh,
                 material = Swarm_Of_Iron.instance.rockMaterial
             });
+
+            BlobAssetReference<Unity.Physics.Collider> collider = Unity.Physics.BoxCollider.Create(
+                new BoxGeometry {
+                    Center = mesh.bounds.center,
+                    Orientation = quaternion.identity,
+                    Size = 5.0f,
+                    BevelRadius = 0.0f
+                });
+            entityManager.SetComponentData(entity, new PhysicsCollider { Value = collider });
         }
 
         static public Mesh GenerateRockMesh()

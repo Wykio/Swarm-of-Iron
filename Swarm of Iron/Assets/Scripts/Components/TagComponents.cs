@@ -9,6 +9,7 @@ namespace Swarm_Of_Iron_namespace
     public struct MiniMapComponent : IComponentData {}
     public struct ActionComponent : IComponentData {}
     public struct WorkerComponent : IComponentData {}
-    public struct SelectionMeshComponent : IComponentData { }
+    public struct SelectionMeshComponent : IComponentData {}
+    public struct RockComponent : IComponentData {}
 }
 

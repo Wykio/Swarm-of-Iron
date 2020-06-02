@@ -18,16 +18,21 @@ namespace Swarm_Of_Iron_namespace
                 if (moveTo.move) {
                     float reachedPositionDistance = 1.0f;
 
-                    if (math.distance(translation.Value, moveTo.position) > reachedPositionDistance)
-                    {
-                        // Far from target position, Move to position
-                        float3 moveDir = math.normalize(moveTo.position - translation.Value);
-                        moveTo.lastMoveDir = moveDir;
-                        translation.Value.x += moveDir.x * moveTo.moveSpeed * deltatime;
-                        translation.Value.z += moveDir.z * moveTo.moveSpeed * deltatime;
+                    // Far from target position, Move to position
+                    float3 moveDir = math.normalize(moveTo.position - translation.Value);
+                    moveTo.lastMoveDir = moveDir;
+                    if (moveDir[0] == 0 && moveDir[1] == -1 && moveDir[2] == 0) {
+                        if (moveTo.harvest) {
+                            float3 hub = new float3(0, 0, 0);
+                            if (moveTo.position[0] == hub[0] && moveTo.position[1] == hub[1] && moveTo.position[2] == hub[2]) moveTo.position = moveTo.targetPosition;
+                            else moveTo.position = hub;
+                        } else {
+                            // Already there
+                            moveTo.move = false;
+                        }
                     } else {
-                        // Already there
-                        moveTo.move = false;
+                      translation.Value.x += moveDir.x * moveTo.moveSpeed * deltatime;
+                      translation.Value.z += moveDir.z * moveTo.moveSpeed * deltatime;
                     }
                 }
             }).Schedule(inputDeps);

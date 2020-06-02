@@ -7,6 +7,8 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
 using Unity.Rendering;
+using Unity.Physics;
+using Unity.Physics.Systems;
 
 namespace Swarm_Of_Iron_namespace
 {
@@ -17,10 +19,10 @@ namespace Swarm_Of_Iron_namespace
         }
 
         public static float3 ScreenPointToWorldPoint(float3 point) {
-            Ray ray = Camera.main.ScreenPointToRay(point);
-            RaycastHit hit;
+            UnityEngine.Ray ray = Camera.main.ScreenPointToRay(point);
+            UnityEngine.RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit)) {
+            if (UnityEngine.Physics.Raycast(ray, out hit)) {
                 return hit.point;
             } else {
                 return -Vector3.one;
@@ -50,6 +52,33 @@ namespace Swarm_Of_Iron_namespace
                 }
                 return tmp;
             }
+        }
+
+        public static Entity Raycast(Vector3 _rayOrigin, Vector3 _to) {
+            var physicWorldSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>();
+            var collisionWorldSystem = physicWorldSystem.PhysicsWorld.CollisionWorld;
+
+            var raycastInput = new Unity.Physics.RaycastInput {
+                Start = _rayOrigin,
+                End = _to,
+                Filter = new CollisionFilter {
+                    BelongsTo = ~0u,  // Everything
+                    CollidesWith = ~0u,
+                    GroupIndex = 0
+                }
+            };
+
+            var raycatsHit = new Unity.Physics.RaycastHit();
+            RaycastHelper.SingleRaycast(collisionWorldSystem, raycastInput, ref raycatsHit);
+              
+            return raycatsHit.Entity;
+        }
+
+        public static Entity GetEntityTarget() {
+            float3 _from = Input.mousePosition;
+            float3 _to = ScreenPointToWorldPoint(_from);
+
+            return Raycast(_from, _to);
         }
     }
 }

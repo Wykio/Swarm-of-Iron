@@ -184,12 +184,24 @@ namespace Swarm_Of_Iron_namespace
         }
 
         public void MoveAllUnitSelected() {
+            EntityManager m_entityManager = Swarm_Of_Iron.instance.entityManager;
+
+            bool harvest = false;
+
             float3 targetPosition = UnitControlHelpers.GetMousePosition();
+            Entity target = UnitControlHelpers.GetEntityTarget();
+            if (m_entityManager.Exists(target)) {
+                Debug.Log("Raycast Intersect Entity");
+                harvest = m_entityManager.HasComponent<RockComponent>(target);
+                Debug.Log(harvest);
+            }
             int positionIndex = 0;
 
             Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) => {
                 moveTo.move = true;
-                moveTo.position = Soldier.movePositionList[positionIndex] + targetPosition;
+                moveTo.harvest = harvest;
+                moveTo.targetPosition = Soldier.movePositionList[positionIndex] + targetPosition;
+                moveTo.position = moveTo.targetPosition;
                 positionIndex = (positionIndex + 1) % Soldier.movePositionList.Count;
             });
         }
