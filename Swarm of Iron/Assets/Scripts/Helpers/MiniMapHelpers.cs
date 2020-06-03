@@ -13,7 +13,7 @@ namespace Swarm_Of_Iron_namespace
         const int mapWidth = 500;
         const int mapHeight = 500;
 
-        public static int[] ConvertWorldToTexture(Vector3 vect, int width, int height)
+        public static int2 ConvertWorldCoord(float3 vect, int width, int height)
         {
             // Enlever les chiffres negatif
             int transX = (int)vect.x + (mapWidth / 2);
@@ -23,16 +23,26 @@ namespace Swarm_Of_Iron_namespace
             int x = (transX * width) / mapWidth;
             int y = (transZ * height) / mapHeight;
 
-            return new int[2] { x, height -  1 - y };
+            return new int2(x, y);
         }
 
-        public static void DefineBounds(int[] coords, int width, int height)
+        public static int2 ConvertWorldToTexture(float3 vect, int width, int height)
         {
-            coords[0] = Mathf.Max(coords[0], 0);
-            coords[1] = Mathf.Max(coords[1], 0);
+            // Enlever les chiffres negatif
+            int2 coords = ConvertWorldCoord(vect, width, height);
 
-            coords[0] = Mathf.Min(coords[0], width - 1);
-            coords[1] = Mathf.Min(coords[1], height - 1);
+            return new int2(coords[0], height - 1 - coords[1]);
+        }
+
+        public static int2 DefineBounds(int2 coords, int width, int height)
+        {
+            coords[0] = math.max(coords[0], 0);
+            coords[1] = math.max(coords[1], 0);
+
+            coords[0] = math.min(coords[0], width - 1);
+            coords[1] = math.min(coords[1], height - 1);
+
+            return coords;
         }
 
         public static void ConstructCameraCoordonates(int[,] outVect, int width, int height)
@@ -53,10 +63,10 @@ namespace Swarm_Of_Iron_namespace
                 ray = Camera.main.ViewportPointToRay(points[i]);
                 if (plane.Raycast(ray, out distance))
                 {
-                    Vector3 vect = ray.GetPoint(distance);
+                    float3 vect = ray.GetPoint(distance);
 
-                    int[] coords = ConvertWorldToTexture(vect, width, height);
-                    DefineBounds(coords, width, height);
+                    int2 coords = ConvertWorldToTexture(vect, width, height);
+                    coords = DefineBounds(coords, width, height);
                     outVect[i, 0] = coords[0];
                     outVect[i, 1] = coords[1];
                 }

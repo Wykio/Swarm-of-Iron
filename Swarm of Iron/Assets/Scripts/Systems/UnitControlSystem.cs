@@ -191,9 +191,8 @@ namespace Swarm_Of_Iron_namespace
             float3 targetPosition = UnitControlHelpers.GetMousePosition();
             Entity target = UnitControlHelpers.GetEntityTarget();
             if (m_entityManager.Exists(target)) {
-                Debug.Log("Raycast Intersect Entity");
                 harvest = m_entityManager.HasComponent<RockComponent>(target);
-                Debug.Log(harvest);
+                Debug.Log("Raycast Intersect Entity" + ((harvest) ? ": is Rock" : ""));
             }
             int positionIndex = 0;
 

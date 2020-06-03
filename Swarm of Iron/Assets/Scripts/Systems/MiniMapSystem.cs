@@ -27,7 +27,7 @@ namespace Swarm_Of_Iron_namespace {
 
             public void Execute(int index)
             {
-                int[] coords = MiniMapHelpers.ConvertWorldToTexture(m_positions[index].Value, width, height);
+                int2 coords = MiniMapHelpers.ConvertWorldToTexture(m_positions[index].Value, width, height);
                 m_results[coords[0] + (coords[1] * width)] = m_color;
             }
         }

@@ -1,4 +1,4 @@
-﻿using Unity.Entities;
+﻿/*using Unity.Entities;
 using Unity.Jobs;
 using Unity.Burst;
 using Unity.Transforms;
@@ -53,4 +53,4 @@ namespace Swarm_Of_Iron_namespace
             return job.Schedule(this, inputDependencies);
         }
     }
-}
+}*/
