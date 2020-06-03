@@ -5,20 +5,17 @@ using Unity.Mathematics;
 using Unity.Collections;
 using Unity.Rendering;
 using Unity.Jobs;
+using Unity.Burst;
 
 namespace Swarm_Of_Iron_namespace {
-    public class MiniMapSystem : ComponentSystem {
+    public class MiniMapSystem : JobComponentSystem {
 
         const int width = 100;
         const int height = 100;
 
-        RenderTexture green = new RenderTexture { Value = new Color(0, 1, 0, 1) };
-        RenderTexture yellow = new RenderTexture { Value = new Color(1, 1, 0, 1) };
-        RenderTexture blue = new RenderTexture { Value = new Color(0, 0, 1, 1) };
-        RenderTexture white = new RenderTexture { Value = new Color(1, 1, 1, 1) };
+        EntityQuery m_MinimapQuery, m_UnitQuery, m_WorkerQuery, m_SelectedQuery;
 
-        EntityQuery m_UnitQuery, m_WorkerQuery, m_SelectedQuery;
-
+        [BurstCompile]
         struct ColoringJob : IJobParallelFor
         {
             [ReadOnly] public RenderTexture m_color;
@@ -27,12 +24,12 @@ namespace Swarm_Of_Iron_namespace {
 
             public void Execute(int index)
             {
-                int[] coords = MiniMapHelpers.ConvertWorldToTexture(m_positions[index].Value, width, height);
+                int2 coords = MiniMapHelpers.ConvertWorldToTexture(m_positions[index].Value, width, height);
                 m_results[coords[0] + (coords[1] * width)] = m_color;
             }
         }
 
-        public static JobHandle Schedule(RenderTexture _color, NativeArray<Translation> _position, NativeArray<RenderTexture> _colors)
+        public static JobHandle Schedule(RenderTexture _color, NativeArray<Translation> _position, NativeArray<RenderTexture> _colors, JobHandle _dependency)
         {
             var job = new ColoringJob()
             {
@@ -40,10 +37,11 @@ namespace Swarm_Of_Iron_namespace {
                 m_positions = _position,
                 m_results = _colors
             };
-            return job.Schedule(_position.Length, 1);
+            return job.Schedule(_position.Length, 1, _dependency);
         }
 
         protected override void OnCreate() {
+            m_MinimapQuery = GetEntityQuery(typeof(MiniMapComponent));
             m_UnitQuery = GetEntityQuery(new EntityQueryDesc
             {
                 None = new ComponentType[] { typeof(WorkerComponent), typeof(UnitSelectedComponent) },
@@ -53,55 +51,56 @@ namespace Swarm_Of_Iron_namespace {
             m_SelectedQuery = GetEntityQuery(ComponentType.ReadOnly<UnitSelectedComponent>(), ComponentType.ReadOnly<Translation>());
         }
 
-        protected override void OnUpdate() {
+        protected override JobHandle OnUpdate(JobHandle dependency) {
             var unitPositions = m_UnitQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
             var workerPositions = m_WorkerQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
             var selectedPositions = m_SelectedQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
 
-            Entities
-                .WithAllReadOnly<MiniMapComponent>()
-                .ForEach((DynamicBuffer<RenderTexture> buffer) =>
-                {
-                    NativeArray<RenderTexture> colorArray = new NativeArray<RenderTexture>(width * height, Allocator.TempJob);
+            Entity entity = m_MinimapQuery.GetSingletonEntity();
+            DynamicBuffer<RenderTexture> buffer = EntityManager.GetBuffer<RenderTexture>(entity);
 
-                    for (int x = 0; x < width; x++) {
-                        for (int y = 0; y < height; y++) {
-                            colorArray[x + (y * width)] = new RenderTexture { Value = new Color(143.0f / 255.0f, 113.0f / 255.0f, 92.0f / 255.0f, 1.0f) };
-                        }
+            NativeArray<RenderTexture> colorArray = new NativeArray<RenderTexture>(width * height, Allocator.TempJob);
+
+            dependency = Job.WithCode(() => {
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        colorArray[x + (y * width)] = new RenderTexture { Value = new Color(143.0f / 255.0f, 113.0f / 255.0f, 92.0f / 255.0f, 1.0f) };
                     }
+                }
+            }).Schedule(dependency);
 
-                    JobHandle jobHandle;
+            dependency = Schedule(new RenderTexture { Value = new Color(0, 0, 1, 1) }, unitPositions, colorArray, dependency);
+            dependency = Schedule(new RenderTexture { Value = new Color(1, 1, 0, 1) }, workerPositions, colorArray, dependency);
+            dependency = Schedule(new RenderTexture { Value = new Color(0, 1, 0, 1) }, selectedPositions, colorArray, dependency);
 
-                    jobHandle = Schedule(blue, unitPositions, colorArray);
-                    jobHandle.Complete();
+            NativeArray<int2> outVect = new NativeArray<int2>(4, Allocator.TempJob);
+            outVect[0] = new int2(0, 0);
+            outVect[1] = new int2(0, height - 1);
+            outVect[2] = new int2(width - 1, height - 1);
+            outVect[3] = new int2(width - 1, 0);
 
-                    jobHandle = Schedule(yellow, workerPositions, colorArray);
-                    jobHandle.Complete();
+            MiniMapHelpers.ConstructCameraCoordonates(outVect, width, height);
 
-                    jobHandle = Schedule(green, selectedPositions, colorArray);
-                    jobHandle.Complete();
+            dependency = Job.WithCode(() =>
+            {
+                for (int i = 0; i < 4; i++) {
+                    int idx = (i + 1) % 4;
+                    MiniMapHelpers.DrawLine(colorArray, width, height, outVect[i][0], outVect[i][1], outVect[idx][0], outVect[idx][1], new RenderTexture { Value = new Color(1, 1, 1, 1) });
+                }
+            }).Schedule(dependency);
 
-                    int[,] outVect = new int[4,2] {
-                        {0, 0},
-                        {0, height - 1},
-                        {width - 1, height - 1},
-                        {width - 1, 0},
-                    };
+            dependency.Complete();
 
-                    MiniMapHelpers.ConstructCameraCoordonates(outVect, width, height);
+            dependency = outVect.Dispose(dependency);
 
-                    for (int i = 0; i < 4; i++) {
-                        int idx = (i + 1) % 4;
-                        MiniMapHelpers.DrawLine(colorArray, width, height, outVect[i, 0], outVect[i, 1], outVect[idx, 0], outVect[idx, 1], white);
-                    }
+            buffer.CopyFrom(colorArray);
+            dependency = colorArray.Dispose(dependency);
 
-                    buffer.CopyFrom(colorArray);
-                    colorArray.Dispose();
-                });
+            dependency = unitPositions.Dispose(dependency);
+            dependency = workerPositions.Dispose(dependency);
+            dependency = selectedPositions.Dispose(dependency);
 
-            unitPositions.Dispose();
-            workerPositions.Dispose();
-            selectedPositions.Dispose();
+            return dependency;
         }
     }
 }
