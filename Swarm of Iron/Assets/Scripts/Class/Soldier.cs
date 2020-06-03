@@ -53,6 +53,7 @@ namespace Swarm_Of_Iron_namespace
             EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
                 typeof(UnitComponent),
+                typeof(TargetComponent),
                 typeof(MoveToComponent),
                 typeof(Translation),
                 typeof(LocalToWorld),

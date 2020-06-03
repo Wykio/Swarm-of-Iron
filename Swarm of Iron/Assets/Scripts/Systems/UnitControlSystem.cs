@@ -196,7 +196,11 @@ namespace Swarm_Of_Iron_namespace
             }
             int positionIndex = 0;
 
-            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) => {
+            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, ref Translation translation, ref MoveToComponent moveTo) => {
+                m_entityManager.SetSharedComponentData(entity, new TargetComponent {
+                    position = MiniMapHelpers.ConvertWorldCoord(translation.Value, 100, 100)
+                });
+                
                 moveTo.move = true;
                 moveTo.harvest = harvest;
                 moveTo.targetPosition = Soldier.movePositionList[positionIndex] + targetPosition;

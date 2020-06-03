@@ -15,4 +15,8 @@ namespace Swarm_Of_Iron_namespace
         public float3 lastMoveDir;
         public float moveSpeed;
     }
+
+    public struct TargetComponent : ISharedComponentData {
+        public int2 position;
+    }
 }
