@@ -8,19 +8,16 @@ using Unity.Mathematics;
 namespace Swarm_Of_Iron_namespace
 {
     [BurstCompile]
-    struct UnitMovingJob : IJobForEachWithEntity<Translation, MoveToComponent>
+    struct UnitMovingJob : IJobForEach<Translation, MoveToComponent>
     {
         [ReadOnly] public float deltatime;
         [ReadOnly] public int m_width, m_height;
-        [ReadOnly] public NativeArray<NativeArray<float2>> m_flowFields;
+        [ReadOnly] public NativeArray<float2> m_flowFields;
 
-        public void Execute([ReadOnly] Entity e, int i, ref Translation translation, ref MoveToComponent moveTo)
+        public void Execute(ref Translation translation, ref MoveToComponent moveTo)
         {
             if (moveTo.move)
             {
-                int index = Swarm_Of_Iron.instance.entityManager.GetSharedComponentDataIndex<TargetComponent>(e);
-                var flowField = m_flowFields[index];
-
                 int2 coords = MiniMapHelpers.ConvertWorldCoord(translation.Value, m_width, m_height);
 
                 float posX = translation.Value.x;
@@ -30,10 +27,10 @@ namespace Swarm_Of_Iron_namespace
                 int floorZ = coords[1];
 
                 //The 4 weights we'll interpolate, see http://en.wikipedia.org/wiki/File:Bilininterp.png for the coordinates
-                float2 f00 = flowField[(floorX + 1) + floorZ * m_width];
-                float2 f01 = flowField[floorX + (floorZ + 1) * m_width];
-                float2 f10 = flowField[(floorX - 1) + floorZ * m_width];
-                float2 f11 = flowField[floorX + (floorZ - 1) * m_width];
+                float2 f00 = m_flowFields[(floorX + 1) + floorZ * m_width];
+                float2 f01 = m_flowFields[floorX + (floorZ + 1) * m_width];
+                float2 f10 = m_flowFields[(floorX - 1) + floorZ * m_width];
+                float2 f11 = m_flowFields[floorX + (floorZ - 1) * m_width];
 
                 //Do the x interpolations
                 float xWeight = posX - math.floor(posX);
@@ -54,8 +51,6 @@ namespace Swarm_Of_Iron_namespace
                 //moveTo.lastMoveDir = math.float3(desiredVelocity, 0);
                 translation.Value.x += desiredVelocity[0] * deltatime;
                 translation.Value.z += desiredVelocity[1] * deltatime;
-
-                flowField.Dispose();
             }
             else
             {
