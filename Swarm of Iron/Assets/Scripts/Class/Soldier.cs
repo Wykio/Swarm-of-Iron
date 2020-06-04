@@ -8,7 +8,7 @@ using Unity.Transforms;
 using Unity.Rendering;
 
 
-namespace Swarm_Of_Iron_namespace {
+namespace SOI {
     public static class Soldier {
 
         public static List<float3> movePositionList;
@@ -33,10 +33,10 @@ namespace Swarm_Of_Iron_namespace {
         }
 
         static public EntityArchetype GetArchetype()  {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
                 typeof(UnitComponent),
-                typeof(MoveToComponent),
+                typeof(PathPosition),
                 typeof(Translation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
@@ -45,18 +45,15 @@ namespace Swarm_Of_Iron_namespace {
         }
 
         static public void SetEntity(Entity e, float3 position) {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
 
             entityManager.SetComponentData(e, new Translation { Value = position });
             entityManager.SetComponentData(e, new UnitComponent { animationSpeed = 0.5f });
-            entityManager.SetComponentData(e, new MoveToComponent {
-                move = false,
-                moveSpeed = 10.0f
-            });
             entityManager.SetSharedComponentData(e, new RenderMesh {
-                mesh = Swarm_Of_Iron.instance.soldierMesh,
-                material = Swarm_Of_Iron.instance.soldierMaterial
+                mesh = SwarmOfIron.Instance.soldierMesh,
+                material = SwarmOfIron.Instance.soldierMaterial
             });
+            entityManager.AddBuffer<PathPosition>(e);
         }
 
         // Fill position List for each rings

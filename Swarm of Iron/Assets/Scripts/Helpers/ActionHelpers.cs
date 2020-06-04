@@ -7,7 +7,7 @@ using UnityEngine.UI;
 using Unity.Transforms;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public static class ActionHelpers
     {
@@ -16,9 +16,9 @@ namespace Swarm_Of_Iron_namespace
             int actionIdx = -1;
 
             layers = new List<Texture2D>();
-            for (int i = 0; i < Swarm_Of_Iron.instance.layers.Count; i++)
+            for (int i = 0; i < SwarmOfIron.Instance.layers.Count; i++)
             {
-                Texture2D texture = Swarm_Of_Iron.instance.layers[i];
+                Texture2D texture = SwarmOfIron.Instance.layers[i];
                 if (texture.name == "ArrowIcon" && (hasWorkerSelected || hasSoldierSelected))
                 {
                     layers.Add(texture);
@@ -31,7 +31,7 @@ namespace Swarm_Of_Iron_namespace
                 }
             }
 
-            Image rend = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").GetComponent<Image>();
+            Image rend = SwarmOfIron.Instance.listButtonGO.Find(el => el.name == "Actions").GetComponent<Image>();
 
             // Create a texture
             Texture2D tex = new Texture2D(32 * 3, 32 * 3);

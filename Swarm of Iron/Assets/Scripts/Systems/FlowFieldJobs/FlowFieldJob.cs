@@ -6,7 +6,7 @@
 // using Unity.Mathematics;
 // using Unity.Burst;
 
-// namespace Swarm_Of_Iron_namespace
+// namespace SOI
 // {
 //     [BurstCompile]
 //     struct FlowFieldJob : IJobParallelFor

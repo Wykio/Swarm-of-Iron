@@ -7,32 +7,27 @@ using Unity.Rendering;
 using Unity.Jobs;
 using Unity.Burst;
 
-namespace Swarm_Of_Iron_namespace {
+namespace SOI {
     public class MiniMapSystem : JobComponentSystem {
 
-        const int width = 100;
-        const int height = 100;
+        private const int width = 100, height = 100;
 
-        EntityQuery m_MinimapQuery, m_UnitQuery, m_WorkerQuery, m_SelectedQuery;
+        private EntityQuery m_MinimapQuery, m_UnitQuery, m_WorkerQuery, m_SelectedQuery;
 
         [BurstCompile]
-        struct ColoringJob : IJobParallelFor
-        {
-            [ReadOnly] public RenderTexture m_color;
+        struct ColoringJob : IJobParallelFor {
+            [ReadOnly] public float4 m_color;
             [ReadOnly] public NativeArray<Translation> m_positions;
-            [NativeDisableParallelForRestriction] public NativeArray<RenderTexture> m_results;
+            [NativeDisableParallelForRestriction] public NativeArray<float4> m_results;
 
-            public void Execute(int index)
-            {
+            public void Execute(int index) {
                 int2 coords = MiniMapHelpers.ConvertWorldToTexture(m_positions[index].Value, width, height);
                 m_results[coords[0] + (coords[1] * width)] = m_color;
             }
         }
 
-        public static JobHandle Schedule(RenderTexture _color, NativeArray<Translation> _position, NativeArray<RenderTexture> _colors, JobHandle _dependency)
-        {
-            var job = new ColoringJob()
-            {
+        public static JobHandle Schedule(float4 _color, NativeArray<Translation> _position, NativeArray<float4> _colors, JobHandle _dependency) {
+            var job = new ColoringJob() {
                 m_color = _color,
                 m_positions = _position,
                 m_results = _colors
@@ -59,19 +54,19 @@ namespace Swarm_Of_Iron_namespace {
             Entity entity = m_MinimapQuery.GetSingletonEntity();
             DynamicBuffer<RenderTexture> buffer = EntityManager.GetBuffer<RenderTexture>(entity);
 
-            NativeArray<RenderTexture> colorArray = new NativeArray<RenderTexture>(width * height, Allocator.TempJob);
+            NativeArray<float4> colorArray = new NativeArray<float4>(width * height, Allocator.TempJob);
 
             dependency = Job.WithCode(() => {
                 for (int x = 0; x < width; x++) {
                     for (int y = 0; y < height; y++) {
-                        colorArray[x + (y * width)] = new RenderTexture { Value = new Color(143.0f / 255.0f, 113.0f / 255.0f, 92.0f / 255.0f, 1.0f) };
+                        colorArray[x + (y * width)] = new float4(143.0f / 255.0f, 113.0f / 255.0f, 92.0f / 255.0f, 1.0f);
                     }
                 }
             }).Schedule(dependency);
 
-            dependency = Schedule(new RenderTexture { Value = new Color(0, 0, 1, 1) }, unitPositions, colorArray, dependency);
-            dependency = Schedule(new RenderTexture { Value = new Color(1, 1, 0, 1) }, workerPositions, colorArray, dependency);
-            dependency = Schedule(new RenderTexture { Value = new Color(0, 1, 0, 1) }, selectedPositions, colorArray, dependency);
+            dependency = Schedule(new float4(0, 0, 1, 1), unitPositions, colorArray, dependency);
+            dependency = Schedule(new float4(1, 1, 0, 1), workerPositions, colorArray, dependency);
+            dependency = Schedule(new float4(0, 1, 0, 1), selectedPositions, colorArray, dependency);
 
             NativeArray<int2> outVect = new NativeArray<int2>(4, Allocator.TempJob);
             outVect[0] = new int2(0, 0);
@@ -81,11 +76,10 @@ namespace Swarm_Of_Iron_namespace {
 
             MiniMapHelpers.ConstructCameraCoordonates(outVect, width, height);
 
-            dependency = Job.WithCode(() =>
-            {
+            dependency = Job.WithCode(() => {
                 for (int i = 0; i < 4; i++) {
                     int idx = (i + 1) % 4;
-                    MiniMapHelpers.DrawLine(colorArray, width, height, outVect[i][0], outVect[i][1], outVect[idx][0], outVect[idx][1], new RenderTexture { Value = new Color(1, 1, 1, 1) });
+                    MiniMapHelpers.DrawLine(colorArray, width, height, outVect[i][0], outVect[i][1], outVect[idx][0], outVect[idx][1], new float4(1, 1, 1, 1));
                 }
             }).Schedule(dependency);
 
@@ -93,7 +87,7 @@ namespace Swarm_Of_Iron_namespace {
 
             dependency = outVect.Dispose(dependency);
 
-            buffer.CopyFrom(colorArray);
+            buffer.CopyFrom(colorArray.Reinterpret<RenderTexture>());
             dependency = colorArray.Dispose(dependency);
 
             dependency = unitPositions.Dispose(dependency);

@@ -4,15 +4,10 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Swarm_Of_Iron_namespace
-{
-    public struct MoveToComponent : IComponentData
-    {
-        public bool move;
+namespace SOI {
+    public struct MoveToComponent : IComponentData {
         public bool harvest;
-        public float3 targetPosition;
-        public float3 position;
-        public float3 lastMoveDir;
-        public float moveSpeed;
+        public float3 startPosition;
+        public float3 endPosition;
     }
 }

@@ -5,18 +5,17 @@ using Unity.Jobs;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Burst;
+using Unity.Physics;
 
-namespace Swarm_Of_Iron_namespace
-{
+namespace SOI {
     [BurstCompile]
-    struct InitDijkstraGridJob : IJobForEach<RockComponent, Translation>
-    {
-        [ReadOnly] public int m_maxValue, m_width, m_height;
-        [NativeDisableParallelForRestriction] public NativeArray<int> m_dijkstraGrid;
-        public void Execute([ReadOnly] ref RockComponent c, [ReadOnly] ref Translation translation)
-        {
-            int2 pos = MiniMapHelpers.ConvertWorldCoord(translation.Value, m_width, m_height);
-            m_dijkstraGrid[pos[0] + (pos[1] * m_width)] = m_maxValue;
+    [RequireComponentTagAttribute(typeof(PhysicsCollider))]
+    struct InitDijkstraGridJob : IJobForEach<Translation> {
+        [ReadOnly] public int _max, _width, _height;
+        [NativeDisableParallelForRestriction] public NativeArray<int> _dijkstraGrid;
+        public void Execute([ReadOnly] ref Translation translation) {
+            int2 pos = MiniMapHelpers.ConvertWorldCoord(translation.Value, _width, _height);
+            _dijkstraGrid[pos[0] + (pos[1] * _width)] = _max;
         }
     }
 }

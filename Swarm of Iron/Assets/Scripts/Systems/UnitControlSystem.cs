@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Collections;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public class UnitControlSystem : ComponentSystem
     {
@@ -22,6 +23,12 @@ namespace Swarm_Of_Iron_namespace
         private bool hasWorkerSelected;
         private string currentAction;
 
+        private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
+
+        protected override void OnCreate() {
+            endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+
         protected override void OnUpdate() {
             // left click Down
             if (Input.GetMouseButtonDown(0)) {
@@ -34,9 +41,9 @@ namespace Swarm_Of_Iron_namespace
             }
 
             if (this.currentAction == "HouseIcon") {
-                Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = UnitControlHelpers.GetMousePosition() + new float3(-10, 1, 10);
-                Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = new Vector3(20, 1, 20);
-                Swarm_Of_Iron.instance.selectionAreaTransform.localScale = new Vector3(0, 0, 0);
+                SwarmOfIron.Instance.worldSelectionAreaTransform.position = UnitControlHelpers.GetMousePosition() + new float3(-10, 1, 10);
+                SwarmOfIron.Instance.worldSelectionAreaTransform.localScale = new Vector3(20, 1, 20);
+                SwarmOfIron.Instance.selectionAreaTransform.localScale = new Vector3(0, 0, 0);
             }
 
             // left click Up
@@ -51,13 +58,13 @@ namespace Swarm_Of_Iron_namespace
         }
 
         private void OnLeftClickDown () {
-            Swarm_Of_Iron.instance.ToggleSelectionArea(true);
+            SwarmOfIron.Instance.ToggleSelectionArea(true);
             
             startPosition = UnitControlHelpers.GetMousePosition();  // World Position
             startPositionScreen = Input.mousePosition;              // Screen Position
             
             // selection OBJ Box
-            selectionObj = Swarm_Of_Iron.instance.selectionObj;
+            selectionObj = SwarmOfIron.Instance.selectionObj;
             selectionObj.transform.position = startPosition;
 
             Vector3 cameraVec3 = Camera.main.transform.eulerAngles;
@@ -68,7 +75,7 @@ namespace Swarm_Of_Iron_namespace
                 isUI = true;
 
                 // On récupère la coordonnée local du clique
-                Vector3 localActionCoord = Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == "Actions").transform.InverseTransformPoint(startPositionScreen);
+                Vector3 localActionCoord = SwarmOfIron.Instance.listButtonGO.Find(el => el.name == "Actions").transform.InverseTransformPoint(startPositionScreen);
 
                 // On récupère l'action & on met a jour
                 this.currentAction = ActionHelpers.GetAction(localActionCoord, this.layers);
@@ -76,9 +83,9 @@ namespace Swarm_Of_Iron_namespace
             } else {
                 isUI = false;
 
-                Swarm_Of_Iron.instance.selectionAreaTransform.position = startPositionScreen;                       // Zone de sélection    rectangle vert      (screen)
-                Swarm_Of_Iron.instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);  // Debug                rectangle orange    (world)
-                Swarm_Of_Iron.instance.worldSelectionAreaTransform.rotation = Quaternion.Euler(0,  Swarm_Of_Iron.instance.cameraRig.transform.eulerAngles.y, 0);
+                SwarmOfIron.Instance.selectionAreaTransform.position = startPositionScreen;                       // Zone de sélection    rectangle vert      (screen)
+                SwarmOfIron.Instance.worldSelectionAreaTransform.position = startPosition + new float3(0, 1, 0);  // Debug                rectangle orange    (world)
+                SwarmOfIron.Instance.worldSelectionAreaTransform.rotation = Quaternion.Euler(0,  SwarmOfIron.Instance.cameraRig.transform.eulerAngles.y, 0);
             }
         }
 
@@ -92,18 +99,18 @@ namespace Swarm_Of_Iron_namespace
             currentPositionWorld = RotatePointAroundPivot(currentPositionWorld, startPosition, Quaternion.Inverse(Camera.main.transform.rotation));
             //currentPositionWorld = RotatePointAroundPivot();
             float3 worldSelectionAeraSizetest = currentPositionWorld - startPosition;
-            Swarm_Of_Iron.instance.selectionAreaTransform.localScale = selectionAeraSize;
+            SwarmOfIron.Instance.selectionAreaTransform.localScale = selectionAeraSize;
             Vector3 scaleSelectObj = new Vector3(worldSelectionAeraSizetest[0], 3.0f, worldSelectionAeraSizetest[2]);
             selectionObj.transform.localScale = scaleSelectObj;
 
             float3 OrangeSelectionAeraSize = currentPositionWorld - startPosition;
             
             // Debug 
-            Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = OrangeSelectionAeraSize * new float3(1, 1, -1);
+            SwarmOfIron.Instance.worldSelectionAreaTransform.localScale = OrangeSelectionAeraSize * new float3(1, 1, -1);
         }
 
         private void OnLeftClickUp() {
-            Swarm_Of_Iron.instance.ToggleSelectionArea(false);
+            SwarmOfIron.Instance.ToggleSelectionArea(false);
 
             this.selectedEntityCount = 0;
             this.hasWorkerSelected = false;
@@ -119,11 +126,11 @@ namespace Swarm_Of_Iron_namespace
         } 
 
         private void SelectedUnits() {
-            var trans = Swarm_Of_Iron.instance.image.GetComponent<RectTransform>();
+            var trans = SwarmOfIron.Instance.image.GetComponent<RectTransform>();
             Vector3[] worldCorners = new Vector3[4];
             trans.GetWorldCorners(worldCorners);
 
-            Quaternion q = Quaternion.Inverse(Quaternion.Euler(0, Swarm_Of_Iron.instance.cameraRig.transform.eulerAngles.y, 0));
+            Quaternion q = Quaternion.Inverse(Quaternion.Euler(0, SwarmOfIron.Instance.cameraRig.transform.eulerAngles.y, 0));
             
             float3[] localCorners = new float3[4];
             for(var i = 0; i < 4; i ++) {
@@ -179,36 +186,14 @@ namespace Swarm_Of_Iron_namespace
 
             // Destroy all entities of the selection Mesh
             Entities.WithAll<SelectionMeshComponent>().ForEach((Entity entity) => {
-                Swarm_Of_Iron.instance.entityManager.DestroyEntity(entity);
-            });
-        }
-
-        public void MoveAllUnitSelected() {
-            EntityManager m_entityManager = Swarm_Of_Iron.instance.entityManager;
-
-            bool harvest = false;
-
-            float3 targetPosition = UnitControlHelpers.GetMousePosition();
-            Entity target = UnitControlHelpers.GetEntityTarget();
-            if (m_entityManager.Exists(target)) {
-                harvest = m_entityManager.HasComponent<RockComponent>(target);
-                Debug.Log("Raycast Intersect Entity" + ((harvest) ? ": is Rock" : ""));
-            }
-            int positionIndex = 0;
-
-            Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, ref MoveToComponent moveTo) => {
-                moveTo.move = true;
-                moveTo.harvest = harvest;
-                moveTo.targetPosition = Soldier.movePositionList[positionIndex] + targetPosition;
-                moveTo.position = moveTo.targetPosition;
-                positionIndex = (positionIndex + 1) % Soldier.movePositionList.Count;
+                SwarmOfIron.Instance.entityManager.DestroyEntity(entity);
             });
         }
 
         public void ExecuteCurrentAction(string action) {
             if (action == "ArrowIcon") {
                 //move selected units
-                MoveAllUnitSelected();
+                // MoveAllUnitSelected();
             } else if (action == "HouseIcon") {
                 CustomEntity.SpawnEntityAtPosition(typeof(CityHall), UnitControlHelpers.GetMousePosition());
             }

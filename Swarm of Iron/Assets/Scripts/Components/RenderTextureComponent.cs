@@ -7,7 +7,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public struct RenderTexture : IBufferElementData
     {

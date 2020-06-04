@@ -7,13 +7,13 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public static class MiniMap
     {
         public static void SpawnMiniMap()
         {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
                 typeof(MiniMapComponent),
                 typeof(RectComponent)

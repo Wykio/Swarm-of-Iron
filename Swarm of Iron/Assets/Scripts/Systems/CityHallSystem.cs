@@ -5,20 +5,15 @@ using Unity.Entities;
 using Unity.Jobs;
 using Unity.Transforms;
 
-namespace Swarm_Of_Iron_namespace
-{
-    public class CityHallSystem : JobComponentSystem
-    {
-        protected override JobHandle OnUpdate(JobHandle inputDeps)
-        {
+namespace SOI {
+    public class CityHallSystem : JobComponentSystem {
+        protected override JobHandle OnUpdate(JobHandle inputDeps) {
             double time = UnityEngine.Time.time;
-            int constructTime = Swarm_Of_Iron.instance.CityHallConstructionTime;
+            int constructTime = SwarmOfIron.Instance.CityHallConstructionTime;
 
-            return Entities.ForEach((ref CityHallComponent cityHallComponent, ref NonUniformScale nonUniformScale) =>
-            {
+            return Entities.ForEach((ref CityHallComponent cityHallComponent, ref NonUniformScale nonUniformScale) => {
                 if (time - cityHallComponent.LastConstructionStateTime >= 2 &&
-                cityHallComponent.ConstructionState < cityHallComponent.ConstructionTime)
-                {
+                cityHallComponent.ConstructionState < cityHallComponent.ConstructionTime) {
                     nonUniformScale.Value.y += (0.05f /cityHallComponent.ConstructionTime);
                     cityHallComponent.LastConstructionStateTime = time;
                     cityHallComponent.ConstructionState++;

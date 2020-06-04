@@ -7,7 +7,7 @@ using Unity.Transforms;
 using Unity.Rendering;
 using Unity.Physics;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public static class MeshExtensions
     {
@@ -26,11 +26,11 @@ namespace Swarm_Of_Iron_namespace
     }
 }
 
-namespace Swarm_Of_Iron_namespace {
+namespace SOI {
     static public class Rock {
 
         static public EntityArchetype GetArchetype()  {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
                 typeof(RockComponent),
                 typeof(Translation),
@@ -46,13 +46,13 @@ namespace Swarm_Of_Iron_namespace {
         static public void SetEntity(Entity e, float3 position) {
             Mesh mesh = Rock.GenerateRockMesh();
 
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
 
             entityManager.SetComponentData(e, new Translation { Value = position });
             entityManager.SetComponentData(e, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
             entityManager.SetSharedComponentData(e, new RenderMesh {
                 mesh = mesh,
-                material = Swarm_Of_Iron.instance.rockMaterial
+                material = SwarmOfIron.Instance.rockMaterial
             });
 
             BlobAssetReference<Unity.Physics.Collider> collider = Unity.Physics.BoxCollider.Create(
@@ -68,22 +68,20 @@ namespace Swarm_Of_Iron_namespace {
         static public Mesh GenerateRockMesh() {
             float offset = UnityEngine.Random.Range(0, 20);
 
-            Mesh mesh = MeshExtensions.Copy(Swarm_Of_Iron.instance.sphereMesh);
+            Mesh mesh = MeshExtensions.Copy(SwarmOfIron.Instance.rockMesh);
             
             Vector3[] vertices = mesh.vertices;
             List<Vector3> doneVerts = new List<Vector3>();
-            for (int v = 0; v < vertices.Length; v++)
-            {
-                if (!doneVerts.Contains(vertices[v]))
-                {
+            for (int v = 0; v < vertices.Length; v++) {
+                if (!doneVerts.Contains(vertices[v])) {
                     Vector3 curVector = vertices[v];
                     doneVerts.Add(curVector);
+
                     int smoothing = UnityEngine.Random.Range(2, 4);
                     Vector3 changedVector = (curVector + (Vector3.Normalize(curVector) * (Mathf.PerlinNoise((float)v / offset, (float)v / offset) / smoothing)));
-                    for (int s = 0; s < vertices.Length; s++)
-                    {
-                        if (vertices[s] == curVector)
-                        {
+                    
+                    for (int s = 0; s < vertices.Length; s++) {
+                        if (vertices[s] == curVector) {
                             vertices[s] = changedVector;
                         }
                     }

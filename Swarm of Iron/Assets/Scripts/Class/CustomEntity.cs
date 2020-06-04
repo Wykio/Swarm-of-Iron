@@ -6,7 +6,7 @@ using Unity.Transforms;
 using Unity.Rendering;
 
 
-namespace Swarm_Of_Iron_namespace {
+namespace SOI {
     public static class CustomEntity {
 
         public static float3 GetRandomPosition(float sizeArea) {
@@ -26,7 +26,7 @@ namespace Swarm_Of_Iron_namespace {
             var SetEntity = t.GetMethod("SetEntity");
             
             if (GetArchetype != null && SetEntity != null) {
-                EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+                EntityManager entityManager = SwarmOfIron.Instance.entityManager;
                 EntityArchetype entityArchetype = (EntityArchetype)GetArchetype.Invoke(null, null); //null - means calling static method
 
                 NativeArray<Entity> entities = new NativeArray<Entity>(amout, Allocator.TempJob);
@@ -45,13 +45,13 @@ namespace Swarm_Of_Iron_namespace {
             var SetEntity = t.GetMethod("SetEntity");
             
             if (GetArchetype != null && SetEntity != null) {
-                EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+                EntityManager entityManager = SwarmOfIron.Instance.entityManager;
                 EntityArchetype entityArchetype = (EntityArchetype)GetArchetype.Invoke(null, null); //null - means calling static method
 
                 NativeArray<Entity> entities = new NativeArray<Entity>(amout, Allocator.TempJob);
                 entityManager.CreateEntity(entityArchetype, entities);
 
-                float spawnAreaRange = Swarm_Of_Iron.instance.spawnAreaRange;
+                float spawnAreaRange = SwarmOfIron.Instance.spawnAreaRange;
 
                 for (var i = 0; i < amout; i++) {
                     SetEntity.Invoke(null, new object[] { entities[i], GetRandomPosition(spawnAreaRange) });

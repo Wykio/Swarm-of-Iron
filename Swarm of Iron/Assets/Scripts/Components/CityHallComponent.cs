@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public struct CityHallComponent : IComponentData
     {

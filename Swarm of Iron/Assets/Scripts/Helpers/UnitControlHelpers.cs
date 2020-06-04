@@ -10,7 +10,7 @@ using Unity.Rendering;
 using Unity.Physics;
 using Unity.Physics.Systems;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public static class UnitControlHelpers
     {

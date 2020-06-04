@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public class UserInterface {
         struct Button {
@@ -25,8 +25,8 @@ namespace Swarm_Of_Iron_namespace
         } 
 
         static public bool TryClickInterface(Vector3 pos) {
-            for (var i = 0; i < Swarm_Of_Iron.instance.listButtonGO.Count; i++) {
-                if (UserInterface.TryClickInterface(pos, Swarm_Of_Iron.instance.listButtonGO[i])) {
+            for (var i = 0; i < SwarmOfIron.Instance.listButtonGO.Count; i++) {
+                if (UserInterface.TryClickInterface(pos, SwarmOfIron.Instance.listButtonGO[i])) {
                     return true;
                 }
             }
@@ -34,7 +34,7 @@ namespace Swarm_Of_Iron_namespace
         }
 
         static public bool TryClickInterface(Vector3 pos, string name) {
-            return UserInterface.TryClickInterface(pos, Swarm_Of_Iron.instance.listButtonGO.Find(el => el.name == name));
+            return UserInterface.TryClickInterface(pos, SwarmOfIron.Instance.listButtonGO.Find(el => el.name == name));
         }
 
         static public bool TryClickInterface(Vector3 pos, GameObject element) {
