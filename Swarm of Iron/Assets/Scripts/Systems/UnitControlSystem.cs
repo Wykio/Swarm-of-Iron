@@ -23,12 +23,6 @@ namespace SOI
         private bool hasWorkerSelected;
         private string currentAction;
 
-        private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
-
-        protected override void OnCreate() {
-            endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-        }
-
         protected override void OnUpdate() {
             // left click Down
             if (Input.GetMouseButtonDown(0)) {

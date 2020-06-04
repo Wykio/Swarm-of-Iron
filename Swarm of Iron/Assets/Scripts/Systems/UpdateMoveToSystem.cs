@@ -30,11 +30,14 @@ namespace SOI {
             EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
             JobHandle jobHandle = Entities.WithAll<UnitSelectedComponent>().WithNone<MoveToComponent>().ForEach((Entity entity, int entityInQueryIndex, in Translation translation) => {
-                entityCommandBuffer.AddComponent(entityInQueryIndex, entity, new MoveToComponent {
-                    harvest = harvest,
-                    startPosition = translation.Value,
-                    endPosition = targetPosition
-                });
+                if (math.distance(translation.Value, targetPosition) >= 1f) {
+                    entityCommandBuffer.AddComponent(entityInQueryIndex, entity, new MoveToComponent {
+                        harvest = harvest,
+                        startPosition = translation.Value,
+                        endPosition = targetPosition,
+                        move = -1
+                    });
+                }
             }).Schedule(inputDeps);
 
             endSimulationEntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);

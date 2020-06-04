@@ -29,6 +29,10 @@ namespace SOI
 namespace SOI {
     static public class Rock {
 
+        public static float3 GetRandomPosition(float sizeArea) {
+            return new float3(UnityEngine.Random.Range(0, 10) * (sizeArea / 10) - (sizeArea / 2), 1.0f, UnityEngine.Random.Range(0, 10) * (sizeArea / 10) - (sizeArea / 2));
+        }
+
         static public EntityArchetype GetArchetype()  {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
@@ -44,12 +48,17 @@ namespace SOI {
         }
 
         static public void SetEntity(Entity e, float3 position) {
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
+
             Mesh mesh = Rock.GenerateRockMesh();
 
-            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
+            var mapSize = 500;
+            var cellSize = 50;
+            var scale = (mapSize / cellSize) / mesh.bounds.size.x;
 
             entityManager.SetComponentData(e, new Translation { Value = position });
             entityManager.SetComponentData(e, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
+            entityManager.SetComponentData(e, new Scale { Value = scale });
             entityManager.SetSharedComponentData(e, new RenderMesh {
                 mesh = mesh,
                 material = SwarmOfIron.Instance.rockMaterial

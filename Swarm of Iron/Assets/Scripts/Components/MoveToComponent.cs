@@ -9,5 +9,6 @@ namespace SOI {
         public bool harvest;
         public float3 startPosition;
         public float3 endPosition;
+        public int move;
     }
 }

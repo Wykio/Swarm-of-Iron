@@ -9,36 +9,53 @@ namespace SOI {
 
         const int width = 50, height = 50;
 
+        private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
+
+        protected override void OnCreate() {
+            endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+
         protected override JobHandle OnUpdate(JobHandle inputDeps) {
             float deltaTime = Time.DeltaTime;
 
-            return Entities.ForEach((Entity entity, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, in MoveToComponent moveTo) => {
-                int2 position = MiniMapHelpers.ConvertWorldCoord(translation.Value, width, height);
+            EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-                var flowfield = pathPositionBuffer.Reinterpret<int2>();
+            JobHandle jobHandle = Entities.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref MoveToComponent moveTo) => {
+              if (moveTo.move >= 0) {
+                  int2 position = MiniMapHelpers.ConvertWorldCoord(translation.Value, width, height);
 
-                float2 f00 = flowfield[(position[0] + 1) + position[1] * width];
-                float2 f01 = flowfield[position[0] + (position[1] + 1) * width];
-                float2 f10 = flowfield[(position[0] - 1) + position[1] * width];
-                float2 f11 = flowfield[position[0] + (position[1] - 1) * width];
+                  var flowfield = pathPositionBuffer.Reinterpret<int2>();
 
-                float xWeight = translation.Value.x - math.floor(translation.Value.x);
-                float zWeight = translation.Value.z - math.floor(translation.Value.z);
+                  float2 f00 = flowfield[(position[0] + 1) + position[1] * width];
+                  float2 f01 = flowfield[position[0] + (position[1] + 1) * width];
+                  float2 f10 = flowfield[(position[0] - 1) + position[1] * width];
+                  float2 f11 = flowfield[position[0] + (position[1] - 1) * width];
 
-                float2 top = f00 * (1 - xWeight) + (f10 * (xWeight));
-                float2 bottom = f01 * (1 - xWeight) + (f11 * (xWeight));
+                  float xWeight = translation.Value.x - math.floor(translation.Value.x);
+                  float zWeight = translation.Value.z - math.floor(translation.Value.z);
 
-                float2 direction = math.normalizesafe(top * (1 - zWeight) + (bottom * (zWeight)));
+                  float2 top = f00 * (1 - xWeight) + (f10 * (xWeight));
+                  float2 bottom = f01 * (1 - xWeight) + (f11 * (xWeight));
 
-                float3 moveDir = new float3(direction[0], 0.0f, direction[1]);
-                float moveSpeed = 10f;
+                  float2 direction = math.normalizesafe(top * (1 - zWeight) + (bottom * (zWeight)));
 
-                translation.Value += moveDir * moveSpeed * deltaTime;
+                  float3 moveDir = new float3(direction[0], 0.0f, direction[1]);
+                  float moveSpeed = 10f;
 
-                if (math.distance(translation.Value, moveTo.endPosition) < .1f) {
-                    pathPositionBuffer.Clear();
-                }
+                  translation.Value += moveDir * moveSpeed * deltaTime;
+
+                  moveTo.move--;
+
+                  if (math.distance(translation.Value, moveTo.endPosition) < 1f) {
+                      pathPositionBuffer.Clear();
+                      entityCommandBuffer.RemoveComponent<MoveToComponent>(entityInQueryIndex, entity);
+                  }
+              }
             }).Schedule(inputDeps);
+
+            endSimulationEntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
+
+            return jobHandle;
         }
     }
 }
