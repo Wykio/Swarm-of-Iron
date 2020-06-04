@@ -13,8 +13,6 @@ namespace Swarm_Of_Iron_namespace
         [ReadOnly] public float deltatime;
         [ReadOnly] public int m_width, m_height, MAX_VALUE;
         [ReadOnly] public NativeArray<int> dijkstraGridBase;
-        [NativeDisableParallelForRestriction] public NativeArray<int> m_dijkstraGrid;
-        [NativeDisableParallelForRestriction] public NativeArray<float2> flowField;
 
         public struct Neighbour
         {
@@ -69,6 +67,7 @@ namespace Swarm_Of_Iron_namespace
 
                     /* STEP 3 - With Dijkstra Grid construct FlowField (array of dir vector) */
 
+                    NativeArray<int2> flowField = new NativeArray<int2>(m_width * m_height, Allocator.Temp);
                     neighbours = new NativeArray<int2>(8, Allocator.Temp);
 
                     int marg = m_width;//2;
@@ -78,7 +77,6 @@ namespace Swarm_Of_Iron_namespace
                     for (var x = baseX - padd; x < baseX + marg + padd; x++) {
                         for (var y = baseY - padd; y < baseY + marg + padd; y++) {
                             int index = x + y * m_width;
-                            flowField[index] = new float2(0, 0);
 
                             //Obstacles have no flow value
                             if (dijkstraGrid[index] != MAX_VALUE)
@@ -105,16 +103,15 @@ namespace Swarm_Of_Iron_namespace
                                 //If we found a valid neighbour, point in its direction
                                 if (minDist < MAX_VALUE)
                                 {
-                                    flowField[index] = math.normalize(min - pos);
+                                    flowField[index] = new int2(math.normalize(min - pos));
                                 }
                             }
                         }
                     }
                     neighbours.Dispose();
 
-                    flowField[target[0] + (target[1] * m_width)] = new float2(0.0f, 0.0f);
+                    flowField[target[0] + (target[1] * m_width)] = new int2(0, 0);
 
-                    m_dijkstraGrid.CopyFrom(dijkstraGrid);
                     dijkstraGrid.Dispose();
 
                     /* STEP 4 -  */
@@ -160,7 +157,7 @@ namespace Swarm_Of_Iron_namespace
                     translation.Value.x += desiredVelocity[0] * deltatime;
                     translation.Value.z += desiredVelocity[1] * deltatime;
 
-                    // flowField.Dispose();
+                    flowField.Dispose();
                 }
                 else
                 {

@@ -42,66 +42,15 @@ namespace Swarm_Of_Iron_namespace
             };
             JobHandle deps1 = job_initDijkstraGrid.Schedule(m_rock, deps);
 
-            NativeArray<int> dijkstraGrid = new NativeArray<int>(width * height, Allocator.TempJob);
-            NativeArray<float2> flowField = new NativeArray<float2>(width * height, Allocator.TempJob);
             var mainJob = new UnitMovingJob() {
                 deltatime = Time.DeltaTime,
                 m_width = width,
                 m_height = height,
                 MAX_VALUE = MAX_VALUE,
-                dijkstraGridBase = dijkstraGridBase,
-                m_dijkstraGrid = dijkstraGrid,
-                flowField = flowField
+                dijkstraGridBase = dijkstraGridBase
             };
             JobHandle finalDependency = mainJob.Schedule(m_query, deps1);
             finalDependency.Complete();
-
-            /* STEP 2.5 - DEBUG DIJKSTRA */
-
-            finalDependency = Entities
-                .WithAll<MiniMapComponent>()
-                .ForEach((DynamicBuffer<RenderTexture> buffer) =>
-                {
-                    NativeArray<RenderTexture> colorArray = new NativeArray<RenderTexture>(width * height, Allocator.Temp);
-                    Color color;
-
-                    for (var x = 0; x < width; x++)
-                    {
-                        for (var y = 0; y < width; y++)
-                        {
-                            float val = dijkstraGrid[x + y * width];
-
-                            if (val < 0) color = new Color(0.0f, 0.0f, 1.0f, 1.0f);
-                            else {
-                              var tmp = val / 50;
-                              if (MAX_VALUE <= val) color = new Color(0.0f, 0.0f, 0.0f, 1.0f);
-                              else color = new Color(tmp, 1.0f - tmp, 0.0f, 1.0f);
-                            }
-                            colorArray[x + y * width] = new RenderTexture { Value = color };
-                        }
-                    }
-
-                    buffer.CopyFrom(colorArray);
-                    colorArray.Dispose();
-            }).Schedule(finalDependency);
-            finalDependency.Complete();
-            finalDependency = dijkstraGrid.Dispose(finalDependency);
-
-            /* STEP 3.5 - DEBUG FLOWFIELD */
-
-            for (var i = 0; i < width; i++) {
-                for (var j = 0; j < height; j++) {
-                    float x = ((i * 500) / width) - 250;
-                    float z = (((j) * 500) / height) - 250;
-
-                    float2 dir = flowField[i + j * width];
-                    float3 dir3 = new float3(dir[0], 0, dir[1]);
-                    Debug.DrawRay(new float3(x, 5, z), dir3, Color.green);
-                    Debug.DrawRay(new float3(x + dir[0], 5, z + dir[1]), dir3, Color.red);
-                }
-            }
-
-            flowField.Dispose();
 
             return dijkstraGridBase.Dispose(finalDependency);
         }
