@@ -26,29 +26,12 @@ namespace Swarm_Of_Iron_namespace
     }
 }
 
-namespace Swarm_Of_Iron_namespace
-{
-    static public class Rock
-    {
-        static public void SpawnRock()
-        {
-            float spawnAreaRange = Swarm_Of_Iron.instance.spawnAreaRange;
-            SpawnRock(new float3(UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange), 1.0f, UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange)));
-        }
+namespace Swarm_Of_Iron_namespace {
+    static public class Rock {
 
-        static public void SpawnRock(int amount)
-        {
-            // Spawn Woods
-            for (int i = 0; i < amount; i++)
-            {
-                SpawnRock();
-            }
-        }
-
-        static public void SpawnRock(float3 spawnPosition)
-        {
+        static public EntityArchetype GetArchetype()  {
             EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
-            EntityArchetype entityArchetype = entityManager.CreateArchetype(
+            return entityManager.CreateArchetype(
                 typeof(RockComponent),
                 typeof(Translation),
                 typeof(Rotation),
@@ -57,15 +40,16 @@ namespace Swarm_Of_Iron_namespace
                 typeof(RenderBounds),
                 typeof(PhysicsCollider)
             );
+        }
 
-            Entity entity = entityManager.CreateEntity(entityArchetype);
-
+        static public void SetEntity(Entity e, float3 position) {
             Mesh mesh = Rock.GenerateRockMesh();
 
-            entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.SetComponentData(entity, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
-            entityManager.SetSharedComponentData(entity, new RenderMesh
-            {
+            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+
+            entityManager.SetComponentData(e, new Translation { Value = position });
+            entityManager.SetComponentData(e, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
+            entityManager.SetSharedComponentData(e, new RenderMesh {
                 mesh = mesh,
                 material = Swarm_Of_Iron.instance.rockMaterial
             });
@@ -77,11 +61,10 @@ namespace Swarm_Of_Iron_namespace
                     Size = 5.0f,
                     BevelRadius = 0.0f
                 });
-            entityManager.SetComponentData(entity, new PhysicsCollider { Value = collider });
+            entityManager.SetComponentData(e, new PhysicsCollider { Value = collider });
         }
 
-        static public Mesh GenerateRockMesh()
-        {
+        static public Mesh GenerateRockMesh() {
             float offset = UnityEngine.Random.Range(0, 20);
 
             Mesh mesh = MeshExtensions.Copy(Swarm_Of_Iron.instance.sphereMesh);

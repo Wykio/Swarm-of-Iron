@@ -211,7 +211,7 @@ namespace Swarm_Of_Iron_namespace
                 //move selected units
                 MoveAllUnitSelected();
             } else if (action == "HouseIcon") {
-                CityHall.SpawnCityHall(UnitControlHelpers.GetMousePosition());
+                CustomEntity.SpawnEntityAtPosition(typeof(CityHall), UnitControlHelpers.GetMousePosition());
             }
         }
 
