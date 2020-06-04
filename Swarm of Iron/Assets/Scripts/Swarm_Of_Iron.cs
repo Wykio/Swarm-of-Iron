@@ -71,6 +71,8 @@ namespace Swarm_Of_Iron_namespace
         // Start is called before the first frame update
         private void Start()
         {
+            DefaultWorldInitialization.Initialize("SwarmOfIron", false);
+            
             //Init entityManager
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
@@ -78,15 +80,17 @@ namespace Swarm_Of_Iron_namespace
             unitSelectedCircleMesh = SelectionMesh.CreateMesh();
 
             //spawn some woods
-            Wood.SpawnWood(spawnWoodAmount);
-            Rock.SpawnRock(spawnRockAmount);
+            // Wood.SpawnWood(spawnWoodAmount);
+            CustomEntity.SpawnEntitiesAtRandomPosition(typeof(Wood), spawnWoodAmount);
+            CustomEntity.SpawnEntitiesAtRandomPosition(typeof(Rock), spawnRockAmount);
 
             //spawn some workers
-            Worker.SpawnWorkers(spawnWorkerAmount);
+            CustomEntity.SpawnEntitiesAtRandomPosition(typeof(Worker), spawnWorkerAmount);
+
 
             //spawn some soldiers
             Soldier.init();
-            Soldier.SpawnSoldiers(spawnSoldierAmount);
+            CustomEntity.SpawnEntitiesAtRandomPosition(typeof(Soldier), spawnSoldierAmount);
 
             MiniMap.SpawnMiniMap();
 

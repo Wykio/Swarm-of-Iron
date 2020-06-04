@@ -13,7 +13,7 @@ namespace Swarm_Of_Iron_namespace
         const int mapWidth = 500;
         const int mapHeight = 500;
 
-        public static int2 ConvertWorldCoord(float3 vect, int width, int height)
+        public static int2 ConvertWorldToTexture(float3 vect, int width, int height)
         {
             // Enlever les chiffres negatif
             int transX = (int)vect.x + (mapWidth / 2);
@@ -45,7 +45,7 @@ namespace Swarm_Of_Iron_namespace
             return coords;
         }
 
-        public static void ConstructCameraCoordonates(int[,] outVect, int width, int height)
+        public static void ConstructCameraCoordonates(NativeArray<int2> outVect, int width, int height)
         {
             Ray ray;
             float distance;
@@ -67,8 +67,7 @@ namespace Swarm_Of_Iron_namespace
 
                     int2 coords = ConvertWorldToTexture(vect, width, height);
                     coords = DefineBounds(coords, width, height);
-                    outVect[i, 0] = coords[0];
-                    outVect[i, 1] = coords[1];
+                    outVect[i] = coords;
                 }
             }
         }

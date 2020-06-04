@@ -69,7 +69,7 @@ namespace Swarm_Of_Iron_namespace
             };
 
             var raycatsHit = new Unity.Physics.RaycastHit();
-            RaycastHelper.SingleRaycast(collisionWorldSystem, raycastInput, ref raycatsHit);
+            RaycastHelpers.SingleRaycast(collisionWorldSystem, raycastInput, ref raycatsHit);
               
             return raycatsHit.Entity;
         }
