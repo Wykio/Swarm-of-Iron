@@ -8,6 +8,7 @@ using Unity.Mathematics;
 
 namespace Swarm_Of_Iron_namespace
 {
+    [UpdateAfter(typeof(MiniMapSystem))]
     public class RenderTextureSystem : ComponentSystem
     {
         protected override void OnUpdate()

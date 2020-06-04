@@ -71,6 +71,8 @@ namespace Swarm_Of_Iron_namespace
         // Start is called before the first frame update
         private void Start()
         {
+            DefaultWorldInitialization.Initialize("SwarmOfIron", false);
+            
             //Init entityManager
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
