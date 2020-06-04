@@ -13,6 +13,8 @@ namespace Swarm_Of_Iron_namespace
         [ReadOnly] public float deltatime;
         [ReadOnly] public int m_width, m_height, MAX_VALUE;
         [ReadOnly] public NativeArray<int> dijkstraGridBase;
+        [NativeDisableParallelForRestriction] public NativeArray<int> m_dijkstraGrid;
+        [NativeDisableParallelForRestriction] public NativeArray<float2> flowField;
 
         public struct Neighbour
         {
@@ -30,7 +32,8 @@ namespace Swarm_Of_Iron_namespace
                 if (target[0] != coords[0] || target[1] != coords[1])
                 {
 
-                    NativeArray<int> dijkstraGrid = new NativeArray<int>(dijkstraGridBase, Allocator.Temp);
+                    NativeArray<int> dijkstraGrid = new NativeArray<int>(dijkstraGridBase.Length, Allocator.Temp);
+                    dijkstraGrid.CopyFrom(dijkstraGridBase);
                     NativeArray<int2> neighbours = new NativeArray<int2>(4, Allocator.Temp);
 
                     /* STEP 2 - Explore all node to construct Dijkstra Grid */
@@ -55,7 +58,7 @@ namespace Swarm_Of_Iron_namespace
 
                             //We will only ever visit every node once as we are always visiting nodes in the most efficient order
                             var dist = toVisit[i].distance + 1;
-                            if (dijkstraGrid[n[0] + (n[1] * m_width)] == -1 || dijkstraGrid[n[0] + (n[1] * m_width)] > dist)
+                            if (dijkstraGrid[n[0] + (n[1] * m_width)] == -1)
                             {
                                 dijkstraGrid[n[0] + (n[1] * m_width)] = dist;
                                 toVisit[toVisitIndex++] = new Neighbour { position = n, distance = dist };
@@ -64,45 +67,14 @@ namespace Swarm_Of_Iron_namespace
                     }
                     toVisit.Dispose();
 
-                    /* STEP 2.5 - DEBUG DIJKSTRA */
-
-                    // JobHandle four = Entities
-                    //     .WithAll<MiniMapComponent>()
-                    //     .ForEach((DynamicBuffer<RenderTexture> buffer) =>
-                    //     {
-                    //         NativeArray<RenderTexture> colorArray = new NativeArray<RenderTexture>(m_width * m_height, Allocator.Temp);
-                    //         Color color;
-
-                    //         for (var x = 0; x < m_width; x++)
-                    //         {
-                    //             for (var y = 0; y < m_width; y++)
-                    //             {
-                    //                 float val = dijkstraGrid[x + y * m_width];
-
-                    //                 if (dijkstraGrid[x + y * m_width] < 0) color = new Color(0.0f, 0.0f, 1.0f, 1.0f);
-                    //                 else {
-                    //                   var tmp = val / 50;
-                    //                   if (MAX_VALUE <= val) color = new Color(0.0f, 0.0f, 0.0f, 1.0f);
-                    //                   else color = new Color(tmp, 1.0f - tmp, 0.0f, 1.0f);
-                    //                 }
-                    //                 colorArray[x + y * m_width] = new RenderTexture { Value = color };
-                    //             }
-                    //         }
-
-                    //         buffer.CopyFrom(colorArray);
-                    //         colorArray.Dispose();
-                    // }).Schedule(Two);
-                    // four.Complete();
-
                     /* STEP 3 - With Dijkstra Grid construct FlowField (array of dir vector) */
 
-                    NativeArray<float2> flowField = new NativeArray<float2>(m_width * m_height, Allocator.Temp);
                     neighbours = new NativeArray<int2>(8, Allocator.Temp);
 
-                    int marg = 5;
-                    int padd = 4;
-                    int baseX = (int)math.floor(coords[0] / marg) * marg;
-                    int baseY = (int)math.floor(coords[1] / marg) * marg;
+                    int marg = m_width;//2;
+                    int padd = 0;//1;
+                    int baseX = 0;//(int)math.floor(coords[0] / marg) * marg;
+                    int baseY = 0;//(int)math.floor(coords[1] / marg) * marg;
                     for (var x = baseX - padd; x < baseX + marg + padd; x++) {
                         for (var y = baseY - padd; y < baseY + marg + padd; y++) {
                             int index = x + y * m_width;
@@ -120,6 +92,7 @@ namespace Swarm_Of_Iron_namespace
                                 for (var j = 0; j < neighbours.Length; j++)
                                 {
                                     int2 n = neighbours[j];
+                                    if (dijkstraGrid[n[0] + (n[1] * m_width)] == MAX_VALUE) continue;
                                     float dist = dijkstraGrid[n[0] + (n[1] * m_width)] - dijkstraGrid[index];
 
                                     if (dist < minDist)
@@ -141,21 +114,8 @@ namespace Swarm_Of_Iron_namespace
 
                     flowField[target[0] + (target[1] * m_width)] = new float2(0.0f, 0.0f);
 
+                    m_dijkstraGrid.CopyFrom(dijkstraGrid);
                     dijkstraGrid.Dispose();
-
-                    /* STEP 3.5 - DEBUG FLOWFIELD */
-
-                    // for (var i = 0; i < m_width; i++) {
-                    //     for (var j = 0; j < m_height; j++) {
-                    //         float x = ((i * 500) / 100) - 250;
-                    //         float z = (((j) * 500) / 100) - 250;
-
-                    //         float2 dir = flowField[i + j * m_width];
-                    //         Vector3 direction = new Vector3(dir[0], 0, dir[1]);
-                    //         Debug.DrawRay(new Vector3(x, 5, z), direction, Color.green);
-                    //         Debug.DrawRay(new Vector3(x + dir[0], 5, z + dir[1]), direction, Color.red);
-                    //     }
-                    // }
 
                     /* STEP 4 -  */
 
@@ -200,7 +160,7 @@ namespace Swarm_Of_Iron_namespace
                     translation.Value.x += desiredVelocity[0] * deltatime;
                     translation.Value.z += desiredVelocity[1] * deltatime;
 
-                    flowField.Dispose();
+                    // flowField.Dispose();
                 }
                 else
                 {

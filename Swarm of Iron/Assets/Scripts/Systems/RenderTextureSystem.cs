@@ -33,18 +33,22 @@ namespace Swarm_Of_Iron_namespace
                 if (buffer.Capacity > buffer.Length)
                     buffer.TrimExcess();
 
-                Texture2D tex = new Texture2D(100, 100);
-                tex.SetPixels(buffer.Reinterpret<Color>().AsNativeArray().ToArray());
-                tex.Apply();
-
-                tex.wrapMode = TextureWrapMode.Clamp;
-
-                RectComponent p = pos;
-                Camera.onPostRender += (Camera camera) =>
+                Texture2D tex = new Texture2D(50, 50);
+                Color[] colorArray = buffer.Reinterpret<Color>().AsNativeArray().ToArray();
+                if (colorArray.Length == tex.width * tex.height)
                 {
-                    if (tex != null)
-                        Graphics.DrawTexture(new Rect(p.x, p.y, p.width, p.height), tex);
-                };
+                    tex.SetPixels(colorArray);
+                    tex.Apply();
+
+                    tex.wrapMode = TextureWrapMode.Clamp;
+
+                    RectComponent p = pos;
+                    Camera.onPostRender += (Camera camera) =>
+                    {
+                        if (tex != null)
+                            Graphics.DrawTexture(new Rect(p.x, p.y, p.width, p.height), tex);
+                    };
+                }
             });
 
             Camera.onPostRender += (Camera camera) =>

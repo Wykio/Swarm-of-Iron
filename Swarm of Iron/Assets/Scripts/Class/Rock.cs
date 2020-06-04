@@ -33,7 +33,7 @@ namespace Swarm_Of_Iron_namespace
         static public void SpawnRock()
         {
             float spawnAreaRange = Swarm_Of_Iron.instance.spawnAreaRange;
-            SpawnRock(new float3(UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange), 1.0f, UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange)));
+            SpawnRock(new float3(UnityEngine.Random.Range(0, 10) * (spawnAreaRange / 10) - (spawnAreaRange / 2), 1.0f, UnityEngine.Random.Range(0, 10) * (spawnAreaRange / 10) - (spawnAreaRange / 2)));
         }
 
         static public void SpawnRock(int amount)
@@ -52,6 +52,7 @@ namespace Swarm_Of_Iron_namespace
                 typeof(RockComponent),
                 typeof(Translation),
                 typeof(Rotation),
+                typeof(Scale),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
                 typeof(RenderBounds),
@@ -62,8 +63,12 @@ namespace Swarm_Of_Iron_namespace
 
             Mesh mesh = Rock.GenerateRockMesh();
 
+            var u = 500 / 50;
+            var scale = u / mesh.bounds.size.x;
+
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
             entityManager.SetComponentData(entity, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
+            entityManager.SetComponentData(entity, new Scale { Value = scale });
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {
                 mesh = mesh,
