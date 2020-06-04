@@ -13,7 +13,7 @@ namespace Swarm_Of_Iron_namespace
         const int mapWidth = 500;
         const int mapHeight = 500;
 
-        public static int2 ConvertWorldToTexture(float3 vect, int width, int height)
+        public static int2 ConvertWorldCoord(float3 vect, int width, int height)
         {
             // Enlever les chiffres negatif
             int transX = (int)vect.x + (mapWidth / 2);
