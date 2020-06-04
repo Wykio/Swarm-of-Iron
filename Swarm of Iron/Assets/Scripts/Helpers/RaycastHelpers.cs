@@ -5,7 +5,7 @@ using Unity.Jobs;
 using Unity.Physics;
 
 namespace Swarm_Of_Iron_namespace {
-    public class RaycastHelper {
+    public class RaycastHelpers {
         public struct RaycastJob : IJobParallelFor {
 
             [ReadOnly] public CollisionWorld m_collisionWorld;
