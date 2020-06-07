@@ -31,6 +31,11 @@ namespace Swarm_Of_Iron_namespace
         public Material soldierMaterial; // materiaux pour les soldats
         public int spawnSoldierAmount = 10; //nombre d'unité à spawn
 
+        [Header("Enemie Soldiers Attributes")]
+        public Mesh EsoldierMesh; // mesh pour les soldats
+        public Material EsoldierMaterial; // materiaux pour les soldats
+        public int EspawnSoldierAmount = 10; //nombre d'unité à spawn
+
         [Header("Woods Attributes")]
         public Mesh leafMesh; // mesh pour les soldats
         public Material leafMaterial; // materiaux pour les soldats
@@ -91,6 +96,9 @@ namespace Swarm_Of_Iron_namespace
             //spawn some soldiers
             Soldier.init();
             CustomEntity.SpawnEntitiesAtRandomPosition(typeof(Soldier), spawnSoldierAmount);
+            //spawn Enemie soldiers
+            E_Soldier.init();
+            CustomEntity.SpawnEntitiesAtRandomPosition(typeof(E_Soldier), EspawnSoldierAmount);
 
             MiniMap.SpawnMiniMap();
 
