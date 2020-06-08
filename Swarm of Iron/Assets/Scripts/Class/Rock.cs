@@ -26,14 +26,18 @@ namespace SOI
     }
 }
 
-namespace SOI {
-    static public class Rock {
+namespace SOI
+{
+    static public class Rock
+    {
 
-        public static float3 GetRandomPosition(float sizeArea) {
+        public static float3 GetRandomPosition(float sizeArea)
+        {
             return new float3(UnityEngine.Random.Range(0, 10) * (sizeArea / 10) - (sizeArea / 2), 1.0f, UnityEngine.Random.Range(0, 10) * (sizeArea / 10) - (sizeArea / 2));
         }
 
-        static public EntityArchetype GetArchetype()  {
+        static public EntityArchetype GetArchetype()
+        {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
                 typeof(RockComponent),
@@ -47,25 +51,28 @@ namespace SOI {
             );
         }
 
-        static public void SetEntity(Entity e, float3 position) {
+        static public void SetEntity(Entity e, float3 position)
+        {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
 
             Mesh mesh = Rock.GenerateRockMesh();
 
             var mapSize = 500;
-            var cellSize = 50;
+            var cellSize = 250; // 50;
             var scale = (mapSize / cellSize) / mesh.bounds.size.x;
 
             entityManager.SetComponentData(e, new Translation { Value = position });
             entityManager.SetComponentData(e, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
             entityManager.SetComponentData(e, new Scale { Value = scale });
-            entityManager.SetSharedComponentData(e, new RenderMesh {
+            entityManager.SetSharedComponentData(e, new RenderMesh
+            {
                 mesh = mesh,
                 material = SwarmOfIron.Instance.rockMaterial
             });
 
             BlobAssetReference<Unity.Physics.Collider> collider = Unity.Physics.BoxCollider.Create(
-                new BoxGeometry {
+                new BoxGeometry
+                {
                     Center = mesh.bounds.center,
                     Orientation = quaternion.identity,
                     Size = 5.0f,
@@ -74,23 +81,28 @@ namespace SOI {
             entityManager.SetComponentData(e, new PhysicsCollider { Value = collider });
         }
 
-        static public Mesh GenerateRockMesh() {
+        static public Mesh GenerateRockMesh()
+        {
             float offset = UnityEngine.Random.Range(0, 20);
 
             Mesh mesh = MeshExtensions.Copy(SwarmOfIron.Instance.rockMesh);
-            
+
             Vector3[] vertices = mesh.vertices;
             List<Vector3> doneVerts = new List<Vector3>();
-            for (int v = 0; v < vertices.Length; v++) {
-                if (!doneVerts.Contains(vertices[v])) {
+            for (int v = 0; v < vertices.Length; v++)
+            {
+                if (!doneVerts.Contains(vertices[v]))
+                {
                     Vector3 curVector = vertices[v];
                     doneVerts.Add(curVector);
 
                     int smoothing = UnityEngine.Random.Range(2, 4);
                     Vector3 changedVector = (curVector + (Vector3.Normalize(curVector) * (Mathf.PerlinNoise((float)v / offset, (float)v / offset) / smoothing)));
-                    
-                    for (int s = 0; s < vertices.Length; s++) {
-                        if (vertices[s] == curVector) {
+
+                    for (int s = 0; s < vertices.Length; s++)
+                    {
+                        if (vertices[s] == curVector)
+                        {
                             vertices[s] = changedVector;
                         }
                     }
@@ -98,7 +110,7 @@ namespace SOI {
             }
 
             mesh.vertices = vertices;
-            
+
             return mesh;
         }
     }

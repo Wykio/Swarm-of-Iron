@@ -8,7 +8,7 @@ using Unity.Transforms;
 using Unity.Rendering;
 
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     class E_Soldier
     {
@@ -38,10 +38,9 @@ namespace Swarm_Of_Iron_namespace
 
         static public EntityArchetype GetArchetype()
         {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
                 typeof(UnitComponent),
-                typeof(MoveToComponent),
                 typeof(Translation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
@@ -51,19 +50,14 @@ namespace Swarm_Of_Iron_namespace
 
         static public void SetEntity(Entity e, float3 position)
         {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
 
             entityManager.SetComponentData(e, new Translation { Value = position });
             entityManager.SetComponentData(e, new UnitComponent { animationSpeed = 0.5f });
-            entityManager.SetComponentData(e, new MoveToComponent
-            {
-                move = false,
-                moveSpeed = 10.0f
-            });
             entityManager.SetSharedComponentData(e, new RenderMesh
             {
-                mesh = Swarm_Of_Iron.instance.EsoldierMesh,
-                material = Swarm_Of_Iron.instance.EsoldierMaterial
+                mesh = SwarmOfIron.Instance.EsoldierMesh,
+                material = SwarmOfIron.Instance.EsoldierMaterial
             });
         }
 
@@ -99,6 +93,6 @@ namespace Swarm_Of_Iron_namespace
         {
             return Quaternion.Euler(0.0f, angle, 0.0f) * vector;
         }
-    
+
     }
 }

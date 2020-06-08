@@ -7,22 +7,26 @@ using Unity.Mathematics;
 using Unity.Burst;
 using Unity.Physics;
 
-namespace SOI {
+namespace SOI
+{
     [UpdateInGroup(typeof(MoveLogicGroup))]
     [UpdateAfter(typeof(UpdateMoveToSystem))]
-    public class FlowFieldSystem : JobComponentSystem {
+    public class FlowFieldSystem : JobComponentSystem
+    {
         private const int width = 50, height = 50, MAX_VALUE = 500;
 
         private EntityQuery _Obstacle;
 
         private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
 
-        protected override void OnCreate() {
+        protected override void OnCreate()
+        {
             _Obstacle = GetEntityQuery(ComponentType.ReadOnly<PhysicsCollider>(), ComponentType.ReadOnly<Translation>());
             endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
-        protected override JobHandle OnUpdate(JobHandle inputDeps) {
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        {
             /* STEP 1 - Initialiser Dijkstra Grid */
 
             NativeArray<int> dijkstraGridBase = new NativeArray<int>(width * height, Allocator.TempJob);
@@ -30,8 +34,10 @@ namespace SOI {
 
             EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-            JobHandle jobHandle = Entities.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<PathPosition> pathPositionBuffer, ref PathFollow pathFollow, in Translation translation, in MoveToComponent moveTo) => {
-                if (!pathFollow.move) {
+            JobHandle jobHandle = Entities.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<PathPosition> pathPositionBuffer, ref PathFollow pathFollow, in Translation translation, in MoveToComponent moveTo) =>
+            {
+                if (!pathFollow.move)
+                {
                     pathFollow.move = true;
 
                     int2 position = MiniMapHelpers.ConvertWorldCoord(translation.Value, width, height);

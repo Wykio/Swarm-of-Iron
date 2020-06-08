@@ -8,23 +8,28 @@ using Unity.Transforms;
 using Unity.Rendering;
 
 
-namespace SOI {
-    public static class Soldier {
+namespace SOI
+{
+    public static class Soldier
+    {
 
         public static List<float3> movePositionList;
-        
+
         //Initialise Positions Arrays for units
-        static public void init() {
+        static public void init()
+        {
             float[] ringDistancesArray;
             int[] unitsPerRingArray;
             List<float> ringDistancesList = new List<float>();
-            for (int i = 3; i < 3333; i += 3) {
+            for (int i = 3; i < 3333; i += 3)
+            {
                 ringDistancesList.Add((float)i);
             }
             ringDistancesArray = ringDistancesList.ToArray();
 
             List<int> unitsPerRingList = new List<int>();
-            for (int i = 8; i < 2500; i += 4) {
+            for (int i = 8; i < 2500; i += 4)
+            {
                 unitsPerRingList.Add(i);
             }
             unitsPerRingArray = unitsPerRingList.ToArray();
@@ -32,12 +37,13 @@ namespace SOI {
             movePositionList = GetPositionListAround(new float3(0.0f, 0.0f, 0.0f), ringDistancesArray, unitsPerRingArray);
         }
 
-        static public EntityArchetype GetArchetype()  {
+        static public EntityArchetype GetArchetype()
+        {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
                 typeof(UnitComponent),
-                typeof(PathPosition),
-                typeof(PathFollow),
+                // typeof(PathPosition),
+                // typeof(PathFollow),
                 typeof(Translation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
@@ -45,13 +51,15 @@ namespace SOI {
             );
         }
 
-        static public void SetEntity(Entity e, float3 position) {
+        static public void SetEntity(Entity e, float3 position)
+        {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
 
             entityManager.SetComponentData(e, new Translation { Value = position });
             entityManager.SetComponentData(e, new UnitComponent { animationSpeed = 0.5f });
-            entityManager.SetComponentData(e, new PathFollow { move = false });
-            entityManager.SetSharedComponentData(e, new RenderMesh {
+            // entityManager.SetComponentData(e, new PathFollow { move = false });
+            entityManager.SetSharedComponentData(e, new RenderMesh
+            {
                 mesh = SwarmOfIron.Instance.soldierMesh,
                 material = SwarmOfIron.Instance.soldierMaterial
             });
