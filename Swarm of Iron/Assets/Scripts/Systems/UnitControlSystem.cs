@@ -187,7 +187,7 @@ namespace SOI
         public void ExecuteCurrentAction(string action) {
             if (action == "ArrowIcon") {
                 //move selected units
-                // MoveAllUnitSelected();
+                SwarmOfIron.Instance.updateMoveToSystem.Update();
             } else if (action == "HouseIcon") {
                 CustomEntity.SpawnEntityAtPosition(typeof(CityHall), UnitControlHelpers.GetMousePosition());
             }

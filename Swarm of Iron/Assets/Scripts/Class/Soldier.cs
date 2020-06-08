@@ -37,6 +37,7 @@ namespace SOI {
             return entityManager.CreateArchetype(
                 typeof(UnitComponent),
                 typeof(PathPosition),
+                typeof(PathFollow),
                 typeof(Translation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
@@ -49,6 +50,7 @@ namespace SOI {
 
             entityManager.SetComponentData(e, new Translation { Value = position });
             entityManager.SetComponentData(e, new UnitComponent { animationSpeed = 0.5f });
+            entityManager.SetComponentData(e, new PathFollow { move = false });
             entityManager.SetSharedComponentData(e, new RenderMesh {
                 mesh = SwarmOfIron.Instance.soldierMesh,
                 material = SwarmOfIron.Instance.soldierMaterial

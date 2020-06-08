@@ -7,21 +7,17 @@ using Unity.Physics;
 namespace SOI {
     public class Flowfield {
 
-        public static void Construct(NativeArray<int2> flowField, NativeArray<int> dijkstraGrid, int2 position, int2 target, int _width, int _height, int _max) {
-            int marg = 2;
-            int padd = 1;
-            int baseX = (int)math.floor(position[0] / marg) * marg;
-            int baseY = (int)math.floor(position[1] / marg) * marg;
+        public static void Construct(NativeArray<int2> flowfield, in NativeArray<int> dijkstraGrid, in int2 position, in int2 target, in int _width, in int _height, in int _max) {
 
-            for (var x = baseX - padd; x < baseX + marg + padd; x++) {
-                for (var y = baseY - padd; y < baseY + marg + padd; y++) {
+            for (var x = 0; x < _width; x++) {
+                for (var y = 0; y < _height; y++) {
                     int index = x + y * _width;
 
                     if (dijkstraGrid[index] != _max) {
                         int2 pos = new int2(x, y);
 
                         NativeArray<int2> neighbours = new NativeArray<int2>(8, Allocator.Temp);
-                        allNeighboursOf(pos, baseX - padd, baseY - padd, marg + (padd * 2), neighbours);
+                        allNeighboursOf(pos, 0, 0, _width, neighbours);
 
                         int2 min = new int2(0, 0);
                         float minDist = _max;
@@ -35,29 +31,25 @@ namespace SOI {
                             }
                         }
 
-                        if (minDist < _max) flowField[index] = new int2(math.normalize(min - pos));
+                        if (minDist < _max) flowfield[index] = new int2(math.normalize(min - pos));
                         neighbours.Dispose();
                     }
                 }
             }
 
-            flowField[target[0] + (target[1] * _width)] = new int2(0, 0);
+            flowfield[target[0] + (target[1] * _width)] = new int2(0, 0);
         }
 
-        private static void allNeighboursOf(int2 pos, int top, int left, int size, NativeArray<int2> res)
-        {
+        public static void allNeighboursOf(int2 pos, int top, int left, int size, NativeArray<int2> res) {
             var index = 0;
 
-            for (var dx = -1; dx <= 1; dx++)
-            {
-                for (var dy = -1; dy <= 1; dy++)
-                {
+            for (var dx = -1; dx <= 1; dx++) {
+                for (var dy = -1; dy <= 1; dy++) {
                     var x = pos[0] + dx;
                     var y = pos[1] + dy;
 
                     //All neighbours on the grid that aren't ourself
-                    if (x >= top && y >= left && x < top + size && y < left + size && !(dx == 0 && dy == 0))
-                    {
+                    if (x >= top && y >= left && x < top + size && y < left + size && !(dx == 0 && dy == 0)) {
                         res[index++] = new int2(x, y);
                     }
                 }

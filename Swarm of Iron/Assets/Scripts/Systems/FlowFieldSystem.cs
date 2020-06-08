@@ -8,13 +8,18 @@ using Unity.Burst;
 using Unity.Physics;
 
 namespace SOI {
+    [UpdateInGroup(typeof(MoveLogicGroup))]
+    [UpdateAfter(typeof(UpdateMoveToSystem))]
     public class FlowFieldSystem : JobComponentSystem {
         private const int width = 50, height = 50, MAX_VALUE = 500;
 
         private EntityQuery _Obstacle;
 
+        private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
+
         protected override void OnCreate() {
             _Obstacle = GetEntityQuery(ComponentType.ReadOnly<PhysicsCollider>(), ComponentType.ReadOnly<Translation>());
+            endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps) {
@@ -23,8 +28,12 @@ namespace SOI {
             NativeArray<int> dijkstraGridBase = new NativeArray<int>(width * height, Allocator.TempJob);
             JobHandle dependency = Dijkstra.Construct(dijkstraGridBase, width, height, MAX_VALUE, _Obstacle, inputDeps);
 
-            JobHandle jobHandle = Entities.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<PathPosition> pathPositionBuffer, ref Translation translation, ref MoveToComponent moveTo) => {
-                if (moveTo.move < 0) {
+            EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
+
+            JobHandle jobHandle = Entities.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<PathPosition> pathPositionBuffer, ref PathFollow pathFollow, in Translation translation, in MoveToComponent moveTo) => {
+                if (!pathFollow.move) {
+                    pathFollow.move = true;
+
                     int2 position = MiniMapHelpers.ConvertWorldCoord(translation.Value, width, height);
                     int2 target = MiniMapHelpers.ConvertWorldCoord(moveTo.endPosition, width, height);
 
@@ -46,9 +55,11 @@ namespace SOI {
                     dijkstraGrid.Dispose();
                     flowfield.Dispose();
 
-                    moveTo.move = 20;
+                    entityCommandBuffer.RemoveComponent<MoveToComponent>(entityInQueryIndex, entity);
                 }
             }).Schedule(dependency);
+
+            endSimulationEntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
 
             return dijkstraGridBase.Dispose(jobHandle);
         }

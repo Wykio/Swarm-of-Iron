@@ -7,6 +7,7 @@ using Unity.Rendering;
 using Unity.Mathematics;
 
 namespace SOI {
+    [UpdateInGroup(typeof(MiniMapLogicGroup))]
     [UpdateAfter(typeof(MiniMapSystem))]
     public class RenderTextureSystem : ComponentSystem {
 

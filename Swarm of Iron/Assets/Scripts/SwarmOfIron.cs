@@ -12,7 +12,8 @@ namespace SOI
     {
         //management des dépendences à revoir
         //instance du MonoBehaviour pour partager les attributs
-        public static SwarmOfIron Instance;
+        public static SwarmOfIron Instance { private set; get; }
+        public UpdateMoveToSystem updateMoveToSystem;
 
         //EntityManager
         public EntityManager entityManager;
@@ -71,8 +72,10 @@ namespace SOI
         private void Start() {
             DefaultWorldInitialization.Initialize("SwarmOfIron", false);
             
+            World w = World.DefaultGameObjectInjectionWorld;
             //Init entityManager
-            entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            entityManager = w.EntityManager;
+            updateMoveToSystem = w.GetOrCreateSystem<UpdateMoveToSystem>();
 
             //create selection Mesh
             unitSelectedCircleMesh = SelectionMesh.CreateMesh();

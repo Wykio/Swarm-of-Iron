@@ -12,11 +12,11 @@ namespace SOI
     public struct RenderTexture : IBufferElementData
     {
         // These implicit conversions are optional, but can help reduce typing.
-        public static implicit operator Color(RenderTexture e) { return e.Value; }
-        public static implicit operator RenderTexture(Color e) { return new RenderTexture { Value = e }; }
+        public static implicit operator float4(RenderTexture e) { return e.Value; }
+        public static implicit operator RenderTexture(float4 e) { return new RenderTexture { Value = e }; }
 
         // Actual value each buffer element will store.
-        public Color Value;
+        public float4 Value;
 
     }
 }

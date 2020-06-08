@@ -3,6 +3,7 @@ using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Burst;
+using Unity.Physics;
 using Unity.Transforms;
 
 namespace SOI {
@@ -14,6 +15,7 @@ namespace SOI {
         }
 
         [BurstCompile]
+        [RequireComponentTagAttribute(typeof(PhysicsCollider))]
         struct InitDijkstraGridJob : IJobForEach<Translation> {
             [ReadOnly] public int _max, _width, _height;
             [NativeDisableParallelForRestriction] public NativeArray<int> _dijkstraGrid;
@@ -23,7 +25,7 @@ namespace SOI {
             }
         }
 
-        public static JobHandle Construct(NativeArray<int> dijkstraGridBase, int _width, int _height, int _max, EntityQuery _query, JobHandle dependency) {
+        public static JobHandle Construct(NativeArray<int> dijkstraGridBase, in int _width, in int _height, in int _max, in EntityQuery _query, JobHandle dependency) {
             for (var i = 0; i < dijkstraGridBase.Length; i++) dijkstraGridBase[i] = -1;
 
             return new InitDijkstraGridJob() {
@@ -34,7 +36,7 @@ namespace SOI {
             }.Schedule(_query, dependency);
         }
 
-        public static void Explore(NativeArray<int> dijkstraGrid, int2 target, int _width, int _height) {
+        public static void Explore(NativeArray<int> dijkstraGrid, in int2 target, in int _width, in int _height) {
             Neighbour pathEnd = new Neighbour { position = target, distance = 0 };
             dijkstraGrid[target[0] + (target[1] * _width)] = 0;
 
@@ -60,8 +62,7 @@ namespace SOI {
             toVisit.Dispose();
         }
 
-        private static void straightNeighboursOf(int2 pos, int size, NativeArray<int2> res)
-        {
+        public static void straightNeighboursOf(int2 pos, int size, NativeArray<int2> res) {
             var index = 0;
 
             if (pos[0] > 0) res[index++] = new int2(pos[0] - 1, pos[1]);

@@ -8,6 +8,7 @@ using Unity.Jobs;
 using Unity.Burst;
 
 namespace SOI {
+    [UpdateInGroup(typeof(MiniMapLogicGroup))]
     public class MiniMapSystem : JobComponentSystem {
 
         private const int width = 100, height = 100;

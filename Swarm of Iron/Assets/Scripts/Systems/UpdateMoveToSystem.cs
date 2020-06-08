@@ -5,8 +5,8 @@ using Unity.Mathematics;
 using Unity.Jobs;
 
 namespace SOI {
-
-    [UpdateAfter(typeof(UnitControlSystem))]
+    [UpdateInGroup(typeof(MoveLogicGroup))]
+    [DisableAutoCreation]
     public class UpdateMoveToSystem : JobComponentSystem {
         
         private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
@@ -29,13 +29,11 @@ namespace SOI {
             
             EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-            JobHandle jobHandle = Entities.WithAll<UnitSelectedComponent>().WithNone<MoveToComponent>().ForEach((Entity entity, int entityInQueryIndex, in Translation translation) => {
-                if (math.distance(translation.Value, targetPosition) >= 1f) {
+            JobHandle jobHandle = Entities.WithAll<UnitSelectedComponent>().WithNone<MoveToComponent>().ForEach((Entity entity, int entityInQueryIndex, in Translation translation, in PathFollow pathFollow) => {
+                if (!pathFollow.move) {
                     entityCommandBuffer.AddComponent(entityInQueryIndex, entity, new MoveToComponent {
-                        harvest = harvest,
                         startPosition = translation.Value,
-                        endPosition = targetPosition,
-                        move = -1
+                        endPosition = targetPosition
                     });
                 }
             }).Schedule(inputDeps);
