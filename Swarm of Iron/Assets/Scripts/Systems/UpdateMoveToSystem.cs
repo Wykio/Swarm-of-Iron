@@ -40,7 +40,7 @@ namespace SOI
                 {
                     harvest = harvest,
                     startPosition = translation.Value,
-                    endPosition = movePositionList[entityInQueryIndex] + targetPosition
+                    endPosition = (!harvest ? movePositionList[entityInQueryIndex] : 0) + targetPosition
                 });
             }).Schedule(inputDeps);
 

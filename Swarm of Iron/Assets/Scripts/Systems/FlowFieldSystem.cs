@@ -11,6 +11,7 @@ namespace SOI
 {
     [UpdateInGroup(typeof(MoveLogicGroup))]
     [UpdateAfter(typeof(UpdateMoveToSystem))]
+    [DisableAutoCreation]
     public class FlowFieldSystem : JobComponentSystem
     {
         private const int width = 50, height = 50, MAX_VALUE = 500;

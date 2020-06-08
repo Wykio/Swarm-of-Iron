@@ -8,6 +8,8 @@ using Unity.Mathematics;
 
 namespace SOI
 {
+    [UpdateInGroup(typeof(MoveLogicGroup))]
+    [UpdateAfter(typeof(UnitMovingSystem))]
     public class UnitAnimationSystem : JobComponentSystem
     {
         // This is the right way to write a JobSystem
