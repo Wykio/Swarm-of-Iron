@@ -5,7 +5,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public static class MiniMapHelpers
     {
@@ -13,7 +13,7 @@ namespace Swarm_Of_Iron_namespace
         const int mapWidth = 500;
         const int mapHeight = 500;
 
-        public static int2 ConvertWorldToTexture(float3 vect, int width, int height)
+        public static int2 ConvertWorldCoord(float3 vect, int width, int height)
         {
             // Enlever les chiffres negatif
             int transX = (int)vect.x + (mapWidth / 2);
@@ -23,16 +23,21 @@ namespace Swarm_Of_Iron_namespace
             int x = (transX * width) / mapWidth;
             int y = (transZ * height) / mapHeight;
 
-            return new int2(x, height -  1 - y);
+            return new int2(x, y);
+        }
+
+        public static int2 ConvertWorldToTexture(float3 vect, int width, int height)
+        {
+            // Enlever les chiffres negatif
+            int2 coords = ConvertWorldCoord(vect, width, height);
+
+            return new int2(coords[0], height - 1 - coords[1]);
         }
 
         public static int2 DefineBounds(int2 coords, int width, int height)
         {
-            coords[0] = math.max(coords[0], 0);
-            coords[1] = math.max(coords[1], 0);
-
-            coords[0] = math.min(coords[0], width - 1);
-            coords[1] = math.min(coords[1], height - 1);
+            coords[0] = math.clamp(coords[0], 0, width - 1);
+            coords[1] = math.clamp(coords[1], 0, height - 1);
 
             return coords;
         }
@@ -55,7 +60,7 @@ namespace Swarm_Of_Iron_namespace
                 ray = Camera.main.ViewportPointToRay(points[i]);
                 if (plane.Raycast(ray, out distance))
                 {
-                    Vector3 vect = ray.GetPoint(distance);
+                    float3 vect = ray.GetPoint(distance);
 
                     int2 coords = ConvertWorldToTexture(vect, width, height);
                     coords = DefineBounds(coords, width, height);
@@ -65,7 +70,7 @@ namespace Swarm_Of_Iron_namespace
         }
 
         // Algorithme de tracé de segment de Bresenham (schooding tracé de ligne générique)
-        public static void DrawLine(NativeArray<RenderTexture> colorArray, int width, int height, int xA, int yA, int xB, int yB, RenderTexture color)
+        public static void DrawLine(NativeArray<float4> colorArray, int width, int height, int xA, int yA, int xB, int yB, float4 color)
         {
             int size = width * height;
 

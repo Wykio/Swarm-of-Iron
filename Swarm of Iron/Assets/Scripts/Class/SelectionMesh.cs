@@ -6,7 +6,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public static class SelectionMesh
     {
@@ -52,7 +52,7 @@ namespace Swarm_Of_Iron_namespace
 
         public static void AddEntitySelectionMesh(Entity entityParent)
         {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
                 typeof(SelectionMeshComponent),
                 typeof(LocalToWorld),
@@ -69,8 +69,8 @@ namespace Swarm_Of_Iron_namespace
             entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
             entityManager.SetSharedComponentData(entity, new RenderMesh
             {
-                mesh = Swarm_Of_Iron.instance.unitSelectedCircleMesh,
-                material = Swarm_Of_Iron.instance.unitSelectedCircleMaterial
+                mesh = SwarmOfIron.Instance.unitSelectedCircleMesh,
+                material = SwarmOfIron.Instance.unitSelectedCircleMaterial
             });
         }
     }

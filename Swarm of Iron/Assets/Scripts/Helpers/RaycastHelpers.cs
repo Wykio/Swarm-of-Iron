@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Physics;
 
-namespace Swarm_Of_Iron_namespace {
+namespace SOI {
     public class RaycastHelpers {
         public struct RaycastJob : IJobParallelFor {
 

@@ -6,13 +6,14 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
-    public class Swarm_Of_Iron : MonoBehaviour
+    public class SwarmOfIron : MonoBehaviour
     {
         //management des dépendences à revoir
         //instance du MonoBehaviour pour partager les attributs
-        public static Swarm_Of_Iron instance;
+        public static SwarmOfIron Instance { private set; get; }
+        public UpdateMoveToSystem updateMoveToSystem;
 
         //EntityManager
         public EntityManager entityManager;
@@ -44,7 +45,7 @@ namespace Swarm_Of_Iron_namespace
         public int spawnWoodAmount = 1; //nombre d'unité à spawn
 
         [Header("Rock Attributes")]
-        public Mesh sphereMesh;
+        public Mesh rockMesh;
         public Material rockMaterial;
         public int spawnRockAmount = 1;
 
@@ -67,19 +68,19 @@ namespace Swarm_Of_Iron_namespace
         public List<GameObject> listButtonGO;
         public List<Texture2D> layers;
 
-        private void Awake()
-        {
+        private void Awake() {
             //management des dépendences à revoir
-            instance = this;
+            Instance = this;
         }
 
         // Start is called before the first frame update
-        private void Start()
-        {
+        private void Start() {
             DefaultWorldInitialization.Initialize("SwarmOfIron", false);
             
+            World w = World.DefaultGameObjectInjectionWorld;
             //Init entityManager
-            entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            entityManager = w.EntityManager;
+            updateMoveToSystem = w.GetOrCreateSystem<UpdateMoveToSystem>();
 
             //create selection Mesh
             unitSelectedCircleMesh = SelectionMesh.CreateMesh();

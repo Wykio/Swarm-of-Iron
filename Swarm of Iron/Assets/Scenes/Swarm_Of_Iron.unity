@@ -450,7 +450,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 493064366}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fce485dc98c478941a1e9d9f0e741c80, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a5132ccd6c5f7728ba339cf0dc08a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAreaRange: 50
@@ -468,7 +468,7 @@ MonoBehaviour:
   trunkMesh: {fileID: 4300006, guid: c52a1ad28de5ec447a225e11be0fe132, type: 3}
   trunkMaterial: {fileID: 2100000, guid: 94387ac3fe852d549966d245def277be, type: 2}
   spawnWoodAmount: 5
-  sphereMesh: {fileID: 4300000, guid: 71bb44319f15e0741846c4fad009f013, type: 3}
+  rockMesh: {fileID: 4300000, guid: 71bb44319f15e0741846c4fad009f013, type: 3}
   rockMaterial: {fileID: 2100000, guid: a9cb62bf9aa1500a2ba3e1e6566b0057, type: 2}
   spawnRockAmount: 10
   CityHallMesh: {fileID: -2432090755550338912, guid: 52f9f800d73d4064a8e3265881252889,
@@ -1386,6 +1386,11 @@ PrefabInstance:
         type: 3}
       propertyPath: mapLimit.z
       value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 5684794827389571727, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
+        type: 3}
+      propertyPath: fastSpeed
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5684794827644384209, guid: 0b37b56c7d719ab4389420a5f7b30e3b,
         type: 3}
