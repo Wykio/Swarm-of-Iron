@@ -6,7 +6,22 @@ ModelImporter:
   - first:
       74: -203655887218126122
     second: mixamo.com
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mutant_M
+    second: {fileID: 2100000, guid: 079bb76ec73fdfd4f9d07c8205bb6484, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Mutant_diffuse
+    second: {fileID: 2800000, guid: 26cd1a5719adb6540b6270ee6be30d25, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: Mutant_normal
+    second: {fileID: 2800000, guid: cb7ebed3d96e01a4e874b99a0390cbf8, type: 3}
   materials:
     materialImportMode: 1
     materialName: 0

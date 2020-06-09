@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: RockSurface
-  m_Shader: {fileID: 4800000, guid: b6ce3ebc9d0c9324eb2ac142a0a03011, type: 3}
+  m_Shader: {fileID: 4800000, guid: 2fb0cdce8870b2753965f78c7de1c3c1, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
