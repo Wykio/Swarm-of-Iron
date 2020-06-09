@@ -50,7 +50,7 @@ namespace Swarm_Of_Iron_namespace
             return mesh;
         }
 
-        public static void AddEntitySelectionMesh(Entity entityParent)
+        public static void AddEntitySelectionMesh(Entity entityParent, bool isBuilding)
         {
             EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
@@ -67,11 +67,24 @@ namespace Swarm_Of_Iron_namespace
 
             entityManager.SetComponentData(entity, new Parent { Value = entityParent });
             entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
-            entityManager.SetSharedComponentData(entity, new RenderMesh
+            if (!isBuilding)
             {
-                mesh = Swarm_Of_Iron.instance.unitSelectedCircleMesh,
-                material = Swarm_Of_Iron.instance.unitSelectedCircleMaterial
-            });
+                entityManager.SetSharedComponentData(entity, new RenderMesh
+                {
+                    mesh = Swarm_Of_Iron.instance.unitSelectedCircleMesh,
+                    material = Swarm_Of_Iron.instance.unitSelectedCircleMaterial
+                });
+            }
+            else
+            {
+                Debug.Log("house selected !");
+                entityManager.SetSharedComponentData(entity, new RenderMesh
+                {
+                    mesh = Swarm_Of_Iron.instance.unitSelectedCircleMeshBIG,
+                    material = Swarm_Of_Iron.instance.unitSelectedCircleMaterial
+                });
+            }
+            
         }
     }
 }

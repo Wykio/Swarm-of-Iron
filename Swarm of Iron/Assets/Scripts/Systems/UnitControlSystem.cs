@@ -20,6 +20,7 @@ namespace Swarm_Of_Iron_namespace
         private List<Texture2D> layers;
         private int selectedEntityCount;
         private bool hasWorkerSelected;
+        private bool hasHubSelected;
         private string currentAction;
 
         protected override void OnUpdate() {
@@ -38,6 +39,7 @@ namespace Swarm_Of_Iron_namespace
                 Swarm_Of_Iron.instance.worldSelectionAreaTransform.localScale = new Vector3(20, 1, 20);
                 Swarm_Of_Iron.instance.selectionAreaTransform.localScale = new Vector3(0, 0, 0);
             }
+            
 
             // left click Up
             if (Input.GetMouseButtonUp(0) && !isUI) {
@@ -72,7 +74,13 @@ namespace Swarm_Of_Iron_namespace
 
                 // On récupère l'action & on met a jour
                 this.currentAction = ActionHelpers.GetAction(localActionCoord, this.layers);
-                ActionHelpers.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
+                ActionHelpers.UpdateActionUI(this.hasHubSelected, this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
+
+                if (this.currentAction == "PeonIcon")
+                {
+                    float3 spawnPosition = new Vector3(0, 0, 0);
+                    Worker.SpawnWorker(spawnPosition);
+                }
             } else {
                 isUI = false;
 
@@ -107,11 +115,12 @@ namespace Swarm_Of_Iron_namespace
 
             this.selectedEntityCount = 0;
             this.hasWorkerSelected = false;
+            //this.hasHubSelected = false;
             this.currentAction = "ArrowIcon";
 
             DeselectAllUnits();
             SelectedUnits();
-            ActionHelpers.UpdateActionUI(this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
+            ActionHelpers.UpdateActionUI(this.hasHubSelected, this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
         }
 
         private void OnRightClickDown() {
@@ -162,10 +171,17 @@ namespace Swarm_Of_Iron_namespace
                     // Entity inside selection area
                     PostUpdateCommands.AddComponent(entity, new UnitSelectedComponent());
                     this.selectedEntityCount++;
-                    SelectionMesh.AddEntitySelectionMesh(entity);
+
+                    if (EntityManager.HasComponent<CityHallComponent>(entity))
+                        SelectionMesh.AddEntitySelectionMesh(entity, true);                      
+                    else
+                        //SelectionMesh.AddEntitySelectionMesh(entity, false);
 
                     if (!this.hasWorkerSelected) {
                         this.hasWorkerSelected = EntityManager.HasComponent<WorkerComponent>(entity);
+                    }
+                    if (!this.hasHubSelected) {
+                        this.hasHubSelected = EntityManager.HasComponent<CityHallComponent>(entity);
                     }
                 }
             });
@@ -212,6 +228,9 @@ namespace Swarm_Of_Iron_namespace
                 MoveAllUnitSelected();
             } else if (action == "HouseIcon") {
                 CityHall.SpawnCityHall(UnitControlHelpers.GetMousePosition());
+            } else if (action == "PeonIcon") {
+                float3 spawnPosition = new Vector3(0, 0, 0);
+                Worker.SpawnWorker(spawnPosition);
             }
         }
 

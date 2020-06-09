@@ -11,7 +11,7 @@ namespace Swarm_Of_Iron_namespace
 {
     public static class ActionHelpers
     {
-        public static void UpdateActionUI(bool hasWorkerSelected, bool hasSoldierSelected, string action, ref List<Texture2D> layers)
+        public static void UpdateActionUI(bool hasHubSelected, bool hasWorkerSelected, bool hasSoldierSelected, string action, ref List<Texture2D> layers)
         {
             int actionIdx = -1;
 
@@ -28,6 +28,11 @@ namespace Swarm_Of_Iron_namespace
                 {
                     layers.Add(texture);
                     if (action == "HouseIcon") actionIdx = i;
+                }
+                else if (texture.name == "PeonIcon" && hasWorkerSelected)
+                {
+                    layers.Add(texture);
+                    if (action == "PeonIcon") actionIdx = i;
                 }
             }
 
