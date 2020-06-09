@@ -12,6 +12,7 @@ namespace SOI
 {
     class E_Soldier
     {
+
         public static List<float3> movePositionList;
 
         //Initialise Positions Arrays for units

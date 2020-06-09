@@ -98,7 +98,7 @@ namespace SOI
             Soldier.init();
             CustomEntity.SpawnEntitiesAtRandomPosition(typeof(Soldier), spawnSoldierAmount);
             //spawn Enemie soldiers
-            //E_Soldier.init();
+            E_Soldier.init();
             CustomEntity.SpawnEntitiesAtRandomPosition(typeof(E_Soldier), EspawnSoldierAmount);
 
             MiniMap.SpawnMiniMap();
