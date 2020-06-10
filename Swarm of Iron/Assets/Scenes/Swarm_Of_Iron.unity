@@ -453,7 +453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fce485dc98c478941a1e9d9f0e741c80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnAreaRange: 10
+  spawnAreaRange: 100
   workerMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   workerMaterial: {fileID: 2100000, guid: 8a59af476ad75e34b8b8e153a68314e6, type: 2}
   spawnWorkerAmount: 10
@@ -476,7 +476,6 @@ MonoBehaviour:
   worldSelectionAreaTransform: {fileID: 1400258129}
   selectionObj: {fileID: 477357248}
   unitSelectedCircleMesh: {fileID: 0}
-  unitSelectedCircleMeshBIG: {fileID: 0}
   unitSelectedCircleMaterial: {fileID: 2100000, guid: 753bccb4e4bca0149b19efd9dd5be33d,
     type: 2}
   cameraRig: {fileID: 1701617082}

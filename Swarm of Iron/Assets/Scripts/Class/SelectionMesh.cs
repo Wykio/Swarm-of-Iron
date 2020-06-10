@@ -59,6 +59,7 @@ namespace Swarm_Of_Iron_namespace
                 typeof(LocalToParent),
                 typeof(Parent),
                 typeof(Translation),
+                typeof(Scale),
                 typeof(RenderMesh),
                 typeof(RenderBounds)
             );
@@ -66,9 +67,10 @@ namespace Swarm_Of_Iron_namespace
             Entity entity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.SetComponentData(entity, new Parent { Value = entityParent });
-            entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
             if (!isBuilding)
             {
+                entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
+                entityManager.SetComponentData(entity, new Scale { Value = 2.0f });
                 entityManager.SetSharedComponentData(entity, new RenderMesh
                 {
                     mesh = Swarm_Of_Iron.instance.unitSelectedCircleMesh,
@@ -78,9 +80,11 @@ namespace Swarm_Of_Iron_namespace
             else
             {
                 Debug.Log("house selected !");
+                entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, 1.0f, 0.0f) });
+                entityManager.SetComponentData(entity, new Scale { Value = 500.0f });
                 entityManager.SetSharedComponentData(entity, new RenderMesh
                 {
-                    mesh = Swarm_Of_Iron.instance.unitSelectedCircleMeshBIG,
+                    mesh = Swarm_Of_Iron.instance.unitSelectedCircleMesh,
                     material = Swarm_Of_Iron.instance.unitSelectedCircleMaterial
                 });
             }

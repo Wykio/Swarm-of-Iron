@@ -54,7 +54,6 @@ namespace Swarm_Of_Iron_namespace
         public Transform worldSelectionAreaTransform;
         public GameObject selectionObj;
         public Mesh unitSelectedCircleMesh;
-        public Mesh unitSelectedCircleMeshBIG;
         public Material unitSelectedCircleMaterial;
         public GameObject cameraRig;
         public GameObject image;
@@ -76,8 +75,7 @@ namespace Swarm_Of_Iron_namespace
             entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
             //create selection Mesh
-            unitSelectedCircleMesh = SelectionMesh.CreateMesh(100.0f, 100.0f);
-            unitSelectedCircleMeshBIG = SelectionMesh.CreateMesh(100.0f, 100.0f);
+            unitSelectedCircleMesh = SelectionMesh.CreateMesh(1.0f, 1.0f);      
 
             //spawn some woods
             Wood.SpawnWood(spawnWoodAmount);

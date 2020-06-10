@@ -32,7 +32,7 @@ namespace Swarm_Of_Iron_namespace
             Entity entity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.SetComponentData(entity, new NonUniformScale { Value = new float3(0.05f, 0, 0.05f) });
+            entityManager.SetComponentData(entity, new NonUniformScale { Value = new float3(0.05f, 0.0f, 0.05f) });
             entityManager.SetComponentData(entity, new CityHallComponent {
                 ConstructionTime = 10.0f,
                 ConstructionState = 0,

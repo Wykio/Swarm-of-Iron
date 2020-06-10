@@ -29,7 +29,7 @@ namespace Swarm_Of_Iron_namespace
                     layers.Add(texture);
                     if (action == "HouseIcon") actionIdx = i;
                 }
-                else if (texture.name == "PeonIcon" && hasWorkerSelected)
+                else if (texture.name == "PeonIcon" && hasHubSelected)
                 {
                     layers.Add(texture);
                     if (action == "PeonIcon") actionIdx = i;

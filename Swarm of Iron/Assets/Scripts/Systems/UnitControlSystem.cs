@@ -76,11 +76,13 @@ namespace Swarm_Of_Iron_namespace
                 this.currentAction = ActionHelpers.GetAction(localActionCoord, this.layers);
                 ActionHelpers.UpdateActionUI(this.hasHubSelected, this.hasWorkerSelected, this.selectedEntityCount > 0, this.currentAction, ref this.layers);
 
-                if (this.currentAction == "PeonIcon")
+                if (hasHubSelected)
                 {
-                    float3 spawnPosition = new Vector3(0, 0, 0);
-                    Worker.SpawnWorker(spawnPosition);
+                    Debug.Log("hello PeonIcon");
+                    spawWorkers();
+                    //Worker.SpawnWorker(new float3(0, 0, 0));
                 }
+
             } else {
                 isUI = false;
 
@@ -115,7 +117,7 @@ namespace Swarm_Of_Iron_namespace
 
             this.selectedEntityCount = 0;
             this.hasWorkerSelected = false;
-            //this.hasHubSelected = false;
+            this.hasHubSelected = false;
             this.currentAction = "ArrowIcon";
 
             DeselectAllUnits();
@@ -175,7 +177,7 @@ namespace Swarm_Of_Iron_namespace
                     if (EntityManager.HasComponent<CityHallComponent>(entity))
                         SelectionMesh.AddEntitySelectionMesh(entity, true);                      
                     else
-                        //SelectionMesh.AddEntitySelectionMesh(entity, false);
+                        SelectionMesh.AddEntitySelectionMesh(entity, false);
 
                     if (!this.hasWorkerSelected) {
                         this.hasWorkerSelected = EntityManager.HasComponent<WorkerComponent>(entity);
@@ -227,11 +229,17 @@ namespace Swarm_Of_Iron_namespace
                 //move selected units
                 MoveAllUnitSelected();
             } else if (action == "HouseIcon") {
+                Debug.Log("hello HouseIcon");
                 CityHall.SpawnCityHall(UnitControlHelpers.GetMousePosition());
-            } else if (action == "PeonIcon") {
-                float3 spawnPosition = new Vector3(0, 0, 0);
-                Worker.SpawnWorker(spawnPosition);
             }
+        }
+
+        public void spawWorkers()
+        {
+            Entities.WithAll<CityHallComponent>().ForEach((ref Translation translation, ref UnitSelectedComponent unitSelectedComponent) => {
+                Worker.SpawnWorker(translation.Value + new float3(0,0,-20));
+                
+            });
         }
 
         public static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles) {
