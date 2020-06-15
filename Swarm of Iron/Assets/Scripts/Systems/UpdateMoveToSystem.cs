@@ -34,7 +34,7 @@ namespace SOI
 
             EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-            JobHandle jobHandle = Entities.WithAll<UnitSelectedComponent>().ForEach((Entity entity, int entityInQueryIndex, in Translation translation) =>
+            JobHandle jobHandle = Entities.WithAll<UnitSelectedComponent>().WithNone<CityHallComponent>().ForEach((Entity entity, int entityInQueryIndex, in Translation translation) =>
             {
                 entityCommandBuffer.AddComponent(entityInQueryIndex, entity, new MoveToComponent
                 {

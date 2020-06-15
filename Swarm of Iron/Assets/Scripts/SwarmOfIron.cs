@@ -83,7 +83,7 @@ namespace SOI
             updateMoveToSystem = w.GetOrCreateSystem<UpdateMoveToSystem>();
 
             //create selection Mesh
-            unitSelectedCircleMesh = SelectionMesh.CreateMesh();
+            unitSelectedCircleMesh = SelectionMesh.CreateMesh(1.0f, 1.0f);      
 
             //spawn some woods
             // Wood.SpawnWood(spawnWoodAmount);

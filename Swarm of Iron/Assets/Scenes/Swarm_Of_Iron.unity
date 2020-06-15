@@ -490,6 +490,7 @@ MonoBehaviour:
   layers:
   - {fileID: 2800000, guid: 6494baca2ed1b82ef97761526039fadd, type: 3}
   - {fileID: 2800000, guid: c8018bb241c766198af4e5706ebd8c6a, type: 3}
+  - {fileID: 2800000, guid: be0dd565ee028964eabf632ab51e3e9d, type: 3}
 --- !u!1 &556468207
 GameObject:
   m_ObjectHideFlags: 0

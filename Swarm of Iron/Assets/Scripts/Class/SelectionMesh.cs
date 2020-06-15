@@ -50,7 +50,7 @@ namespace SOI
             return mesh;
         }
 
-        public static void AddEntitySelectionMesh(Entity entityParent)
+        public static void AddEntitySelectionMesh(Entity entityParent, bool isBuilding)
         {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
@@ -59,6 +59,7 @@ namespace SOI
                 typeof(LocalToParent),
                 typeof(Parent),
                 typeof(Translation),
+                typeof(Scale),
                 typeof(RenderMesh),
                 typeof(RenderBounds)
             );
@@ -66,12 +67,27 @@ namespace SOI
             Entity entity = entityManager.CreateEntity(entityArchetype);
 
             entityManager.SetComponentData(entity, new Parent { Value = entityParent });
-            entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
-            entityManager.SetSharedComponentData(entity, new RenderMesh
+            if (!isBuilding)
             {
-                mesh = SwarmOfIron.Instance.unitSelectedCircleMesh,
-                material = SwarmOfIron.Instance.unitSelectedCircleMaterial
-            });
+                entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, -1.0f, 0.0f) });
+                entityManager.SetComponentData(entity, new Scale { Value = 2.0f });
+                entityManager.SetSharedComponentData(entity, new RenderMesh
+                {
+                    mesh = SwarmOfIron.Instance.unitSelectedCircleMesh,
+                    material = SwarmOfIron.Instance.unitSelectedCircleMaterial
+                });
+            }
+            else
+            {
+                entityManager.SetComponentData(entity, new Translation { Value = new float3(0.0f, 1.0f, 0.0f) });
+                entityManager.SetComponentData(entity, new Scale { Value = 500.0f });
+                entityManager.SetSharedComponentData(entity, new RenderMesh
+                {
+                    mesh = SwarmOfIron.Instance.unitSelectedCircleMesh,
+                    material = SwarmOfIron.Instance.unitSelectedCircleMaterial
+                });
+            }
+            
         }
     }
 }
