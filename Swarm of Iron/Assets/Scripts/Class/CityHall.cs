@@ -13,6 +13,7 @@ namespace SOI {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
                 typeof(CityHallComponent),
+                typeof(UnitComponent),
                 typeof(Translation),
                 typeof(NonUniformScale),
                 typeof(LocalToWorld),
