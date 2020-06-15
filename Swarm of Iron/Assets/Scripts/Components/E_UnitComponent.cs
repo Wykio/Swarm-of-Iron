@@ -1,18 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Entities;
+using Unity.Mathematics;
 
-public class E : MonoBehaviour
+
+namespace SOI
 {
-    // Start is called before the first frame update
-    void Start()
+    public struct E_UnitComponent : IComponentData
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        public float animationSpeed;
     }
 }

@@ -456,10 +456,10 @@ MonoBehaviour:
   spawnAreaRange: 30
   workerMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   workerMaterial: {fileID: 2100000, guid: 8a59af476ad75e34b8b8e153a68314e6, type: 2}
-  spawnWorkerAmount: 10
+  spawnWorkerAmount: 0
   soldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   soldierMaterial: {fileID: 2100000, guid: 93243c8ced0dc7a4b829027dd3c44bb8, type: 2}
-  spawnSoldierAmount: 10
+  spawnSoldierAmount: 1
   EsoldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   EsoldierMaterial: {fileID: 2100000, guid: d116b0a910e05ce4d8ebb89fc6c4439c, type: 2}
   EspawnSoldierAmount: 5
