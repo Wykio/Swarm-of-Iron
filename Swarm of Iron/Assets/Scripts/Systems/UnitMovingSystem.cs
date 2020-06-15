@@ -4,53 +4,51 @@ using Unity.Burst;
 using Unity.Transforms;
 using Unity.Mathematics;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
+    [UpdateInGroup(typeof(MoveLogicGroup))]
+    [UpdateAfter(typeof(FlowFieldSystem))]
     public class UnitMovingSystem : JobComponentSystem
     {
-        [BurstCompile]
-        struct MovingJob : IJobForEach<Translation, MoveToComponent>
-        {
-            public float DeltaTime;
-            public void Execute(ref Translation translation, ref MoveToComponent moveTo)
-            {
-                if (moveTo.move)
-                {
-                    float reachedPositionDistance = 1.0f;
+        private EndSimulationEntityCommandBufferSystem endSimulationEntityCommandBufferSystem;
 
-                    // Far from target position, Move to position
-                    float3 moveDir = math.normalize(moveTo.position - translation.Value);
-                    moveTo.lastMoveDir = moveDir;
-                    if (moveDir[0] == 0 && moveDir[1] == -1 && moveDir[2] == 0)
+        protected override void OnCreate()
+        {
+            endSimulationEntityCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+        }
+
+        protected override JobHandle OnUpdate(JobHandle inputDeps)
+        {
+            float deltaTime = Time.DeltaTime;
+
+            EntityCommandBuffer.Concurrent entityCommandBuffer = endSimulationEntityCommandBufferSystem.CreateCommandBuffer().ToConcurrent();
+
+            JobHandle jobHandle = Entities.ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref MoveToComponent moveTo) =>
+            {
+                float reachedPositionDistance = 1.0f;
+                float3 moveDir = math.normalize(moveTo.endPosition - translation.Value);
+                float moveSpeed = 10f;
+
+                translation.Value += moveDir * moveSpeed * deltaTime;
+
+                if (math.distance(translation.Value, moveTo.endPosition) < reachedPositionDistance)
+                {
+                    if (moveTo.harvest)
                     {
-                        if (moveTo.harvest)
-                        {
-                            float3 hub = new float3(0, 0, 0);
-                            if (moveTo.position[0] == hub[0] && moveTo.position[1] == hub[1] && moveTo.position[2] == hub[2]) moveTo.position = moveTo.targetPosition;
-                            else moveTo.position = hub;
-                        }
-                        else
-                        {
-                            // Already there
-                            moveTo.move = false;
-                        }
+                        var tmp = moveTo.startPosition;
+                        moveTo.startPosition = moveTo.endPosition;
+                        moveTo.endPosition = tmp;
                     }
                     else
                     {
-                        translation.Value.x += moveDir.x * moveTo.moveSpeed * DeltaTime;
-                        translation.Value.z += moveDir.z * moveTo.moveSpeed * DeltaTime;
+                        entityCommandBuffer.RemoveComponent<MoveToComponent>(entityInQueryIndex, entity);
                     }
                 }
-            }
-        }
+            }).Schedule(inputDeps);
 
-        protected override JobHandle OnUpdate(JobHandle inputDependencies)
-        {
-            var job = new MovingJob()
-            {
-                DeltaTime = UnityEngine.Time.deltaTime
-            };
-            return job.Schedule(this, inputDependencies);
+            endSimulationEntityCommandBufferSystem.AddJobHandleForProducer(jobHandle);
+
+            return jobHandle;
         }
     }
 }

@@ -6,16 +6,21 @@ using Unity.Transforms;
 using Unity.Rendering;
 using Unity.Mathematics;
 
-namespace Swarm_Of_Iron_namespace
-{
-    public class RenderTextureSystem : ComponentSystem
-    {
-        protected override void OnUpdate()
-        {
+namespace SOI {
+    [UpdateInGroup(typeof(MiniMapLogicGroup))]
+    [UpdateAfter(typeof(MiniMapSystem))]
+    public class RenderTextureSystem : ComponentSystem {
+
+        private EntityQuery m_MinimapQuery;
+
+        protected override void OnCreate() {
+            m_MinimapQuery = GetEntityQuery(typeof(MiniMapComponent));
+        }
+
+        protected override void OnUpdate() {
             Camera.onPostRender = null;
 
-            Camera.onPostRender += (Camera camera) =>
-            {
+            Camera.onPostRender += (Camera camera) => {
                 // Pushes the current matrix onto the stack so that can be restored later
                 GL.PushMatrix();
 
@@ -28,27 +33,25 @@ namespace Swarm_Of_Iron_namespace
                 //GL.MultMatrix(Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0, 0, 45), new Vector3(2, 2)));
             };
 
-            Entities.ForEach((DynamicBuffer<RenderTexture> buffer, ref RectComponent pos) =>
-            {
-                if (buffer.Capacity > buffer.Length)
-                    buffer.TrimExcess();
+            Entity entity = m_MinimapQuery.GetSingletonEntity();
+            DynamicBuffer<RenderTexture> buffer = EntityManager.GetBuffer<RenderTexture>(entity);
+            RectComponent pos = EntityManager.GetComponentData<RectComponent>(entity);
 
-                Texture2D tex = new Texture2D(100, 100);
-                tex.SetPixels(buffer.Reinterpret<Color>().AsNativeArray().ToArray());
-                tex.Apply();
+            if (buffer.Capacity > buffer.Length)
+                buffer.TrimExcess();
 
-                tex.wrapMode = TextureWrapMode.Clamp;
+            Texture2D tex = new Texture2D(100, 100);
+            tex.SetPixels(buffer.Reinterpret<Color>().AsNativeArray().ToArray());
+            tex.Apply();
 
-                RectComponent p = pos;
-                Camera.onPostRender += (Camera camera) =>
-                {
-                    if (tex != null)
-                        Graphics.DrawTexture(new Rect(p.x, p.y, p.width, p.height), tex);
-                };
-            });
+            tex.wrapMode = TextureWrapMode.Clamp;
 
-            Camera.onPostRender += (Camera camera) =>
-            {
+            Camera.onPostRender += (Camera camera) => {
+                if (tex != null)
+                    Graphics.DrawTexture(new Rect(pos.x, pos.y, pos.width, pos.height), tex);
+            };
+
+            Camera.onPostRender += (Camera camera) => {
                 // Pops the matrix that was just loaded, restoring the old matrix
                 GL.PopMatrix();
             };

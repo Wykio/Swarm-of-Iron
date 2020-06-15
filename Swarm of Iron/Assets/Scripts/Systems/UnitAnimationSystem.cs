@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
@@ -6,8 +6,10 @@ using Unity.Jobs;
 using Unity.Transforms;
 using Unity.Mathematics;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
+    [UpdateInGroup(typeof(MoveLogicGroup))]
+    [UpdateAfter(typeof(UnitMovingSystem))]
     public class UnitAnimationSystem : JobComponentSystem
     {
         // This is the right way to write a JobSystem

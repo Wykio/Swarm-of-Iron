@@ -6,52 +6,35 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
 
-namespace Swarm_Of_Iron_namespace
-{
-    public static class Wood
-    {
-        static public void SpawnWood()
-        {
-            float spawnAreaRange = Swarm_Of_Iron.instance.spawnAreaRange;
-            SpawnWood(new float3(UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange), 1.0f, UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange)));
-        }
+namespace SOI {
+    public static class Wood {
 
-        static public void SpawnWood(int amount)
-        {
-            // Spawn Woods
-            for (int i = 0; i < amount; i++)
-            {
-                SpawnWood();
-            }
-        }
-
-        static public void SpawnWood(float3 spawnPosition)
-        {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
-            EntityArchetype entityArchetype = entityManager.CreateArchetype(
+        static public EntityArchetype GetArchetype()  {
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
+            return entityManager.CreateArchetype(
                 typeof(Translation),
                 typeof(Rotation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
                 typeof(RenderBounds)
             );
-
-            Entity entity = entityManager.CreateEntity(entityArchetype);
-
-            entityManager.SetComponentData(entity, new Translation { Value = spawnPosition + new float3(0.0f, -1.0f, 0.0f)});
-            entityManager.SetComponentData(entity, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
-            entityManager.SetSharedComponentData(entity, new RenderMesh
-            {
-                mesh = Swarm_Of_Iron.instance.trunkMesh,
-                material = Swarm_Of_Iron.instance.trunkMaterial
-            });
-
-            addLeaf(entity);
         }
 
-        static private void addLeaf(Entity entityParent)
-        {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
+        static public void SetEntity(Entity e, float3 position) {
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
+
+            entityManager.SetComponentData(e, new Translation { Value = position + new float3(0.0f, -1.0f, 0.0f) });
+            entityManager.SetComponentData(e, new Rotation { Value = quaternion.EulerXYZ(new float3(0.0f, UnityEngine.Random.Range(0.0f, 360.0f), 0.0f)) });
+            entityManager.SetSharedComponentData(e, new RenderMesh {
+                mesh = SwarmOfIron.Instance.trunkMesh,
+                material = SwarmOfIron.Instance.trunkMaterial
+            });
+
+            addLeaf(e);
+        }
+
+        static private void addLeaf(Entity entityParent)  {
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             EntityArchetype entityArchetype = entityManager.CreateArchetype(
                 typeof(Parent),
                 typeof(LocalToParent),
@@ -69,8 +52,8 @@ namespace Swarm_Of_Iron_namespace
             entityManager.SetComponentData(Leaf1entity, new Scale { Value = 1.0f });
             entityManager.SetSharedComponentData(Leaf1entity, new RenderMesh
             {
-                mesh = Swarm_Of_Iron.instance.leafMesh,
-                material = Swarm_Of_Iron.instance.leafMaterial
+                mesh = SwarmOfIron.Instance.leafMesh,
+                material = SwarmOfIron.Instance.leafMaterial
             });
 
             Entity Leaf2entity = entityManager.CreateEntity(entityArchetype);
@@ -80,8 +63,8 @@ namespace Swarm_Of_Iron_namespace
             entityManager.SetComponentData(Leaf2entity, new Scale { Value = 1.0f });
             entityManager.SetSharedComponentData(Leaf2entity, new RenderMesh
             {
-                mesh = Swarm_Of_Iron.instance.leafMesh,
-                material = Swarm_Of_Iron.instance.leafMaterial
+                mesh = SwarmOfIron.Instance.leafMesh,
+                material = SwarmOfIron.Instance.leafMaterial
             });
 
             Entity Leaf3entity = entityManager.CreateEntity(entityArchetype);
@@ -91,8 +74,8 @@ namespace Swarm_Of_Iron_namespace
             entityManager.SetComponentData(Leaf3entity, new Scale { Value = 0.5f });
             entityManager.SetSharedComponentData(Leaf3entity, new RenderMesh
             {
-                mesh = Swarm_Of_Iron.instance.leafMesh,
-                material = Swarm_Of_Iron.instance.leafMaterial
+                mesh = SwarmOfIron.Instance.leafMesh,
+                material = SwarmOfIron.Instance.leafMaterial
             });
         }
     }

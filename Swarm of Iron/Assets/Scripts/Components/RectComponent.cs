@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public struct RectComponent : IComponentData
     {

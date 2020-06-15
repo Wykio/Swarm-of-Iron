@@ -2,30 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
+using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
 
 
-namespace Swarm_Of_Iron_namespace
+namespace SOI
 {
     public static class Soldier
     {
+
         public static List<float3> movePositionList;
-        
+
         //Initialise Positions Arrays for units
         static public void init()
         {
             float[] ringDistancesArray;
             int[] unitsPerRingArray;
             List<float> ringDistancesList = new List<float>();
-            for (int i = 3; i < 3333; i += 3) {
+            for (int i = 3; i < 3333; i += 3)
+            {
                 ringDistancesList.Add((float)i);
             }
             ringDistancesArray = ringDistancesList.ToArray();
 
             List<int> unitsPerRingList = new List<int>();
-            for (int i = 8; i < 2500; i += 4) {
+            for (int i = 8; i < 2500; i += 4)
+            {
                 unitsPerRingList.Add(i);
             }
             unitsPerRingArray = unitsPerRingList.ToArray();
@@ -33,47 +37,33 @@ namespace Swarm_Of_Iron_namespace
             movePositionList = GetPositionListAround(new float3(0.0f, 0.0f, 0.0f), ringDistancesArray, unitsPerRingArray);
         }
 
-        static public void SpawnSoldier()
+        static public EntityArchetype GetArchetype()
         {
-            float spawnAreaRange = Swarm_Of_Iron.instance.spawnAreaRange;
-            SpawnSoldier(new float3(UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange), 1.0f, UnityEngine.Random.Range(-spawnAreaRange, spawnAreaRange)));
-        }
-
-        static public void SpawnSoldiers(int amount)
-        {
-            // Spawn Soldiers
-            for (int i = 0; i < amount; i++)
-            {
-                SpawnSoldier();
-            }
-        }
-
-        static public void SpawnSoldier(float3 spawnPosition)
-        {
-            EntityManager entityManager = Swarm_Of_Iron.instance.entityManager;
-            EntityArchetype entityArchetype = entityManager.CreateArchetype(
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
+            return entityManager.CreateArchetype(
                 typeof(UnitComponent),
-                typeof(MoveToComponent),
+                // typeof(PathPosition),
+                // typeof(PathFollow),
                 typeof(Translation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
                 typeof(RenderBounds)
             );
+        }
 
-            Entity entity = entityManager.CreateEntity(entityArchetype);
+        static public void SetEntity(Entity e, float3 position)
+        {
+            EntityManager entityManager = SwarmOfIron.Instance.entityManager;
 
-            entityManager.SetComponentData(entity, new Translation { Value = spawnPosition });
-            entityManager.SetComponentData(entity, new UnitComponent { animationSpeed = 0.5f });
-            entityManager.SetComponentData(entity, new MoveToComponent
+            entityManager.SetComponentData(e, new Translation { Value = position });
+            entityManager.SetComponentData(e, new UnitComponent { animationSpeed = 0.5f });
+            // entityManager.SetComponentData(e, new PathFollow { move = false });
+            entityManager.SetSharedComponentData(e, new RenderMesh
             {
-                move = false,
-                moveSpeed = 10.0f
+                mesh = SwarmOfIron.Instance.soldierMesh,
+                material = SwarmOfIron.Instance.soldierMaterial
             });
-            entityManager.SetSharedComponentData(entity, new RenderMesh
-            {
-                mesh = Swarm_Of_Iron.instance.soldierMesh,
-                material = Swarm_Of_Iron.instance.soldierMaterial
-            });
+            entityManager.AddBuffer<PathPosition>(e);
         }
 
         // Fill position List for each rings
