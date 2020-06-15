@@ -54,6 +54,19 @@ namespace SOI
             }
         }
 
+        public static Bounds GetViewportBounds(Camera camera, float3 screenPosition1, float3 screenPosition2) {
+            var v1 = camera.ScreenToViewportPoint(screenPosition1);
+            var v2 = camera.ScreenToViewportPoint(screenPosition2);
+            var min = math.min(v1, v2);
+            var max = math.max(v1, v2);
+            min.z = camera.nearClipPlane;
+            max.z = camera.farClipPlane;
+
+            var bounds = new Bounds();
+            bounds.SetMinMax(min, max);
+            return bounds;
+        }
+
         public static Entity Raycast(Vector3 _rayOrigin, Vector3 _to) {
             var physicWorldSystem = World.DefaultGameObjectInjectionWorld.GetExistingSystem<BuildPhysicsWorld>();
             var collisionWorldSystem = physicWorldSystem.PhysicsWorld.CollisionWorld;
