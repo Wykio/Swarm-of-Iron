@@ -27,6 +27,7 @@ namespace SOI
             {
                 float reachedPositionDistance = 1.0f;
                 float3 moveDir = math.normalize(moveTo.endPosition - translation.Value);
+                moveDir.y = 0.0f;
                 float moveSpeed = 10f;
 
                 translation.Value += moveDir * moveSpeed * deltaTime;
