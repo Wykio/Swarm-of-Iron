@@ -462,7 +462,7 @@ MonoBehaviour:
   spawnSoldierAmount: 10
   EsoldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   EsoldierMaterial: {fileID: 2100000, guid: d116b0a910e05ce4d8ebb89fc6c4439c, type: 2}
-  EspawnSoldierAmount: 5
+  EspawnSoldierAmount: 10
   leafMesh: {fileID: 4300008, guid: 24a759921bedc2541881a0535a7bfcc8, type: 3}
   leafMaterial: {fileID: 2100000, guid: 05c3b35dce48bfb44a9ce93ae526df18, type: 2}
   trunkMesh: {fileID: 4300006, guid: c52a1ad28de5ec447a225e11be0fe132, type: 3}

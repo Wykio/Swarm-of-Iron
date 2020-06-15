@@ -41,7 +41,7 @@ namespace SOI
         {
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
             return entityManager.CreateArchetype(
-                typeof(UnitComponent),
+                typeof(E_UnitComponent),
                 typeof(Translation),
                 typeof(LocalToWorld),
                 typeof(RenderMesh),
@@ -54,13 +54,14 @@ namespace SOI
             EntityManager entityManager = SwarmOfIron.Instance.entityManager;
 
             entityManager.SetComponentData(e, new Translation { Value = position });
-            entityManager.SetComponentData(e, new UnitComponent { animationSpeed = 0.5f });
+            entityManager.SetComponentData(e, new E_UnitComponent { animationSpeed = 0.5f });
             entityManager.SetSharedComponentData(e, new RenderMesh
             {
                 mesh = SwarmOfIron.Instance.EsoldierMesh,
                 material = SwarmOfIron.Instance.EsoldierMaterial
             });
         }
+
 
         // Fill position List for each rings
         static private List<float3> GetPositionListAround(float3 centerPosition, float[] ringDistance, int[] ringPositionCount)
@@ -94,6 +95,5 @@ namespace SOI
         {
             return Quaternion.Euler(0.0f, angle, 0.0f) * vector;
         }
-
     }
 }
