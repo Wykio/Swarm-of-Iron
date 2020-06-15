@@ -17,16 +17,19 @@ namespace SOI
         [BurstCompile]
         struct FindTarget : IJobForEachWithEntity<Translation>
         {
-            [ReadOnly] public NativeArray<Translation> E_positions;
+            [ReadOnly] public NativeArray<Translation> U_positions;
+            //public NativeArray<Translation> E_positions;
+            
+
             public void Execute(Entity entity, int idxEntity, ref Translation translation)
             {
                 float3 position = translation.Value;
 
-                for (int i = 0; i < E_positions.Length; i++)
+                for (int i = 0; i < U_positions.Length; i++)
                 {
-                    if (math.distance(position, E_positions[i].Value) < 5f)
+                    if (math.distance(position, U_positions[i].Value) < 5f)
                     {
-                        translation.Value = E_positions[i].Value;
+                        translation.Value = U_positions[i].Value+1;
                     }
                 }
             }
@@ -34,21 +37,24 @@ namespace SOI
 
         protected override void OnCreate()
         {
-            EnemiQuery = GetEntityQuery(ComponentType.ReadOnly<E_UnitComponent>(), ComponentType.ReadOnly<Translation>());
-            UnitQuery = GetEntityQuery(ComponentType.ReadOnly<UnitComponent>(), ComponentType.ReadWrite<Translation>());
+            EnemiQuery = GetEntityQuery(ComponentType.ReadOnly<E_UnitComponent>(), ComponentType.ReadWrite<Translation>());
+            UnitQuery = GetEntityQuery(ComponentType.ReadOnly<UnitComponent>(), ComponentType.ReadOnly<Translation>());
         }
 
         protected override void OnUpdate()
         {
-            NativeArray<Translation> AllEnemiPos = EnemiQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
+           // NativeArray<Translation> AllEnemiPos = EnemiQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
+            NativeArray<Translation> AllUnitPos = UnitQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
 
             var job = new FindTarget()
             {
-                E_positions = AllEnemiPos,
+                U_positions = AllUnitPos,
+                //E_positions = AllEnemiPos
             };
-            JobHandle dependency = job.Schedule(UnitQuery);
+            JobHandle dependency = job.Schedule(EnemiQuery);
 
-            AllEnemiPos.Dispose(dependency);
+           // AllEnemiPos.Dispose(dependency);
+            AllUnitPos.Dispose(dependency);
         }
     }
 }
