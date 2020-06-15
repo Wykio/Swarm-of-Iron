@@ -53,7 +53,8 @@ namespace SOI
             };
             JobHandle dependency = job.Schedule(EnemiQuery);
 
-           // AllEnemiPos.Dispose(dependency);
+            dependency.Complete();
+            // AllEnemiPos.Dispose(dependency);
             AllUnitPos.Dispose(dependency);
         }
     }
