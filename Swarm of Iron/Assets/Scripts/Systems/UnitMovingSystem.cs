@@ -25,14 +25,19 @@ namespace SOI
 
             JobHandle jobHandle = Entities.ForEach((Entity entity, int entityInQueryIndex, ref Translation translation, ref MoveToComponent moveTo) =>
             {
+                // Ignore Y coordinate
+                float3 start = translation.Value;
+                float3 end = moveTo.endPosition;
+                start.y = 0.0f;
+                end.y = 0.0f;
+
                 float reachedPositionDistance = 1.0f;
-                float3 moveDir = math.normalize(moveTo.endPosition - translation.Value);
-                moveDir.y = 0.0f;
+                float3 moveDir = math.normalize(end - start);
                 float moveSpeed = 10f;
 
                 translation.Value += moveDir * moveSpeed * deltaTime;
 
-                if (math.distance(translation.Value, moveTo.endPosition) < reachedPositionDistance)
+                if (math.distance(start, end) < reachedPositionDistance)
                 {
                     if (moveTo.harvest)
                     {
