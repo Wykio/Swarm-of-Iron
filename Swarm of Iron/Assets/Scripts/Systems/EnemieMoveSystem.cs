@@ -40,6 +40,9 @@ namespace SOI
                         if (math.distance(position, U_positions[i].Value) < 18f)
                         {
                             entityCommandBuffer.RemoveComponent<MoveToComponent>(idxEntity, entity);
+                           // entityCommandBuffer.SpawnEntityAtPosition(typeof(Projectiles), translation.Value);
+
+
                         }
 
                         //translation.Value = U_positions[i].Value+1;
@@ -73,5 +76,7 @@ namespace SOI
             // AllEnemiPos.Dispose(dependency);
             AllUnitPos.Dispose(dependency);
         }
+
+
     }
 }

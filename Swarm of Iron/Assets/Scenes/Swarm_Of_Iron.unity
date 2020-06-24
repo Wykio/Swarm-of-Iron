@@ -453,7 +453,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a5132ccd6c5f7728ba339cf0dc08a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnAreaRange: 30
+  spawnAreaRange: 50
   workerMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   workerMaterial: {fileID: 2100000, guid: 8a59af476ad75e34b8b8e153a68314e6, type: 2}
   spawnWorkerAmount: 0
@@ -463,6 +463,10 @@ MonoBehaviour:
   EsoldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   EsoldierMaterial: {fileID: 2100000, guid: d116b0a910e05ce4d8ebb89fc6c4439c, type: 2}
   EspawnSoldierAmount: 5
+  ProjectileMesh: {fileID: -1095442885134521325, guid: a6df12072eecd064ea6c251c9a963b82,
+    type: 3}
+  ProjectileMaterial: {fileID: -3917090685615692763, guid: a6df12072eecd064ea6c251c9a963b82,
+    type: 3}
   leafMesh: {fileID: 4300008, guid: 24a759921bedc2541881a0535a7bfcc8, type: 3}
   leafMaterial: {fileID: 2100000, guid: 05c3b35dce48bfb44a9ce93ae526df18, type: 2}
   trunkMesh: {fileID: 4300006, guid: c52a1ad28de5ec447a225e11be0fe132, type: 3}
