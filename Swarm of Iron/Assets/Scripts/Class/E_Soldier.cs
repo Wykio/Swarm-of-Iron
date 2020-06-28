@@ -10,7 +10,7 @@ using Unity.Rendering;
 
 namespace SOI
 {
-    class E_Soldier
+    public static class E_Soldier
     {
 
         public static List<float3> movePositionList;

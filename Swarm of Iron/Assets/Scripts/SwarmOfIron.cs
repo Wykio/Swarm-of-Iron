@@ -38,6 +38,10 @@ namespace SOI
         public Material EsoldierMaterial; // materiaux pour les soldats
         public int EspawnSoldierAmount = 10; //nombre d'unité à spawn
 
+        [Header("Projectiles Attributes")]
+        public Mesh ProjectileMesh; // mesh pour les soldats
+        public Material ProjectileMaterial; // materiaux pour les soldats
+
         [Header("Woods Attributes")]
         public Mesh leafMesh; // mesh pour les soldats
         public Material leafMaterial; // materiaux pour les soldats
