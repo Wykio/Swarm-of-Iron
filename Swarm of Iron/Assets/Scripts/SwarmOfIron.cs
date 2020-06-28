@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Rendering;
+using UnityEngine.UI;
 
 namespace SOI
 {
@@ -67,6 +68,8 @@ namespace SOI
         [Header("UI Attributes")]
         public List<GameObject> listButtonGO;
         public List<Texture2D> layers;
+        public Text goldAmountText;
+        public float goldAmount;
 
         private void Awake() {
             //management des dépendences à revoir
@@ -104,6 +107,12 @@ namespace SOI
             MiniMap.SpawnMiniMap();
 
             //CityHall.SpawnCityHall(new float3(0.0f, 0.0f, 0.0f));
+        }
+
+        private void Update()
+        {
+            //goldAmount++;
+            goldAmountText.text = ((int)goldAmount).ToString();
         }
 
         public void ToggleSelectionArea (bool isActive) {
