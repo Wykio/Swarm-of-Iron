@@ -167,14 +167,22 @@ namespace SOI
                 //move selected units
                 SwarmOfIron.Instance.updateMoveToSystem.Update();
             } else if (action == "HouseIcon") {
-                CustomEntity.SpawnEntityAtPosition(typeof(CityHall), UnitControlHelpers.GetMousePosition());
+                if (SwarmOfIron.Instance.goldAmount >= 100.0f)
+                {
+                    SwarmOfIron.Instance.goldAmount -= 100.0f;
+                    CustomEntity.SpawnEntityAtPosition(typeof(CityHall), UnitControlHelpers.GetMousePosition());
+                }
             }
         }
 
         public void spawWorkers()
         {
             Entities.WithAll<CityHallComponent>().ForEach((ref Translation translation, ref UnitSelectedComponent unitSelectedComponent) => {
-                CustomEntity.SpawnEntityAtPosition(typeof(Worker), translation.Value + new float3(0, 0, -20));
+                if (SwarmOfIron.Instance.goldAmount >= 10.0f)
+                {
+                    SwarmOfIron.Instance.goldAmount -= 10.0f;
+                    CustomEntity.SpawnEntityAtPosition(typeof(Worker), translation.Value + new float3(0, 0, -20));
+                }
             });
         }
 

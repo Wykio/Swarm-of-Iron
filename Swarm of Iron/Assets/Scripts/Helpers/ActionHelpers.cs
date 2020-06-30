@@ -22,17 +22,17 @@ namespace SOI
                 if (texture.name == "ArrowIcon" && (hasWorkerSelected || hasSoldierSelected))
                 {
                     layers.Add(texture);
-                    if (action == "ArrowIcon") actionIdx = i;
+                    if (action == "ArrowIcon") actionIdx = layers.Count - 1;
                 }
                 else if (texture.name == "HouseIcon" && hasWorkerSelected)
                 {
                     layers.Add(texture);
-                    if (action == "HouseIcon") actionIdx = i;
+                    if (action == "HouseIcon") actionIdx = layers.Count - 1;
                 }
                 else if (texture.name == "PeonIcon" && hasHubSelected)
                 {
                     layers.Add(texture);
-                    if (action == "PeonIcon") actionIdx = i;
+                    if (action == "PeonIcon") actionIdx = layers.Count - 1;
                 }
             }
 
@@ -161,7 +161,7 @@ namespace SOI
                 float maxx = 32 * (scalex + 1) - 1;
                 float maxy = 32 * (scaley + 1) - 1;
 
-                if (pos.x >= minx && pos.y >= miny && pos.x <= maxx && pos.y <= maxy)
+                if (pos.x >= minx && pos.y >= miny - 10 && pos.x <= maxx && pos.y <= maxy)
                 {
                     return layers[i].name;
                 }
