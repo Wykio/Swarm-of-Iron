@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Entities;
-
+using Unity.Mathematics;
 
 namespace SOI
 {
-    public struct ProjectilesComponents : IComponentData
+    public struct ProMoveComponents : IComponentData
     {
+        public float3 startPosition;
+        public float3 endPosition;
         //Don't know if it usefull to creat this file.
     }
 }

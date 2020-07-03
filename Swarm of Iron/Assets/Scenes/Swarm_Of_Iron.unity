@@ -612,7 +612,7 @@ MonoBehaviour:
   spawnAreaRange: 50
   workerMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   workerMaterial: {fileID: 2100000, guid: 8a59af476ad75e34b8b8e153a68314e6, type: 2}
-  spawnWorkerAmount: 100
+  spawnWorkerAmount: 0
   soldierMesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   soldierMaterial: {fileID: 2100000, guid: 93243c8ced0dc7a4b829027dd3c44bb8, type: 2}
   spawnSoldierAmount: 1
@@ -621,8 +621,7 @@ MonoBehaviour:
   EspawnSoldierAmount: 5
   ProjectileMesh: {fileID: -1095442885134521325, guid: a6df12072eecd064ea6c251c9a963b82,
     type: 3}
-  ProjectileMaterial: {fileID: -3917090685615692763, guid: a6df12072eecd064ea6c251c9a963b82,
-    type: 3}
+  ProjectileMaterial: {fileID: 2100000, guid: 4c2eec31993aee54abd7616dd5e658e0, type: 2}
   leafMesh: {fileID: 4300008, guid: 24a759921bedc2541881a0535a7bfcc8, type: 3}
   leafMaterial: {fileID: 2100000, guid: 05c3b35dce48bfb44a9ce93ae526df18, type: 2}
   trunkMesh: {fileID: 4300006, guid: c52a1ad28de5ec447a225e11be0fe132, type: 3}

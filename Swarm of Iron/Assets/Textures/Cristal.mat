@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Volcan
+  m_Name: Cristal
   m_Shader: {fileID: 4800000, guid: a1effe71d1426cd44b25c26d3442bbfc, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
